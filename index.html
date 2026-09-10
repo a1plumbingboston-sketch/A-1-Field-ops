@@ -16,13 +16,13 @@
 .doc-modal-card{width:min(860px,100%)}.doc-preview-actions{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}.material-markup-box{display:grid;gap:6px}.mini-action{justify-self:start;border:0;background:transparent!important;color:#d7d9df!important;padding:2px 0!important;font-size:.78rem;text-decoration:underline;min-height:auto!important}.computed-price{padding:10px 12px;border:1px solid #343840;border-radius:10px;background:#111318}.computed-price b{display:block;font-size:1.05rem}.signature-status{border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px;margin:12px 0;background:rgba(255,255,255,.035)}.invoice-edit-row{display:grid;grid-template-columns:minmax(0,1fr) 90px 125px auto;gap:8px;align-items:center;margin:8px 0}.invoice-edit-row input{min-width:0}.invoice-edit-row button{padding:9px 10px}@media(max-width:650px){.invoice-edit-row{grid-template-columns:1fr 1fr}.invoice-edit-row .edit-desc{grid-column:1/-1}.invoice-edit-row button{grid-column:1/-1}}
 </style>
 
-<style id="a1-brand-v31">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
+<style id="a1-brand-v31.1">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
 <link rel="stylesheet" href="document-system.css"><script src="document-system.js"></script>
 </head>
 <body>
   <div id="login" class="login">
     <img class="a1-login-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating">
-    <h1>FieldOps <small style="font-size:12px">v31</small></h1>
+    <h1>FieldOps <small style="font-size:12px">v31.1</small></h1>
     <p>Private operations portal</p>
     <form id="loginForm" action="javascript:void(0)" onsubmit="if(window.fieldOpsLogin){window.fieldOpsLogin(event)}else{document.getElementById('loginMsg').textContent='FieldOps could not initialize. Refresh once; if this remains, use the new deployment URL.'}; return false;">
       <input id="accessKey" type="password" placeholder="Access key" autocomplete="current-password" required>
@@ -33,7 +33,7 @@
 
   <div id="app" style="display:none">
     <header>
-      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing &amp; HVAC · v31</small></div></div>
+      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing &amp; HVAC · v31.1</small></div></div>
       <button id="logout">Sign out</button>
     </header>
     <main>
@@ -51,7 +51,7 @@
         <button data-filter="lost">Lost</button>
       </nav>
       <section id="leadView"><div id="leads" class="leads"><div class="empty">Loading…</div></div></section>
-<section id="jobView" style="display:none"><div class="job-toolbar"><button id="todayJobs" class="active">Today</button><button id="allMyJobs">My Jobs</button></div><div id="jobs" class="leads"><div class="empty">Choose Jobs below to load your work.</div></div></section>
+<section id="jobView" style="display:none"><div class="job-toolbar"><button id="todayJobs" class="active">Today</button><button id="allMyJobs">My Jobs</button><button id="archivedJobs">Archived</button></div><div id="jobs" class="leads"><div class="empty">Choose Jobs below to load your work.</div></div></section>
 <section id="customerView" style="display:none"><div class="job-toolbar"><input id="customerSearch" class="search" type="search" placeholder="Search customers" aria-label="Search customers"></div><div id="customers" class="leads"><div class="empty">Choose Customers below to load customers.</div></div></section>
 <section id="estimateView" style="display:none"><div class="job-toolbar"><button id="newEstimateBtn" class="active">New Estimate</button><button id="refreshEstimates">Refresh</button></div>
 <form id="estimateForm" class="estimate-form ai-estimator" style="display:none">
@@ -62,7 +62,7 @@
 <input id="estTitle" placeholder="Estimate title — e.g. 50-gal gas water heater replacement" required>
 <textarea id="estDescription" placeholder="Describe the job in plain English: existing equipment, access, venting, piping, permits, what needs to be replaced, photos/measurements you observed, etc."></textarea>
 <div class="item-grid"><input id="estZip" inputmode="numeric" placeholder="Job ZIP / city"><input id="estLaborHours" type="number" step="0.25" min="0" placeholder="Labor hours"><input id="estLaborRate" type="number" step="1" min="0" value="165" placeholder="Billable labor $/hr"></div>
-<div class="item-grid"><input id="estMaterialCost" type="number" step="0.01" min="0" placeholder="Expected material cost"><input id="estMarkup" type="number" step="1" min="0" value="45" placeholder="Material markup %"><input id="estContingency" type="number" step="1" min="0" value="10" placeholder="Contingency %"></div>
+<div class="item-grid"><input id="estMaterialCost" type="number" step="0.01" min="0" placeholder="Expected material cost"><input id="estMarkup" type="number" step="1" min="0" value="45" placeholder="Material markup %"><input id="estContingency" type="number" step="1" min="0" value="10" placeholder="Misc fittings %" aria-label="Misc fittings %"></div>
 <div class="job-toolbar"><button type="button" id="aiEstimateBtn" class="convert">✦ AI Estimate Assist</button><button type="button" id="quickCalcBtn">Quick Price Check</button></div>
 <div id="aiEstimatePanel" class="ai-panel" style="display:none"></div>
 <div id="estimateItems"></div>
@@ -272,7 +272,7 @@ async function load(){
 }
 
 function render(){
-  const rows=filter==='all'?cache:cache.filter(x=>x.status===filter);
+  const rows=filter==='all'?cache:cache.filter(x=>filter==='converted'?(x.status==='won'||x.status==='converted'||(x.customer_id&&x.job_id)):x.status===filter);
   $('#newCount').textContent=cache.filter(x=>x.status==='new').length+' NEW';
   $('#leads').innerHTML=rows.length?rows.map(card).join(''):'<div class="empty">No leads in this view.</div>';
 }
@@ -290,7 +290,7 @@ function card(l){
     <div class="meta">${esc([l.address,l.city,l.state,l.zip].filter(Boolean).join(', '))}</div>
     <textarea class="notes" id="n-${l.id}" placeholder="Internal notes">${esc(l.internal_notes||'')}</textarea>
     <div class="ai-reply-box" id="air-${l.id}" ${l.ai_reply_draft?'':'hidden'}>
-      <div class="meta"><b>AI reply draft</b> — ${l.ai_reply_status==='draft_ready'?'routine inquiry; ready for review':'review before sending'}${l.ai_reply_reason?` · ${esc(l.ai_reply_reason)}`:''}.</div>
+      <div class="meta"><b>AI reply draft</b> — ${l.ai_reply_status==='approved'?'approved':l.ai_reply_status==='held'?'held for review':l.ai_reply_status==='draft_ready'?'routine inquiry; ready for review':'review before sending'}${l.ai_reply_reason?` · ${esc(l.ai_reply_reason)}`:''}.</div>
       <textarea class="notes ai-reply-text" id="airtxt-${l.id}" rows="5" aria-label="AI reply draft">${esc(l.ai_reply_draft||'')}</textarea>
       <div class="actions">
         <button onclick="copyAiReply('${l.id}')">Copy</button>
@@ -352,13 +352,18 @@ window.aiReply=async id=>{const lead=cache.find(x=>x.id===id);if(!lead)return;co
 window.setAiDisposition=async(id,status)=>{
   try{
     const accessKey=sessionStorage.getItem('a1_fieldops_key')||'';
-    const patch={ai_reply_status:status,ai_needs_approval:status==='approved'?false:true,updated_at:new Date().toISOString()};
+    if(!['approved','held'].includes(status))throw new Error('Invalid reply status');
+    const reply=$('#airtxt-'+id);
+    if(!reply||reply.disabled||!reply.value.trim())throw new Error('Wait for a reply, then review it before saving.');
+    const patch={ai_reply_status:status,ai_reply_draft:reply.value.trim(),updated_at:new Date().toISOString()};
     const r=await fetch(`${URL}/rest/v1/leads?id=eq.${encodeURIComponent(id)}`,{
       method:'PATCH',
-      headers:{apikey:KEY,'Content-Type':'application/json','Prefer':'return=minimal','x-fieldops-key':accessKey},
+      headers:{apikey:KEY,'Content-Type':'application/json','Prefer':'return=representation','x-fieldops-key':accessKey},
       body:JSON.stringify(patch)
     });
-    if(!r.ok) throw new Error(await r.text());
+    const saved=await r.json().catch(()=>null);
+    if(!r.ok)throw new Error(saved?.message||'Could not save reply. Please try again.');
+    if(!Array.isArray(saved)||saved.length!==1)throw new Error('Reply was not saved. Refresh the lead and try again.');
     showBanner(status==='approved'?'AI reply approved.':'AI reply held for review.','success');
     await load();
   }catch(err){showBanner('Could not update AI reply: '+(err?.message||String(err)),'error');}
@@ -385,12 +390,18 @@ $('#navEstimates').onclick=async()=>{setSection('estimates');await Promise.all([
 $('#navInvoices').onclick=async()=>{setSection('invoices');await Promise.all([loadCustomers(),loadInvoices()]);await loadTaxBooks();};
 $('#todayJobs').onclick=()=>{jobMode='today';syncJobMode();renderJobs();};
 $('#allMyJobs').onclick=()=>{jobMode='all';syncJobMode();renderJobs();};
-function syncJobMode(){$('#todayJobs').classList.toggle('active',jobMode==='today');$('#allMyJobs').classList.toggle('active',jobMode==='all');}
+$('#archivedJobs').onclick=()=>{jobMode='archived';syncJobMode();renderJobs();};
+function syncJobMode(){$('#archivedJobs').classList.toggle('active',jobMode==='archived');$('#todayJobs').classList.toggle('active',jobMode==='today');$('#allMyJobs').classList.toggle('active',jobMode==='all');}
 async function loadJobs(){if(!currentSession?.user?.id)return;$('#jobs').innerHTML='<div class="empty">Loading jobs…</div>';try{const {data,error}=await sb.from('jobs').select('*').eq('owner_id',currentSession.user.id).order('created_at',{ascending:false});if(error)throw error;jobCache=data||[];renderJobs();}catch(err){console.error('Job load error',err);$('#jobs').innerHTML='<div class="empty">Jobs could not load. '+esc(err?.message||String(err))+'</div>';}}
 function jobDate(j){return j.scheduled_for||j.scheduled_at||j.start_at||j.appointment_at||j.created_at||'';}
 function isToday(v){if(!v)return false;const d=new Date(v),n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate();}
-function renderJobs(){const rows=jobMode==='today'?jobCache.filter(j=>isToday(jobDate(j))):jobCache;$('#jobs').innerHTML=rows.length?rows.map(jobCard).join(''):'<div class="empty">'+(jobMode==='today'?'No assigned jobs scheduled for today.':'No jobs yet.')+'</div>';}
-function jobCard(j){const title=j.title||j.service_type||j.job_type||'Service Job',status=j.status||'scheduled',address=[j.address,j.city,j.state,j.zip].filter(Boolean).join(', '),when=jobDate(j);let displayWhen='Schedule not set';try{if(when)displayWhen=new Date(when).toLocaleString();}catch(_){}const phone=(j.phone||j.customer_phone||'').replace(/[^+\d]/g,'');return `<article class="lead job-card"><div class="leadtop"><div><h3>${esc(title)}</h3><div class="meta">${esc(displayWhen)}</div></div><span class="status">${esc(status)}</span></div>${address?`<div class="message">${esc(address)}</div>`:''}${j.notes?`<div class="meta">${esc(j.notes)}</div>`:''}<div class="actions">${address?`<a href="https://maps.apple.com/?q=${encodeURIComponent(address)}" target="_blank" rel="noopener">Directions</a>`:''}${phone?`<a href="tel:${phone}">Call</a>`:''}<button onclick="openMaterials('${j.id}')">Materials</button><button onclick="updateJobStatus('${j.id}','in_progress')">Start Job</button>${String(status).toLowerCase()==='completed'?`<button class="convert" onclick="openMoneyToCollectForJob('${j.id}')">Money to Collect</button>`:`<button class="convert" onclick="completeJob('${j.id}')">Complete → Invoice</button>`}</div></article>`;}
+function renderJobs(){const visible=jobCache.filter(j=>jobMode==='archived'?!!j.archived_at:!j.archived_at);const rows=jobMode==='today'?visible.filter(j=>isToday(jobDate(j))):visible;$('#jobs').innerHTML=rows.length?rows.map(jobCard).join(''):'<div class="empty">'+(jobMode==='today'?'No assigned jobs scheduled for today.':jobMode==='archived'?'No archived jobs.':'No jobs yet.')+'</div>';}
+function jobCard(j){const title=j.title||j.service_type||j.job_type||'Service Job',status=j.status||'scheduled',address=[j.address,j.city,j.state,j.zip].filter(Boolean).join(', '),when=jobDate(j);let displayWhen='Schedule not set';try{if(when)displayWhen=new Date(when).toLocaleString();}catch(_){}const phone=(j.phone||j.customer_phone||'').replace(/[^+\d]/g,'');return `<article class="lead job-card"><div class="leadtop"><div><h3>${esc(title)}</h3><div class="meta">${esc(displayWhen)}</div></div><span class="status">${esc(status)}</span></div>${address?`<div class="message">${esc(address)}</div>`:''}${j.notes?`<div class="meta">${esc(j.notes)}</div>`:''}<div class="actions">${address?`<a href="https://maps.apple.com/?q=${encodeURIComponent(address)}" target="_blank" rel="noopener">Directions</a>`:''}${phone?`<a href="tel:${phone}">Call</a>`:''}<button onclick="openMaterials('${j.id}')">Materials</button>${status!=='completed'?`<button onclick="updateJobStatus('${j.id}','in_progress')">Start Job</button>`:''}${String(status).toLowerCase()==='completed'?`<button class="convert" onclick="openMoneyToCollectForJob('${j.id}')">Money to Collect</button><button onclick="archiveJob('${j.id}',${!j.archived_at})">${j.archived_at?'Restore job':'Remove from page'}</button>`:`<button class="convert" onclick="completeJob('${j.id}')">Complete → Invoice</button>`}</div></article>`;}
+window.archiveJob=async(id,archive)=>{try{
+ const {data,error}=await sb.from('jobs').update({archived_at:archive?new Date().toISOString():null,updated_at:new Date().toISOString()}).eq('id',id).eq('status','completed').select('id');
+ if(error)throw error;if(!data?.length)throw new Error('Only completed jobs can be removed from the page.');
+ await loadJobs();showBanner(archive?'Job removed from the page. Find it under Archived.':'Job restored.','success');
+}catch(e){showBanner('Could not update job: '+(e?.message||String(e)),'error');}};
 window.updateJobStatus=async(id,status)=>{try{const {error}=await sb.from('jobs').update({status,updated_at:new Date().toISOString()}).eq('id',id);if(error)throw error;showBanner('Job started.','success');await loadJobs();}catch(err){showBanner('Could not update job: '+(err?.message||String(err)),'error');}};
 window.completeJob=async id=>{try{const key=getAccessKey();if(!key)throw new Error('FieldOps access key is missing. Sign in again.');showBanner('Completing job and preparing invoice…');const r=await fetch('/api/complete-job',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':key},body:JSON.stringify({job_id:id})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Could not complete job');showBanner(j.existing?'Job completed — existing invoice opened.':'Job completed — invoice is ready in Money to Collect.','success');await loadJobs();setSection('invoices');await Promise.all([loadCustomers(),loadInvoices()]);if(j.invoice_id)await openInvoice(j.invoice_id);await loadTaxBooks();}catch(err){showBanner('Could not complete job: '+(err?.message||String(err)),'error');}};
 window.openMoneyToCollectForJob=async id=>{setSection('invoices');await Promise.all([loadCustomers(),loadInvoices()]);const inv=invoiceCache.find(x=>String(x.job_id)===String(id));if(inv)openInvoice(inv.id);else showBanner('No invoice is attached to this completed job yet.','error');};

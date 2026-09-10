@@ -1,3 +1,12 @@
+# v31.1 follow-up fixes
+
+- AI Approve/Hold use the actual live lead columns and retain edited reply text. Failed draft saves no longer report success.
+- Quote allowance uses “Misc fittings” with the existing percentage calculation and prices.
+- Completed jobs have Remove from page and an Archived view with Restore job. Invoices, payments and signed records remain available.
+- Conversion uses the lead owner or the single established business owner instead of counting auth users. Conflicting or ambiguous ownership fails safely. Repeated conversion returns the existing customer/job.
+- Converted leads include the database’s `won` status in the Converted view.
+- Before deploying this follow-up, apply `20260910232443_job_archive_owner_resolution.sql`. Its live rollback rehearsal passed. Browser checks verified conversion, completion, archive/restore and AI Approve/Hold using synthetic records.
+
 # A-1 FieldOps v31
 
 Built from `main` at `629d2c90103837250ba08f8f771bf30307ae239e` (v30 branding, v29 service-worker cache). The app and cache now identify v31; package version is 31.0.0.

@@ -37,7 +37,9 @@ export default async function handler(req,res){
     const out=await generateReply(lead);
     if(!out.reply) return res.status(502).json({error:'AI did not return a reply'});
     if(lead.id && process.env.SUPABASE_SERVICE_ROLE_KEY){
-      await fetch(`${SUPABASE_URL}/rest/v1/leads?id=eq.${encodeURIComponent(lead.id)}`,{method:'PATCH',headers:{apikey:process.env.SUPABASE_SERVICE_ROLE_KEY,Authorization:`Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({ai_reply_draft:out.reply,ai_reply_status:out.risk==='routine'?'draft_ready':'needs_approval',ai_reply_risk:out.risk,ai_reply_reason:out.reason,ai_reply_generated_at:new Date().toISOString()})});
+      const saved=await fetch(`${SUPABASE_URL}/rest/v1/leads?id=eq.${encodeURIComponent(lead.id)}`,{method:'PATCH',headers:{apikey:process.env.SUPABASE_SERVICE_ROLE_KEY,Authorization:`Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,'Content-Type':'application/json',Prefer:'return=representation'},body:JSON.stringify({ai_reply_draft:out.reply,ai_reply_status:out.risk==='routine'?'draft_ready':'needs_approval',ai_reply_risk:out.risk,ai_reply_reason:out.reason,ai_reply_generated_at:new Date().toISOString()})});
+      const rows=await saved.json().catch(()=>null);
+      if(!saved.ok||!Array.isArray(rows)||rows.length!==1)throw new Error('The AI reply could not be saved. Please try again.');
     }
     return res.status(200).json(out);
   }catch(err){return res.status(500).json({error:err?.message||'Could not create AI reply'});}

@@ -6,7 +6,10 @@ import {PGlite} from '@electric-sql/pglite';
 import {sample} from './fixtures.js';
 export async function startServer(port=0){
 const db=new PGlite();await db.exec(await fs.readFile(new URL('./schema.sql',import.meta.url),'utf8'));await db.exec(await fs.readFile(new URL('../supabase/migrations/20260910151939_compact_documents.sql',import.meta.url),'utf8'));
-await db.exec(`create table leads(id uuid primary key default gen_random_uuid(),name text,email text,phone text,address text,service_type text,message text,status text default 'new',source text,internal_notes text,created_at timestamptz default now(),updated_at timestamptz default now());`);
+await db.exec(`create table leads(id uuid primary key default gen_random_uuid(),owner_id uuid,customer_id uuid,job_id uuid,converted_at timestamptz,city text,state text,zip text,name text,email text,phone text,address text,service_type text,message text,status text default 'new',source text,internal_notes text,ai_reply_draft text,ai_reply_status text,ai_reply_risk text,ai_reply_reason text,ai_reply_generated_at timestamptz,ai_reply_sent_at timestamptz,created_at timestamptz default now(),updated_at timestamptz default now());`);
+await db.exec("create table auth.users(id uuid primary key);insert into auth.users values('0e034a68-56ff-41af-a323-80415f6570b5'),('969120b1-57fa-4c59-aeee-2673388f037b');alter table customers add column notes text;");
+await db.exec(await fs.readFile(new URL('./legacy-lead-conversion.sql',import.meta.url),'utf8'));
+await db.exec(await fs.readFile(new URL('../supabase/migrations/20260910232443_job_archive_owner_resolution.sql',import.meta.url),'utf8'));
 const q=async(sql,args=[]) => (await db.query(sql,args)).rows;
 const customer=(await q("insert into customers(name,email,phone,address,city,state,zip) values($1,$2,$3,$4,$5,$6,$7) returning id",[sample.customer.name,sample.customer.email,sample.customer.phone,sample.customer.address,sample.customer.city,sample.customer.state,sample.customer.zip]))[0].id;
 const job=(await q("insert into jobs(customer_id,title,address,status) values($1,'Water heater replacement','100 Sample Street, Boston','scheduled') returning id",[customer]))[0].id;
@@ -14,7 +17,7 @@ const estimate=(await q("insert into estimates(customer_id,job_id,title,descript
 for(const [n,i]of sample.items.entries())await q('insert into estimate_items(estimate_id,description,quantity,unit_price,line_total,sort_order) values($1,$2,$3,$4,$5,$6)',[estimate,i.description,i.quantity,i.unit_price,i.line_total,n]);
 await q("update jobs set owner_id='0e034a68-56ff-41af-a323-80415f6570b5' where id=$1",[job]);
 await q("insert into leads(name,email,phone,service_type,message,source) values('Intake Test','lead@example.test','6175550101','Plumbing','Leaking pipe','website')");
-process.env.SUPABASE_SERVICE_ROLE_KEY='test-only-service-role';process.env.RESEND_API_KEY='test-only-mail';process.env.FIELDOPS_FROM_EMAIL='test@example.test';process.env.FIELDOPS_OWNER_ID='00000000-0000-4000-8000-000000000001';
+process.env.OPENAI_API_KEY='test-only-openai';process.env.SUPABASE_SERVICE_ROLE_KEY='test-only-service-role';process.env.RESEND_API_KEY='test-only-mail';process.env.FIELDOPS_FROM_EMAIL='test@example.test';delete process.env.FIELDOPS_OWNER_ID;
 const mails=[],realFetch=global.fetch;
 const identifier=s=>{if(!/^[a-z_][a-z_0-9]*$/i.test(s))throw new Error('Invalid identifier');return '"'+s+'"';};
 async function rest(url,options={}){const u=new URL(url),method=options.method||'GET',body=options.body?JSON.parse(options.body):null;const endpoint=u.pathname.split('/rest/v1/')[1];try{
@@ -28,7 +31,7 @@ async function rest(url,options={}){const u=new URL(url),method=options.method||
  }else if(method==='PATCH'){const sets=Object.entries(body).map(([k,v])=>{params.push(v);return identifier(k)+'=$'+params.length;});result=await q(`update ${table} set ${sets.join(',')}${where} returning *`,params);
  }else if(method==='DELETE'){result=await q(`delete from ${table}${where} returning *`,params);}else throw new Error('Unsupported method');return Response.json(result);
  }catch(e){return Response.json({message:e.message},{status:400});}}
-global.fetch=async(url,options={})=>{const href=String(url);if(href.includes('.supabase.co/rest/v1/'))return rest(href,options);if(href==='https://api.resend.com/emails'){mails.push(JSON.parse(options.body));return Response.json({id:'test-mail-'+mails.length});}if(href.startsWith('http://127.0.0.1:'))return realFetch(url,options);throw new Error('Test blocked external request: '+href);};
+global.fetch=async(url,options={})=>{const href=String(url);if(href.includes('.supabase.co/rest/v1/'))return rest(href,options);if(href==='https://api.openai.com/v1/responses')return Response.json({output:[{type:'message',content:[{type:'output_text',text:'Synthetic reply for local workflow testing.'}]}]});if(href==='https://api.resend.com/emails'){mails.push(JSON.parse(options.body));return Response.json({id:'test-mail-'+mails.length});}if(href.startsWith('http://127.0.0.1:'))return realFetch(url,options);throw new Error('Test blocked external request: '+href);};
 const root=path.resolve('.');const server=http.createServer(async(req,res)=>{try{const u=new URL(req.url,'http://127.0.0.1');let body='';for await(const chunk of req)body+=chunk;if(body.length>5000000)throw new Error('Request too large');const json=body?JSON.parse(body):{};
  if(u.pathname.startsWith('/rest/v1/')){const response=await rest('https://test.supabase.co'+u.pathname+u.search,{method:req.method,headers:req.headers,body:body||undefined});res.writeHead(response.status,{'Content-Type':'application/json'});res.end(await response.text());return;}
  if(u.pathname==='/__fixture'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({customer,job,estimate}));return;}
