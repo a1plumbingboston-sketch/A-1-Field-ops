@@ -1,0 +1,24 @@
+{
+  "name": "a1-fieldops",
+  "version": "31.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/database.test.js tests/documents.test.js tests/api.test.js tests/dashboard.test.js",
+    "smoke": "bash workflow-smoke-test.sh",
+    "dev": "node tests/dev-server.js",
+    "test:browser": "node --test --test-force-exit tests/browser.test.js"
+  },
+  "dependencies": {
+    "pdfkit": "0.17.2"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.3.14",
+    "agent-browser": "0.37.1",
+    "playwright": "1.55.0",
+    "supabase": "2.75.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

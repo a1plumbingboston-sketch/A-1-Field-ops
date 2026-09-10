@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
-python - "$ROOT/index.html" "$ROOT/_inline.js" <<'PY'
+"${PYTHON:-python3}" - "$ROOT/index.html" "$ROOT/_inline.js" <<'PY'
 import re,sys,pathlib
 html=pathlib.Path(sys.argv[1]).read_text()
 parts=[m.group(1) for m in re.finditer(r'<script(?:\s[^>]*)?>(.*?)</script>',html,re.S|re.I)]
@@ -27,7 +27,7 @@ checks={
  'AI estimate': '/api/estimate-assist',
  'AI invoice': '/api/invoice-assist',
  'estimate AI auth': "'x-fieldops-key':accessKey",
- 'partial payment state': "status:fullyPaid?'paid':'partial'",
+ 'atomic payment path': "action:'payment'",
 }
 missing=[k for k,v in checks.items() if v not in html]
 if missing: raise SystemExit('Missing workflow checks: '+', '.join(missing))
@@ -37,6 +37,6 @@ print('workflow references OK')
 PY
 node --check "$ROOT/_inline.js"
 rm "$ROOT/_inline.js"
-for f in "$ROOT"/api/*.js; do node --check "$f"; done
-grep -q "a1-fieldops-v29" "$ROOT/service-worker.js"
+for f in "$ROOT"/api/*.js "$ROOT"/lib/*.js "$ROOT"/document-system.js; do node --check "$f"; done
+grep -q "a1-fieldops-v31" "$ROOT/service-worker.js"
 echo "All local workflow smoke tests passed."

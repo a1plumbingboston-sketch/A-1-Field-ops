@@ -1,0 +1,42 @@
+// Isolated test server: real API handlers and PostgreSQL engine, synthetic data only.
+import http from 'node:http';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {PGlite} from '@electric-sql/pglite';
+import {sample} from './fixtures.js';
+export async function startServer(port=0){
+const db=new PGlite();await db.exec(await fs.readFile(new URL('./schema.sql',import.meta.url),'utf8'));await db.exec(await fs.readFile(new URL('../supabase/migrations/20260910151939_compact_documents.sql',import.meta.url),'utf8'));
+await db.exec(`create table leads(id uuid primary key default gen_random_uuid(),name text,email text,phone text,address text,service_type text,message text,status text default 'new',source text,internal_notes text,created_at timestamptz default now(),updated_at timestamptz default now());`);
+const q=async(sql,args=[]) => (await db.query(sql,args)).rows;
+const customer=(await q("insert into customers(name,email,phone,address,city,state,zip) values($1,$2,$3,$4,$5,$6,$7) returning id",[sample.customer.name,sample.customer.email,sample.customer.phone,sample.customer.address,sample.customer.city,sample.customer.state,sample.customer.zip]))[0].id;
+const job=(await q("insert into jobs(customer_id,title,address,status) values($1,'Water heater replacement','100 Sample Street, Boston','scheduled') returning id",[customer]))[0].id;
+const estimate=(await q("insert into estimates(customer_id,job_id,title,description,notes,subtotal,total) values($1,$2,$3,$4,$5,2500,2500) returning id",[customer,job,sample.doc.title,sample.doc.description,sample.doc.notes]))[0].id;
+for(const [n,i]of sample.items.entries())await q('insert into estimate_items(estimate_id,description,quantity,unit_price,line_total,sort_order) values($1,$2,$3,$4,$5,$6)',[estimate,i.description,i.quantity,i.unit_price,i.line_total,n]);
+await q("update jobs set owner_id='0e034a68-56ff-41af-a323-80415f6570b5' where id=$1",[job]);
+await q("insert into leads(name,email,phone,service_type,message,source) values('Intake Test','lead@example.test','6175550101','Plumbing','Leaking pipe','website')");
+process.env.SUPABASE_SERVICE_ROLE_KEY='test-only-service-role';process.env.RESEND_API_KEY='test-only-mail';process.env.FIELDOPS_FROM_EMAIL='test@example.test';process.env.FIELDOPS_OWNER_ID='00000000-0000-4000-8000-000000000001';
+const mails=[],realFetch=global.fetch;
+const identifier=s=>{if(!/^[a-z_][a-z_0-9]*$/i.test(s))throw new Error('Invalid identifier');return '"'+s+'"';};
+async function rest(url,options={}){const u=new URL(url),method=options.method||'GET',body=options.body?JSON.parse(options.body):null;const endpoint=u.pathname.split('/rest/v1/')[1];try{
+ if(endpoint==='rpc/fieldops_key_status')return Response.json((options.headers['x-fieldops-key']||options.headers.get?.('x-fieldops-key'))==='test-key');
+ if(endpoint.startsWith('rpc/')){const fn=identifier(endpoint.slice(4));const entries=Object.entries(body||{});const sql=`select ${fn}(${entries.map(([k],i)=>identifier(k)+' => $'+(i+1)).join(',')}) as result`;return Response.json((await q(sql,entries.map(([,v])=>v)))[0].result);}
+ const table=identifier(endpoint),params=[],conditions=[];
+ for(const [k,value]of u.searchParams){if(['select','order','limit','offset'].includes(k))continue;let [op,...rest]=value.split('.'),v=rest.join('.'),column=identifier(k);if(op==='not'&&v==='is.null'){conditions.push(column+' is not null');continue;}if(op==='is'&&v==='null'){conditions.push(column+' is null');continue;}if(op==='in'){const vals=v.slice(1,-1).split(',');conditions.push(column+' in ('+vals.map(x=>{params.push(x);return '$'+params.length}).join(',')+')');continue;}const ops={eq:'=',neq:'<>',gte:'>=',lte:'<=',gt:'>',lt:'<'};if(!ops[op])throw new Error('Unsupported filter '+op);params.push(v);conditions.push(column+ops[op]+'$'+params.length);}
+ const where=conditions.length?' where '+conditions.join(' and '):'';let result;
+ if(method==='GET'){const select=u.searchParams.get('select')||'*';const columns=select==='*'?'*':select.split(',').map(identifier).join(',');let order='';if(u.searchParams.get('order'))order=' order by '+u.searchParams.get('order').split(',').map(o=>{const [col,dir='asc',nulls]=o.split('.');return identifier(col)+(dir==='desc'?' desc':' asc')+(nulls==='nullslast'?' nulls last':'');}).join(',');const limit=u.searchParams.get('limit');result=await q(`select ${columns} from ${table}${where}${order}${limit?' limit '+Number(limit):''}`,params);
+ }else if(method==='POST'){const rows=Array.isArray(body)?body:[body];result=[];for(const row of rows){const keys=Object.keys(row);result.push(...await q(`insert into ${table}(${keys.map(identifier).join(',')}) values(${keys.map((_,i)=>'$'+(i+1)).join(',')}) returning *`,Object.values(row)));}
+ }else if(method==='PATCH'){const sets=Object.entries(body).map(([k,v])=>{params.push(v);return identifier(k)+'=$'+params.length;});result=await q(`update ${table} set ${sets.join(',')}${where} returning *`,params);
+ }else if(method==='DELETE'){result=await q(`delete from ${table}${where} returning *`,params);}else throw new Error('Unsupported method');return Response.json(result);
+ }catch(e){return Response.json({message:e.message},{status:400});}}
+global.fetch=async(url,options={})=>{const href=String(url);if(href.includes('.supabase.co/rest/v1/'))return rest(href,options);if(href==='https://api.resend.com/emails'){mails.push(JSON.parse(options.body));return Response.json({id:'test-mail-'+mails.length});}if(href.startsWith('http://127.0.0.1:'))return realFetch(url,options);throw new Error('Test blocked external request: '+href);};
+const root=path.resolve('.');const server=http.createServer(async(req,res)=>{try{const u=new URL(req.url,'http://127.0.0.1');let body='';for await(const chunk of req)body+=chunk;if(body.length>5000000)throw new Error('Request too large');const json=body?JSON.parse(body):{};
+ if(u.pathname.startsWith('/rest/v1/')){const response=await rest('https://test.supabase.co'+u.pathname+u.search,{method:req.method,headers:req.headers,body:body||undefined});res.writeHead(response.status,{'Content-Type':'application/json'});res.end(await response.text());return;}
+ if(u.pathname==='/__fixture'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({customer,job,estimate}));return;}
+ if(u.pathname==='/__rest'){const response=await rest(json.url,json.options);res.writeHead(response.status,{'Content-Type':'application/json'});res.end(await response.text());return;}
+ if(u.pathname.startsWith('/api/')){const name=u.pathname.slice(5);if(!/^[a-z-]+$/.test(name))throw new Error('Bad API path');const {default:handler}=await import('../api/'+name+'.js');const shim={setHeader:(k,v)=>res.setHeader(k,v),status(n){res.statusCode=n;return this;},json(v){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(v));},send(v){res.end(v);}};await handler({method:req.method,headers:req.headers,body:json,query:Object.fromEntries(u.searchParams)},shim);return;}
+ const file=u.pathname==='/'?'index.html':u.pathname.slice(1);if(!['index.html','customer-sign.html','styles.css','document-system.css','document-system.js','service-worker.js','a1-logo.png','icon.svg','manifest.webmanifest'].includes(file)){res.statusCode=404;res.end();return;}const type={'.html':'text/html','.js':'application/javascript','.css':'text/css','.png':'image/png','.svg':'image/svg+xml','.webmanifest':'application/manifest+json'}[path.extname(file)];res.setHeader('Content-Type',type);const content=await fs.readFile(path.join(root,file));res.end(file==='index.html'?content.toString().replace("const URL='https://dddthwakdrxxmjbfowpl.supabase.co'","const URL='http://127.0.0.1:"+server.address().port+"'"):file==='customer-sign.html'?content.toString().replace('<body>','<body><aside style="background:#fff0ae;color:#222;padding:10px;text-align:center">TEST ENVIRONMENT — synthetic records only. No binding agreement. Email is simulated.</aside>'):content);
+ }catch(e){res.statusCode=500;res.end(JSON.stringify({error:e.message}));}});
+await new Promise(r=>server.listen(port,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port;process.env.FIELDOPS_PUBLIC_URL=origin;
+return {origin,db,q,customer,job,estimate,mails,close:async()=>{await new Promise(r=>server.close(r));global.fetch=realFetch;await db.close();}};
+}
+if(process.argv[1]===new URL(import.meta.url).pathname){const s=await startServer(Number(process.env.PORT||4173));console.log('Isolated FieldOps ready at '+s.origin);}

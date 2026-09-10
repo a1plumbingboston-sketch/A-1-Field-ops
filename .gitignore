@@ -1,0 +1,7 @@
+node_modules/
+.vercel/
+.env*
+work/
+test-results/
+_inline.js
+supabase/.temp/

@@ -1,0 +1,11 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import {buildPdf} from '../lib/document-pdf.js';
+import {sample} from './fixtures.js';
+import '../document-system.js';
+const D=globalThis.A1Documents;
+test('all five document types contain exact branding, terms and escaped customer data',()=>{for(const kind of Object.keys(D.labels)){const html=D.render({...sample,kind,customer:{...sample.customer,name:'<img onerror=alert(1)>'}});assert.ok(html.includes('a1-logo.png'));assert.ok(html.includes('Photos &amp; Documentation'));assert.ok(html.includes('only with the consent required by applicable law'));assert.ok(html.includes('&lt;img onerror=alert(1)&gt;'));assert.ok(html.indexOf('cd-agreement')<html.indexOf('cd-authorization'));assert.ok(!html.includes('onerror=alert(1)>'));}});
+test('pending or failed payments do not count as received',()=>{const m=D.model({...sample,kind:'receipt',payments:[{amount:500,status:'succeeded'},{amount:100,status:'pending'},{amount:200,status:'failed'}]});assert.equal(m.paid,500);});
+test('PDF renders every line item with pagination instead of truncation',async()=>{const items=Array.from({length:100},(_,n)=>({description:`Line ${n+1}: full plumbing material description`,quantity:2,unit_price:10,line_total:20}));const buf=await buildPdf({...sample,items});assert.ok(buf.length>10000);await fs.mkdir('test-results',{recursive:true});await fs.writeFile('test-results/long-document.pdf',buf);});
+test('representative PDFs generated for all document types',async()=>{await fs.mkdir('test-results',{recursive:true});for(const kind of Object.keys(D.labels)){const snap={...sample,kind,doc:{...sample.doc,...(kind==='change_order'?{change_order_number:1,parent_kind:'estimate',parent_number:31,base_total:2500,total:400,subtotal:400,description:'Add an expansion tank. Revised full scope and pricing are itemized above.'}: {})},payments:kind==='receipt'?[{status:'succeeded',amount:2500,method:'check',created_at:'2026-09-10T14:00:00Z'}]:[]};await fs.writeFile(`test-results/${kind}.pdf`,await buildPdf(snap));}});

@@ -1,0 +1,5 @@
+tests/
+test-results/
+supabase/
+README*
+workflow-smoke-test.sh
