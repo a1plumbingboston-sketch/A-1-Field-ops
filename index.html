@@ -1,0 +1,856 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0a0b0e">
+  <title>A-1 FieldOps</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="styles.css">
+
+<style>
+.ai-estimator h2{margin:.15rem 0 .5rem}.ai-panel{border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;background:rgba(255,255,255,.04);white-space:normal}.ai-panel h3{margin:.1rem 0 .5rem}.ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.ai-stat{padding:10px;border-radius:12px;background:rgba(255,255,255,.05)}.ai-stat b{display:block;font-size:1.05rem}.ai-note{font-size:.9rem;opacity:.8;line-height:1.4}.ai-sources a{display:block;margin:.35rem 0}.ai-estimator textarea{min-height:110px}.ai-estimator .job-toolbar{flex-wrap:wrap}.ai-estimator .job-toolbar button{flex:1;min-width:150px}
+@media(max-width:600px){.ai-grid{grid-template-columns:1fr}.item-grid{grid-template-columns:1fr!important}}
+
+.doc-modal-card{width:min(860px,100%);background:#1a1c21}.doc-preview-actions{display:flex;gap:8px;position:sticky;top:-22px;z-index:2;background:#1a1c21;padding:10px 0 12px;margin-bottom:12px}.doc-preview-actions button{padding:11px 14px;border-radius:10px;border:1px solid #343840;background:#15171c;color:#fff;font-weight:800}.doc-sheet{background:#fff;color:#161616;border-radius:10px;padding:28px;box-shadow:0 12px 40px #0005;font-family:Arial,Helvetica,sans-serif}.doc-brand{display:flex;justify-content:space-between;gap:20px;border-bottom:4px solid #c9202f;padding-bottom:18px}.doc-logo{display:flex;align-items:center;gap:12px}.doc-logo-img{width:185px;height:92px;object-fit:contain;display:block}.doc-logo-copy b{display:block;font-size:19px;letter-spacing:.02em}.doc-logo-copy span,.doc-company{font-size:12px;color:#555;line-height:1.5}.doc-kind{text-align:right}.doc-kind h1{margin:0;color:#c9202f;font-size:30px;letter-spacing:.04em}.doc-kind div{font-size:13px;color:#555;margin-top:4px}.doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0}.doc-box{border:1px solid #ddd;border-radius:8px;padding:13px}.doc-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#777;font-weight:700;margin-bottom:5px}.doc-value{font-size:14px;line-height:1.45}.doc-scope{background:#f7f7f7;border-left:4px solid #c9202f;padding:14px;margin:18px 0;font-size:14px;line-height:1.55}.doc-table{width:100%;border-collapse:collapse;margin-top:16px}.doc-table th{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#666;border-bottom:2px solid #222;padding:9px 6px;text-align:left}.doc-table td{padding:11px 6px;border-bottom:1px solid #e7e7e7;font-size:13px;vertical-align:top}.doc-table th:nth-child(n+2),.doc-table td:nth-child(n+2){text-align:right}.doc-totals{margin:18px 0 0 auto;max-width:320px}.doc-total-row{display:flex;justify-content:space-between;padding:7px 0;font-size:14px}.doc-total-row.grand{font-size:19px;font-weight:900;border-top:2px solid #222;margin-top:5px;padding-top:11px}.doc-total-row.balance{color:#c9202f;font-weight:900}.doc-footer{margin-top:30px;padding-top:16px;border-top:1px solid #ddd;font-size:11px;line-height:1.55;color:#666}.doc-footer strong{color:#222}.doc-status-pill{display:inline-block;border:1px solid #bbb;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#333}.doc-thanks{font-size:13px;font-weight:700;margin-top:18px}.doc-paid{display:inline-block;margin-top:10px;border:3px solid #24753d;color:#24753d;padding:7px 12px;font-weight:900;transform:rotate(-2deg);letter-spacing:.08em}.doc-draft{display:inline-block;margin-top:10px;border:2px solid #999;color:#777;padding:6px 10px;font-weight:800;letter-spacing:.08em}.doc-number{font-variant-numeric:tabular-nums}@media(max-width:600px){.doc-modal-card{width:100%;padding:10px}.doc-sheet{padding:16px 12px}.doc-brand{display:grid;grid-template-columns:1fr;gap:12px}.doc-logo{align-items:flex-start;gap:10px;min-width:0}.doc-logo-mark{width:48px;height:48px;min-width:48px;font-size:20px}.doc-logo-copy{min-width:0}.doc-logo-copy b{font-size:16px;line-height:1.15;white-space:normal}.doc-logo-copy span{display:block;font-size:10.5px;line-height:1.35;margin-top:4px}.doc-kind{text-align:left;margin-top:2px}.doc-kind h1{font-size:25px}.doc-kind .doc-status-pill{display:inline-block}.doc-grid{grid-template-columns:1fr;gap:10px;margin:14px 0}.doc-table{font-size:12px}.doc-table th:nth-child(2),.doc-table td:nth-child(2){display:none}.doc-preview-actions{top:-10px;flex-wrap:wrap}.doc-preview-actions button{flex:1}.doc-scope{margin:12px 0;padding:12px}.doc-totals{max-width:none;margin-left:0}}
+.material-markup-box{display:grid;gap:6px}.mini-action{justify-self:start;border:0;background:transparent!important;color:#d7d9df!important;padding:2px 0!important;font-size:.78rem;text-decoration:underline;min-height:auto!important}.computed-price{padding:10px 12px;border:1px solid #343840;border-radius:10px;background:#111318}.computed-price b{display:block;font-size:1.05rem}.signature-status{border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px;margin:12px 0;background:rgba(255,255,255,.035)}.invoice-edit-row{display:grid;grid-template-columns:minmax(0,1fr) 90px 125px auto;gap:8px;align-items:center;margin:8px 0}.invoice-edit-row input{min-width:0}.invoice-edit-row button{padding:9px 10px}@media(max-width:650px){.invoice-edit-row{grid-template-columns:1fr 1fr}.invoice-edit-row .edit-desc{grid-column:1/-1}.invoice-edit-row button{grid-column:1/-1}}
+</style>
+
+<style id="a1-brand-v30">
+/* v30 permanent A-1 brand: exact supplied logo + Option 1 document header */
+.a1-app-logo{height:42px;width:auto;display:block;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;display:block;margin:0 auto 12px}.login>.logo{display:none}
+.doc-brand{background:#07090c!important;color:#fff!important;border-bottom:5px solid #d7192d!important;padding:16px 18px!important;align-items:center;position:relative;overflow:hidden}.doc-brand:after{content:"BUILT ON TRUST.";position:absolute;right:18px;bottom:10px;color:#e12636;font-size:9px;font-weight:900;letter-spacing:.13em}.doc-logo{gap:18px!important}.doc-logo-img{width:185px;height:92px;object-fit:contain;display:block;flex:none}.doc-logo-copy b{color:#fff!important;font-size:17px!important}.doc-logo-copy span{color:#c7cbd2!important;font-size:10px!important;line-height:1.55!important}.doc-kind{padding-right:118px}.doc-kind h1{color:#e12636!important}.doc-kind div{color:#d6d8dc!important}.doc-status-pill{border-color:#8d929b!important;color:#fff!important}.doc-paid{border-color:#65c77b!important;color:#65c77b!important}.doc-draft{border-color:#9aa0aa!important;color:#d7d9de!important}
+@media(max-width:600px){.doc-brand{display:grid!important;grid-template-columns:1fr!important;padding:12px!important}.doc-logo{display:grid!important;grid-template-columns:120px 1fr!important;gap:10px!important;align-items:center!important}.doc-logo-img{width:120px;height:68px}.doc-kind{padding-right:0!important;text-align:left!important}.doc-brand:after{right:12px;bottom:10px;font-size:7px}.doc-logo-copy b{font-size:14px!important}.doc-logo-copy span{font-size:9px!important}.a1-app-logo{height:34px}}
+</style>
+</head>
+<body>
+  <div id="login" class="login">
+    <img class="a1-login-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating">
+    <h1>FieldOps</h1>
+    <p>Private operations portal</p>
+    <form id="loginForm" action="javascript:void(0)" onsubmit="if(window.fieldOpsLogin){window.fieldOpsLogin(event)}else{document.getElementById('loginMsg').textContent='FieldOps could not initialize. Refresh once; if this remains, use the new deployment URL.'}; return false;">
+      <input id="accessKey" type="password" placeholder="Access key" autocomplete="current-password" required>
+      <button type="submit">Unlock FieldOps</button>
+      <div id="loginMsg">Enter your FieldOps access key.</div>
+    </form>
+  </div>
+
+  <div id="app" style="display:none">
+    <header>
+      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing & Heating</small></div></div>
+      <button id="logout">Sign out</button>
+    </header>
+    <main>
+      <div id="appMsg" class="appmsg" style="display:none"></div>
+      <section id="moneyToday" class="ai-panel" style="margin-bottom:14px"><div class="eyebrow">MONEY TODAY</div><h2 style="margin:.25rem 0">Business command center</h2><div id="moneyGrid" class="ai-grid"><div class="ai-stat"><span>Hot leads</span><b>—</b></div><div class="ai-stat"><span>Open estimates</span><b>—</b></div><div class="ai-stat"><span>Unpaid invoices</span><b>—</b></div></div><div id="moneyNext" class="ai-note">Loading your highest-value next actions…</div><div class="job-toolbar" style="margin-top:10px"><button type="button" onclick="setSection('leads')">Chase leads</button><button type="button" onclick="setSection('estimates');loadEstimates()">Close estimates</button><button type="button" onclick="setSection('invoices');loadInvoices()">Collect money</button></div></section>
+      <section class="hero">
+        <div><small>OPERATIONS</small><h1>Lead Inbox</h1></div>
+        <span id="newCount" class="badge">0 NEW</span>
+      </section>
+      <nav class="tabs">
+        <button class="active" data-filter="all">All</button>
+        <button data-filter="new">New</button>
+        <button data-filter="contacted">Contacted</button>
+        <button data-filter="won">Converted</button>
+        <button data-filter="lost">Lost</button>
+      </nav>
+      <section id="leadView"><div id="leads" class="leads"><div class="empty">Loading…</div></div></section>
+<section id="jobView" style="display:none"><div class="job-toolbar"><button id="todayJobs" class="active">Today</button><button id="allMyJobs">My Jobs</button></div><div id="jobs" class="leads"><div class="empty">Choose Jobs below to load your work.</div></div></section>
+<section id="customerView" style="display:none"><div class="job-toolbar"><input id="customerSearch" class="search" type="search" placeholder="Search customers" aria-label="Search customers"></div><div id="customers" class="leads"><div class="empty">Choose Customers below to load customers.</div></div></section>
+<section id="estimateView" style="display:none"><div class="job-toolbar"><button id="newEstimateBtn" class="active">New Estimate</button><button id="refreshEstimates">Refresh</button></div>
+<form id="estimateForm" class="estimate-form ai-estimator" style="display:none">
+<div class="eyebrow">SMART ESTIMATOR</div>
+<h2>Build a profitable estimate</h2>
+<input id="estCustomerId" placeholder="Customer ID" required>
+<input id="estJobId" placeholder="Job ID (optional)">
+<input id="estTitle" placeholder="Estimate title — e.g. 50-gal gas water heater replacement" required>
+<textarea id="estDescription" placeholder="Describe the job in plain English: existing equipment, access, venting, piping, permits, what needs to be replaced, photos/measurements you observed, etc."></textarea>
+<div class="item-grid"><input id="estZip" inputmode="numeric" placeholder="Job ZIP / city"><input id="estLaborHours" type="number" step="0.25" min="0" placeholder="Labor hours"><input id="estLaborRate" type="number" step="1" min="0" value="165" placeholder="Billable labor $/hr"></div>
+<div class="item-grid"><input id="estMaterialCost" type="number" step="0.01" min="0" placeholder="Expected material cost"><input id="estMarkup" type="number" step="1" min="0" value="45" placeholder="Material markup %"><input id="estContingency" type="number" step="1" min="0" value="10" placeholder="Contingency %"></div>
+<div class="job-toolbar"><button type="button" id="aiEstimateBtn" class="convert">✦ AI Estimate Assist</button><button type="button" id="quickCalcBtn">Quick Price Check</button></div>
+<div id="aiEstimatePanel" class="ai-panel" style="display:none"></div>
+<div id="estimateItems"></div>
+<button type="button" id="addEstimateItem">+ Add line item</button>
+<div class="estimate-total">Estimate total: <b id="estimateTotal">$0.00</b></div>
+<div id="estimateMargin" class="meta"></div>
+<button type="submit" class="convert">Save Draft Estimate</button>
+</form>
+<div id="estimates" class="leads"><div class="empty">Choose Estimates below to load estimates.</div></div></section>
+    <section id="invoiceView" style="display:none">
+      <section id="taxBooksPanel" class="ai-panel" style="margin-bottom:14px">
+        <div class="eyebrow">BOOKS / TAX TRACKING</div>
+        <h2 style="margin:.25rem 0">Year-to-date snapshot</h2>
+        <div class="job-toolbar"><select id="taxYear" class="search" aria-label="Tax year"></select><button id="refreshTaxBooks" type="button">Refresh</button><button id="exportTaxCsv" type="button">Export CSV</button></div>
+        <div id="taxBooksGrid" class="ai-grid"><div class="ai-stat"><span>Cash collected</span><b>—</b></div><div class="ai-stat"><span>Sales tax recorded</span><b>—</b></div><div class="ai-stat"><span>Material costs</span><b>—</b></div></div>
+        <div id="taxBooksNote" class="ai-note">FieldOps summarizes your records for bookkeeping. Confirm tax treatment with your accountant or tax professional.</div>
+      </section>
+      <div id="invoices" class="leads"><div class="empty">Choose Invoices below to load invoices.</div></div>
+    </section>
+    <div id="materialsModal" class="modal" style="display:none" role="dialog" aria-modal="true"><div class="modal-card"><button id="closeMaterialsModal" class="modal-close" aria-label="Close materials">×</button><div id="materialsDetail"></div></div></div><div id="estimateModal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="estimateModalTitle"><div class="modal-card"><button id="closeEstimateModal" class="modal-close" aria-label="Close estimate">×</button><div id="estimateDetail"></div></div></div><div id="invoiceModal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="invoiceModalTitle"><div class="modal-card"><button id="closeInvoiceModal" class="modal-close" aria-label="Close invoice">×</button><div id="invoiceDetail"></div></div></div><div id="documentModal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="documentModalTitle"><div class="modal-card doc-modal-card"><button id="closeDocumentModal" class="modal-close" aria-label="Close document">×</button><div class="doc-preview-actions"><button class="convert" id="printDocumentBtn" type="button">Print / Save PDF</button><button id="closeDocumentBtn" type="button">Close</button></div><div id="documentDetail"></div></div></div></main>
+    <nav class="bottom">
+      <button id="navLeads" class="active">Leads</button>
+      <button id="navCustomers">Customers</button>
+      <button id="navJobs">Jobs</button>
+      <button id="navEstimates">Estimates</button>
+      <button id="navInvoices">Invoices</button>
+    </nav>
+  </div>
+
+  <script>
+(function(){
+class Query{
+ constructor(c,t){this.c=c;this.t=t;this.method='GET';this.params=new URLSearchParams();this.body=null;this.wantSingle=false;}
+ select(cols='*'){this.params.set('select',cols);return this;}
+ eq(k,v){this.params.append(k,'eq.'+v);return this;}
+ order(k,o={}){this.params.set('order',k+'.'+(o.ascending?'asc':'desc'));return this;}
+ limit(n){this.params.set('limit',n);return this;}
+ update(x){this.method='PATCH';this.body=x;return this;}
+ insert(x){this.method='POST';this.body=x;return this;}
+ single(){this.wantSingle=true;return this;}
+ then(resolve,reject){return this.run().then(resolve,reject)}
+ async run(){
+  try{
+   let url=this.c.url+'/rest/v1/'+this.t;let qs=this.params.toString();if(qs)url+='?'+qs;
+   const h=this.c.headers();h['Content-Type']='application/json';h['Prefer']='return=representation';
+   let r=await fetch(url,{method:this.method,headers:h,body:this.body==null?undefined:JSON.stringify(this.body)});
+   let text=await r.text(),data=text?JSON.parse(text):null;
+   if(!r.ok)throw new Error(data?.message||data?.error_description||('Request failed ('+r.status+')'));
+   if(this.wantSingle&&Array.isArray(data))data=data[0]||null;
+   return {data,error:null};
+  }catch(error){return {data:null,error};}
+ }
+}
+class Client{
+ constructor(url,key){this.url=url;this.key=key;this.accessKey='';}
+ setAccessKey(v){this.accessKey=v||'';}
+ headers(){const h={apikey:this.key};if(this.accessKey)h['x-fieldops-key']=this.accessKey;return h;}
+ from(t){return new Query(this,t);}
+ async rpc(name,args){
+  try{
+   let r=await fetch(this.url+'/rest/v1/rpc/'+name,{method:'POST',headers:{...this.headers(),'Content-Type':'application/json'},body:JSON.stringify(args||{})});
+   let text=await r.text(),data=text?JSON.parse(text):null;
+   if(!r.ok)throw new Error(data?.message||('Request failed ('+r.status+')'));
+   return {data,error:null};
+  }catch(error){return {data:null,error};}
+ }
+}
+window.supabase={createClient:(u,k)=>new Client(u,k)};
+})();
+
+</script>
+  <script>
+const URL='https://dddthwakdrxxmjbfowpl.supabase.co';
+const KEY='sb_publishable_f3QAMeX2YKuyeOI3WMkhng_9LdWdL7O';
+let sb=null;
+let filter='all',cache=[],currentSession=null;
+
+const $=s=>document.querySelector(s);
+const getAccessKey=()=>sessionStorage.getItem('a1_fieldops_key')||'';
+const esc=s=>(s??'').toString().replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+function setView(isSignedIn){
+  const login=$('#login'), app=$('#app');
+  if(login) login.style.display=isSignedIn?'none':'block';
+  if(app) app.style.display=isSignedIn?'block':'none';
+}
+
+function showBanner(message,type='info'){
+  const el=$('#appMsg');
+  if(!el) return;
+  el.textContent=message||'';
+  el.className='appmsg '+type;
+  el.style.display=message?'block':'none';
+}
+
+async function show(session){ resetIdleLock();
+  try{
+    currentSession=session||null;
+    setView(!!session);
+    if(session){
+      showBanner('Loading FieldOps…');
+      await load();
+    }else{
+      cache=[];
+      $('#loginMsg').textContent='';
+    }
+  }catch(err){
+    console.error('FieldOps show error',err);
+    setView(!!session);
+    showBanner('FieldOps loaded, but something went wrong: '+(err?.message||String(err)),'error');
+  }
+}
+
+async function validateAccessKey(key){
+  sb.setAccessKey(key);
+  const {data,error}=await sb.rpc('fieldops_key_status',{});
+  if(error) throw error;
+  if(data!==true) throw new Error('Wrong access key.');
+  return true;
+}
+
+async function init(){
+  try{
+    setView(false);
+    if(!window.supabase) throw new Error('Built-in FieldOps module is missing.');
+    sb=window.supabase.createClient(URL,KEY);
+    const saved=sessionStorage.getItem('a1_fieldops_key')||'';
+    if(saved){
+      $('#loginMsg').textContent='Unlocking FieldOps…';
+      try{
+        await validateAccessKey(saved);
+        await show({user:{id:'0e034a68-56ff-41af-a323-80415f6570b5'}});
+        return;
+      }catch(_){ sessionStorage.removeItem('a1_fieldops_key'); sb.setAccessKey(''); }
+    }
+    $('#loginMsg').textContent='Enter your FieldOps access key.';
+  }catch(err){
+    console.error('FieldOps init error',err);
+    setView(false);
+    $('#loginMsg').textContent='Unable to initialize FieldOps: '+(err?.message||String(err));
+  }
+}
+
+window.fieldOpsLogin=async e=>{
+  if(e) e.preventDefault();
+  const btn=$('#loginForm button');
+  btn.disabled=true;
+  $('#loginMsg').textContent='Checking access key…';
+  try{
+    if(!sb) throw new Error('FieldOps is still loading.');
+    const key=$('#accessKey').value.trim();
+    await validateAccessKey(key);
+    sessionStorage.setItem('a1_fieldops_key',key);
+    $('#loginMsg').textContent='';
+    await show({user:{id:'0e034a68-56ff-41af-a323-80415f6570b5'}});
+  }catch(err){
+    console.error('Access-key error',err);
+    setView(false);
+    sb?.setAccessKey('');
+    $('#loginMsg').textContent=err?.message||'Could not unlock FieldOps.';
+  }finally{ btn.disabled=false; }
+};
+
+let idleTimer=null;
+function lockFieldOps(reason='FieldOps locked after inactivity.'){
+  sessionStorage.removeItem('a1_fieldops_key'); sb?.setAccessKey(''); currentSession=null;
+  setView(false); $('#accessKey').value=''; $('#loginMsg').textContent=reason;
+}
+function resetIdleLock(){
+  clearTimeout(idleTimer);
+  if(currentSession) idleTimer=setTimeout(()=>lockFieldOps(),30*60*1000);
+}
+['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,resetIdleLock,{passive:true}));
+
+$('#logout').onclick=()=>{
+  sessionStorage.removeItem('a1_fieldops_key');
+  sb?.setAccessKey('');
+  currentSession=null;
+  setView(false);
+  $('#accessKey').value='';
+  $('#loginMsg').textContent='Enter your FieldOps access key.';
+};
+
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
+  filter=b.dataset.filter;
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));
+  render();
+});
+
+let sourceFilter='all';
+document.addEventListener('click',e=>{const b=e.target.closest('[data-source-filter]');if(!b)return;sourceFilter=b.dataset.sourceFilter;document.querySelectorAll('[data-source-filter]').forEach(x=>x.classList.toggle('active',x===b));render();});
+async function load(){
+  showBanner('Loading leads…');
+  try{
+    const {data,error}=await sb.from('leads').select('*').order('created_at',{ascending:false});
+    if(error) throw error;
+    cache=data||[];
+    render();
+    refreshMoneyToday();
+    showBanner('');
+  }catch(err){
+    console.error('Lead load error',err);
+    cache=[];
+    render();
+    showBanner('Signed in successfully, but leads could not load: '+(err?.message||String(err)),'error');
+  }
+}
+
+function render(){
+  const rows=filter==='all'?cache:cache.filter(x=>x.status===filter);
+  $('#newCount').textContent=cache.filter(x=>x.status==='new').length+' NEW';
+  $('#leads').innerHTML=rows.length?rows.map(card).join(''):'<div class="empty">No leads in this view.</div>';
+}
+
+function card(l){
+  const tel=(l.phone||'').replace(/[^+\d]/g,'');
+  let when='';
+  try{ when=new Date(l.created_at).toLocaleString(); }catch(_){ when=l.created_at||''; }
+  return `<article class="lead">
+    <div class="leadtop">
+      <div><h3>${esc(l.name)}</h3><div class="meta">${esc(l.service_type||'Service request')} • ${esc(when)}</div></div>
+      <span class="status">${esc(l.status)}</span>
+    </div>
+    ${l.message?`<div class="message">${esc(l.message)}</div>`:''}
+    <div class="meta">${esc([l.address,l.city,l.state,l.zip].filter(Boolean).join(', '))}</div>
+    <textarea class="notes" id="n-${l.id}" placeholder="Internal notes">${esc(l.internal_notes||'')}</textarea>
+    <div class="ai-reply-box" id="air-${l.id}" ${l.ai_reply_draft?'':'hidden'}>
+      <div class="meta"><b>AI reply draft</b> — ${l.ai_reply_status==='draft_ready'?'routine inquiry; ready for review':'review before sending'}${l.ai_reply_reason?` · ${esc(l.ai_reply_reason)}`:''}.</div>
+      <textarea class="notes ai-reply-text" id="airtxt-${l.id}" rows="5" aria-label="AI reply draft">${esc(l.ai_reply_draft||'')}</textarea>
+      <div class="actions">
+        <button onclick="copyAiReply('${l.id}')">Copy</button>
+        <button onclick="setAiDisposition('${l.id}','approved')">Approve</button>
+        <button onclick="setAiDisposition('${l.id}','held')">Hold</button>
+        ${tel?`<button onclick="openAiSms('${l.id}','${tel}')">Open in Text</button>`:''}
+        ${l.email?`<button onclick="openAiEmail('${l.id}','${esc(l.email)}')">Open in Email</button>`:''}
+      </div>
+      <div class="meta">Automatic social sending stays off until the social channel is authorized for outbound replies.</div>
+    </div>
+    <div class="actions">
+      <a href="tel:${tel}">Call</a>
+      <a href="sms:${tel}">Text</a>
+      <button class="ai-reply-btn" onclick="aiReply('${l.id}')">✦ AI Reply</button>
+      <button onclick="markLead('${l.id}','contacted')">Contacted</button>
+      <button onclick="markLead('${l.id}','lost')">Lost</button>
+      <button class="convert" onclick="convertLead('${l.id}')">Convert to Customer + Job</button>
+    </div>
+  </article>`;
+}
+
+window.markLead=async(id,status)=>{
+  try{
+    const notesEl=$('#n-'+id);
+    const patch={status,updated_at:new Date().toISOString(),internal_notes:notesEl?notesEl.value:''};
+    if(status==='contacted')patch.contacted_at=new Date().toISOString();
+    if(status==='lost')patch.lost_at=new Date().toISOString();
+    const {error}=await sb.from('leads').update(patch).eq('id',id);
+    if(error) throw error;
+    await load();
+  }catch(err){
+    showBanner('Could not update lead: '+(err?.message||String(err)),'error');
+  }
+};
+
+window.convertLead=async id=>{
+  if(!confirm('Create a customer and job from this lead?'))return;
+  try{
+    const notesEl=$('#n-'+id);
+    const notes=notesEl?notesEl.value:'';
+    if(notes){
+      const {error:noteError}=await sb.from('leads').update({internal_notes:notes}).eq('id',id);
+      if(noteError) throw noteError;
+    }
+    const accessKey=sessionStorage.getItem('a1_fieldops_key')||'';
+    const r=await fetch('/api/convert-lead',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':accessKey},body:JSON.stringify({lead_id:id})});
+    const result=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(result?.error||'Could not convert lead');
+    showBanner(result?.already_converted?'Lead was already converted.':'Customer and job created.','success');
+    await Promise.all([load(),loadCustomers(),loadJobs()]);
+  }catch(err){
+    showBanner('Could not convert lead: '+(err?.message||String(err)),'error');
+  }
+};
+
+
+window.aiReply=async id=>{const lead=cache.find(x=>x.id===id);if(!lead)return;const box=$('#air-'+id),out=$('#airtxt-'+id);box.hidden=false;out.value='Writing reply…';out.disabled=true;try{const accessKey=sessionStorage.getItem('a1_fieldops_key')||'';const r=await fetch('/api/ai-lead-reply',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':accessKey},body:JSON.stringify({id:lead.id,name:lead.name,source:lead.source,service_type:lead.service_type,message:lead.message,city:lead.city,state:lead.state})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j?.error||'Could not write reply');out.value=j.reply||'';}catch(err){out.value='';showBanner('AI reply failed: '+(err?.message||String(err)),'error');}finally{out.disabled=false;}};
+
+window.setAiDisposition=async(id,status)=>{
+  try{
+    const accessKey=sessionStorage.getItem('a1_fieldops_key')||'';
+    const patch={ai_reply_status:status,ai_needs_approval:status==='approved'?false:true,updated_at:new Date().toISOString()};
+    const r=await fetch(`${URL}/rest/v1/leads?id=eq.${encodeURIComponent(id)}`,{
+      method:'PATCH',
+      headers:{apikey:KEY,'Content-Type':'application/json','Prefer':'return=minimal','x-fieldops-key':accessKey},
+      body:JSON.stringify(patch)
+    });
+    if(!r.ok) throw new Error(await r.text());
+    showBanner(status==='approved'?'AI reply approved.':'AI reply held for review.','success');
+    await load();
+  }catch(err){showBanner('Could not update AI reply: '+(err?.message||String(err)),'error');}
+};
+
+window.copyAiReply=async id=>{const t=$('#airtxt-'+id)?.value||'';if(!t)return;try{await navigator.clipboard.writeText(t);showBanner('AI reply copied.','success');}catch(_){showBanner('Select the reply and copy it manually.','error');}};
+window.openAiSms=(id,tel)=>{const t=$('#airtxt-'+id)?.value||'';if(!t)return;location.href=`sms:${tel}?&body=${encodeURIComponent(t)}`;};
+window.openAiEmail=(id,email)=>{const t=$('#airtxt-'+id)?.value||'';if(!t)return;location.href=`mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent('A-1 Plumbing & Heating')}&body=${encodeURIComponent(t)}`;};
+
+let jobCache=[],jobMode='today';
+function setSection(section){
+  const views={leads:'#leadView',customers:'#customerView',jobs:'#jobView',estimates:'#estimateView',invoices:'#invoiceView'};
+  Object.entries(views).forEach(([k,s])=>$(s).style.display=k===section?'block':'none');
+  document.querySelector('.tabs').style.display=section==='leads'?'flex':'none';
+  const titles={leads:'Lead Inbox',customers:'Customers',jobs:'My Jobs',estimates:'Estimates',invoices:'Invoices'};
+  document.querySelector('.hero h1').textContent=titles[section]||'FieldOps';
+  $('#newCount').style.display=section==='leads'?'inline-flex':'none';
+  [['navLeads','leads'],['navCustomers','customers'],['navJobs','jobs'],['navEstimates','estimates'],['navInvoices','invoices']].forEach(([id,k])=>$('#'+id).classList.toggle('active',k===section));
+}
+$('#navLeads').onclick=()=>setSection('leads');
+$('#navCustomers').onclick=async()=>{setSection('customers');await loadCustomers();};
+$('#navJobs').onclick=async()=>{setSection('jobs');await loadJobs();};
+$('#navEstimates').onclick=async()=>{setSection('estimates');await Promise.all([loadCustomers(),loadEstimates()]);};
+$('#navInvoices').onclick=async()=>{setSection('invoices');await Promise.all([loadCustomers(),loadInvoices()]);await loadTaxBooks();};
+$('#todayJobs').onclick=()=>{jobMode='today';syncJobMode();renderJobs();};
+$('#allMyJobs').onclick=()=>{jobMode='all';syncJobMode();renderJobs();};
+function syncJobMode(){$('#todayJobs').classList.toggle('active',jobMode==='today');$('#allMyJobs').classList.toggle('active',jobMode==='all');}
+async function loadJobs(){if(!currentSession?.user?.id)return;$('#jobs').innerHTML='<div class="empty">Loading jobs…</div>';try{const {data,error}=await sb.from('jobs').select('*').eq('owner_id',currentSession.user.id).order('created_at',{ascending:false});if(error)throw error;jobCache=data||[];renderJobs();}catch(err){console.error('Job load error',err);$('#jobs').innerHTML='<div class="empty">Jobs could not load. '+esc(err?.message||String(err))+'</div>';}}
+function jobDate(j){return j.scheduled_for||j.scheduled_at||j.start_at||j.appointment_at||j.created_at||'';}
+function isToday(v){if(!v)return false;const d=new Date(v),n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate();}
+function renderJobs(){const rows=jobMode==='today'?jobCache.filter(j=>isToday(jobDate(j))):jobCache;$('#jobs').innerHTML=rows.length?rows.map(jobCard).join(''):'<div class="empty">'+(jobMode==='today'?'No assigned jobs scheduled for today.':'No jobs yet.')+'</div>';}
+function jobCard(j){const title=j.title||j.service_type||j.job_type||'Service Job',status=j.status||'scheduled',address=[j.address,j.city,j.state,j.zip].filter(Boolean).join(', '),when=jobDate(j);let displayWhen='Schedule not set';try{if(when)displayWhen=new Date(when).toLocaleString();}catch(_){}const phone=(j.phone||j.customer_phone||'').replace(/[^+\d]/g,'');return `<article class="lead job-card"><div class="leadtop"><div><h3>${esc(title)}</h3><div class="meta">${esc(displayWhen)}</div></div><span class="status">${esc(status)}</span></div>${address?`<div class="message">${esc(address)}</div>`:''}${j.notes?`<div class="meta">${esc(j.notes)}</div>`:''}<div class="actions">${address?`<a href="https://maps.apple.com/?q=${encodeURIComponent(address)}" target="_blank" rel="noopener">Directions</a>`:''}${phone?`<a href="tel:${phone}">Call</a>`:''}<button onclick="openMaterials('${j.id}')">Materials</button><button onclick="updateJobStatus('${j.id}','in_progress')">Start Job</button>${String(status).toLowerCase()==='completed'?`<button class="convert" onclick="openMoneyToCollectForJob('${j.id}')">Money to Collect</button>`:`<button class="convert" onclick="completeJob('${j.id}')">Complete → Invoice</button>`}</div></article>`;}
+window.updateJobStatus=async(id,status)=>{try{const {error}=await sb.from('jobs').update({status,updated_at:new Date().toISOString()}).eq('id',id);if(error)throw error;showBanner('Job started.','success');await loadJobs();}catch(err){showBanner('Could not update job: '+(err?.message||String(err)),'error');}};
+window.completeJob=async id=>{try{const key=getAccessKey();if(!key)throw new Error('FieldOps access key is missing. Sign in again.');showBanner('Completing job and preparing invoice…');const r=await fetch('/api/complete-job',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':key},body:JSON.stringify({job_id:id})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Could not complete job');showBanner(j.existing?'Job completed — existing invoice opened.':'Job completed — invoice is ready in Money to Collect.','success');await loadJobs();setSection('invoices');await Promise.all([loadCustomers(),loadInvoices()]);if(j.invoice_id)await openInvoice(j.invoice_id);}catch(err){showBanner('Could not complete job: '+(err?.message||String(err)),'error');}};
+window.openMoneyToCollectForJob=async id=>{setSection('invoices');await Promise.all([loadCustomers(),loadInvoices()]);const inv=invoiceCache.find(x=>String(x.job_id)===String(id));if(inv)openInvoice(inv.id);else showBanner('No invoice is attached to this completed job yet.','error');};
+
+
+let customerCache=[],estimateCache=[];
+let materialJobId=null;
+window.openMaterials=async id=>{
+ materialJobId=id; const modal=$('#materialsModal'),detail=$('#materialsDetail'); modal.style.display='flex'; detail.innerHTML='<div class="empty">Loading materials…</div>';
+ try{
+  const {data,error}=await sb.from('job_materials').select('*').eq('job_id',id).order('created_at',{ascending:false}); if(error)throw error;
+  const rows=data||[]; const cost=rows.reduce((s,x)=>s+Number(x.quantity||0)*Number(x.unit_cost||0),0), sell=rows.filter(x=>x.billable!==false).reduce((s,x)=>s+Number(x.quantity||0)*Number(x.unit_price||0),0);
+  const defaultMarkup=Number(localStorage.getItem('a1_material_markup_pct')||45);
+  detail.innerHTML=`<div class="eyebrow">JOB COSTING</div><h2>Materials</h2><div class="detail-total"><span>Material cost</span><b>${cost.toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div><div class="detail-total"><span>Billable value</span><b>${sell.toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div>${rows.map(x=>`<div class="detail-row"><div><b>${esc(x.description)}</b><div class="meta">${Number(x.quantity)} × cost ${Number(x.unit_cost).toLocaleString(undefined,{style:'currency',currency:'USD'})}${x.supplier?' • '+esc(x.supplier):''}</div></div><b>${(Number(x.quantity)*Number(x.unit_price)).toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div>`).join('')||'<div class="empty">No materials logged yet.</div>'}<h3>Add material</h3><form id="materialForm" class="estimate-form"><input id="matDesc" placeholder="Material / part" required><div class="item-grid"><input id="matQty" type="number" step="0.01" min="0.01" value="1" placeholder="Qty" required><input id="matCost" type="number" step="0.01" min="0" placeholder="Our cost"><div class="material-markup-box"><input id="matMarkup" type="number" step="1" min="0" value="${defaultMarkup}" placeholder="Markup %"><button id="matNoMarkup" class="mini-action" type="button">No markup</button></div></div><div class="computed-price"><small>Customer price — calculated automatically</small><b id="matComputedPrice">$0.00</b></div><input id="matSupplier" placeholder="Supplier (optional)"><button class="convert" type="submit">Add to Job</button></form>`;
+  const refreshMaterialPrice=()=>{const c=Number($('#matCost').value||0),m=Number($('#matMarkup').value||0);$('#matComputedPrice').textContent=(c*(1+m/100)).toLocaleString(undefined,{style:'currency',currency:'USD'});};
+  $('#matCost').addEventListener('input',refreshMaterialPrice);$('#matMarkup').addEventListener('input',()=>{localStorage.setItem('a1_material_markup_pct',String(Number($('#matMarkup').value||0)));refreshMaterialPrice();});$('#matNoMarkup').onclick=()=>{$('#matMarkup').value='0';refreshMaterialPrice();};refreshMaterialPrice();
+  $('#materialForm').onsubmit=async e=>{e.preventDefault();try{const costEach=Number($('#matCost').value||0),markup=Number($('#matMarkup').value||0),customerPrice=costEach*(1+markup/100);const payload={job_id:id,description:$('#matDesc').value.trim(),quantity:Number($('#matQty').value||1),unit_cost:costEach,unit_price:Math.round(customerPrice*100)/100,supplier:$('#matSupplier').value.trim()||null,billable:true};const {error}=await sb.from('job_materials').insert(payload);if(error)throw error;showBanner('Material added — markup applied automatically.','success');await openMaterials(id);}catch(err){showBanner('Could not add material: '+(err?.message||String(err)),'error');}};
+ }catch(err){detail.innerHTML='<div class="empty">Materials could not load. '+esc(err?.message||String(err))+'</div>';}
+};
+$('#closeMaterialsModal').onclick=()=>$('#materialsModal').style.display='none';
+$('#materialsModal').addEventListener('click',e=>{if(e.target===$('#materialsModal'))$('#materialsModal').style.display='none';});
+
+async function loadCustomers(){
+  $('#customers').innerHTML='<div class="empty">Loading customers…</div>';
+  try{
+    const {data,error}=await sb.from('customers').select('*').order('created_at',{ascending:false}).limit(200);
+    if(error)throw error; customerCache=data||[]; renderCustomers();
+  }catch(err){$('#customers').innerHTML='<div class="empty">Customers could not load. '+esc(err?.message||String(err))+'</div>';}
+}
+function renderCustomers(){
+  const q=($('#customerSearch').value||'').trim().toLowerCase();
+  const rows=customerCache.filter(c=>!q||[c.name,c.email,c.phone,c.address,c.city].some(v=>(v||'').toLowerCase().includes(q)));
+  $('#customers').innerHTML=rows.length?rows.map(c=>`<article class="lead"><div class="leadtop"><div><h3>${esc(c.name||'Customer')}</h3><div class="meta">${esc(c.email||'')} ${esc(c.phone||'')}</div></div></div><div class="meta">${esc([c.address,c.city,c.state,c.zip].filter(Boolean).join(', '))}</div><div class="actions">${c.phone?`<a href="tel:${(c.phone||'').replace(/[^+\d]/g,'')}">Call</a><a href="sms:${(c.phone||'').replace(/[^+\d]/g,'')}">Text</a>`:''}${c.email?`<a href="mailto:${encodeURIComponent(c.email)}">Email</a>`:''}<button onclick="prefillEstimate('${c.id}')">Estimate</button></div></article>`).join(''):'<div class="empty">No matching customers.</div>';
+}
+
+function customerById(id){return customerCache.find(c=>String(c.id)===String(id))||null;}
+function cleanPhone(v){return (v||'').replace(/[^+\d]/g,'');}
+function docMessage(kind,doc,items=[],customer=null){
+  const isEstimate=kind==='estimate';
+  const number=isEstimate?(doc.estimate_number||''):(doc.invoice_number||'');
+  const total=Number(doc.total||0).toLocaleString(undefined,{style:'currency',currency:'USD'});
+  const name=(customer?.name||'').trim();
+  const greeting=name?`Hi ${name.split(/\s+/)[0]},`:'Hello,';
+  const title=(doc.title||'').trim();
+  const scope=(doc.description||'').trim();
+  const label=isEstimate?'quote':'invoice';
+  const intro=isEstimate
+    ? `Thank you for the opportunity to provide this quote. Below is a summary of the proposed work.`
+    : `Thank you for choosing A-1 Plumbing & Heating. Below is a summary of your invoice.`;
+  const scopeBlock=[title,scope].filter(Boolean).join(' — ');
+  return `${greeting}\n\n${intro}\n\n${isEstimate?'Quote':'Invoice'} #${number || '—'}${scopeBlock?`\nScope: ${scopeBlock}`:''}\nTotal: ${total}\n\nPlease reply to this email or call 339-224-4517 with any questions.\n\nThank you,\nA-1 Plumbing & Heating Co.\n339-224-4517\na1plumbingboston@gmail.com`;
+}
+window.sendCustomerDocument=async(kind,id)=>{
+  const isEstimate=kind==='estimate';
+  const doc=(isEstimate?estimateCache:invoiceCache).find(x=>String(x.id)===String(id));
+  if(!doc){banner('Document not found. Refresh and try again.','bad');return;}
+  const customer=customerById(doc.customer_id);
+  if(!customer?.email){banner('Add a customer email before sending.','bad');return;}
+  const label=isEstimate?'quote':'invoice';
+  const number=isEstimate?(doc.estimate_number||''):(doc.invoice_number||'');
+  if(!confirm(`Send ${label} #${number} to ${customer.email}?`))return;
+  const key=getAccessKey();
+  if(!key){banner('FieldOps access key is missing. Sign in again.','bad');return;}
+  banner(`Sending ${label}...`);
+  try{
+    const r=await fetch('/api/send-document',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':key},body:JSON.stringify({kind,id})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j.error||`Could not send ${label}`);
+    banner(`${isEstimate?'Quote':'Invoice'} sent to ${customer.email}.`,'good');
+    if(isEstimate) await loadEstimates(); else await loadInvoices();
+  }catch(e){banner(e.message||`Could not send ${label}`,'bad');}
+};
+
+window.contactDoc=(kind,method,customer,doc,items=[])=>{
+  if(!customer){showBanner('Customer contact information is not loaded.','error');return;}
+  const body=docMessage(kind,doc,items,customer);
+  const number=kind==='estimate'?(doc.estimate_number||''):(doc.invoice_number||'');
+  const subject=`A-1 Plumbing & Heating — ${kind==='estimate'?'Quote':'Invoice'} #${number||'—'}`;
+  if(method==='call'&&customer.phone){location.href=`tel:${cleanPhone(customer.phone)}`;return;}
+  if(method==='sms'&&customer.phone){location.href=`sms:${cleanPhone(customer.phone)}?&body=${encodeURIComponent(body)}`;return;}
+  if(method==='email'&&customer.email){location.href=`mailto:${encodeURIComponent(customer.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;return;}
+  showBanner('That customer is missing the needed contact information.','error');
+};
+
+window.aiInvoiceDraft=async id=>{
+  const invoice=invoiceCache.find(x=>String(x.id)===String(id));
+  const items=window._invoiceItems?.[id]||[];
+  if(!invoice)return;
+  const panel=$('#invoiceAiPanel'); if(!panel)return;
+  panel.innerHTML='<div class="empty">Writing a clean professional invoice description…</div>';
+  try{
+    const accessKey=sessionStorage.getItem('a1_fieldops_key')||'';
+    const payload={title:invoice.title||'',description:invoice.description||'',notes:invoice.notes||'',items:items.map(x=>({description:x.description,quantity:x.quantity,unit_price:x.unit_price})),total:Number(invoice.total||0)};
+    const r=await fetch('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':accessKey},body:JSON.stringify(payload)});
+    const j=await r.json().catch(()=>({})); if(!r.ok)throw new Error(j?.error||'AI invoice writer unavailable');
+    const d=j.draft||{};
+    window._invoiceAiDraft=window._invoiceAiDraft||{}; window._invoiceAiDraft[id]=d;
+    const lines=(d.line_items||[]).map((x,i)=>`<div class="detail-row"><div><b>${esc(x.description||'Line item')}</b><div class="meta">Keeps quantity and price from line ${i+1}</div></div></div>`).join('');
+    panel.innerHTML=`<h3>AI professional draft</h3><p class="ai-note">${esc(d.brief_description||'')}</p>${lines?`<h3>Polished line-item wording</h3>${lines}`:''}${d.customer_message?`<h3>Customer note</h3><p class="ai-note">${esc(d.customer_message)}</p>`:''}<div class="actions"><button class="convert" onclick="applyInvoiceAiDraft('${id}')">Apply to Invoice</button></div><p class="meta">Review before applying. AI changes wording only — it does not change quantities, prices, tax, or totals.</p>`;
+    if(j.usage)logAiUsage({request_id:j.request_id||'',input_tokens:j.usage.input_tokens||0,output_tokens:j.usage.output_tokens||0,total_tokens:j.usage.total_tokens||0,title:'Invoice writer'});
+  }catch(err){panel.innerHTML=`<div class="empty">AI invoice writer failed: ${esc(err?.message||String(err))}</div>`;}
+};
+window.applyInvoiceAiDraft=async id=>{
+  const draft=window._invoiceAiDraft?.[id], items=window._invoiceItems?.[id]||[];
+  if(!draft)return;
+  try{
+    const invoicePatch={description:String(draft.brief_description||'').trim()||null,updated_at:new Date().toISOString()};
+    const {error}=await sb.from('invoices').update(invoicePatch).eq('id',id); if(error)throw error;
+    if(Array.isArray(draft.line_items)&&draft.line_items.length){
+      for(let i=0;i<Math.min(items.length,draft.line_items.length);i++){
+        const desc=String(draft.line_items[i]?.description||'').trim(); if(!desc)continue;
+        const {error:ie}=await sb.from('invoice_items').update({description:desc}).eq('id',items[i].id); if(ie)throw ie;
+      }
+    }
+    showBanner('Professional invoice wording applied. Prices and totals were not changed.','success'); await loadInvoices(); await openInvoice(id);
+  }catch(err){showBanner('Could not apply AI invoice wording: '+(err?.message||String(err)),'error');}
+};
+$('#customerSearch').addEventListener('input',renderCustomers);
+
+function addEstimateItem(description='',qty=1,unit=0){
+  const row=document.createElement('div'); row.className='estimate-item';
+  row.innerHTML=`<input class="item-desc" placeholder="Line item" value="${esc(description)}" required><input class="item-qty" type="number" min="0" step="0.01" value="${qty}" aria-label="Quantity"><input class="item-unit" type="number" min="0" step="0.01" value="${unit}" aria-label="Unit price"><button type="button" class="remove-item" aria-label="Remove line item">×</button>`;
+  row.querySelector('.remove-item').onclick=()=>{row.remove();calcEstimateTotal();};
+  row.querySelectorAll('input').forEach(x=>x.addEventListener('input',calcEstimateTotal));
+  $('#estimateItems').appendChild(row); calcEstimateTotal();
+}
+function calcEstimateTotal(){
+  let total=0; document.querySelectorAll('.estimate-item').forEach(r=>total+=(Number(r.querySelector('.item-qty').value)||0)*(Number(r.querySelector('.item-unit').value)||0));
+  $('#estimateTotal').textContent=total.toLocaleString(undefined,{style:'currency',currency:'USD'});
+  return total;
+}
+$('#addEstimateItem').onclick=()=>addEstimateItem();
+$('#newEstimateBtn').onclick=()=>{ $('#estimateForm').style.display='grid'; if(!document.querySelector('.estimate-item'))addEstimateItem(); };
+$('#refreshEstimates').onclick=loadEstimates;
+window.prefillEstimate=id=>{setSection('estimates');$('#estimateForm').style.display='grid';$('#estCustomerId').value=id;if(!document.querySelector('.estimate-item'))addEstimateItem();};
+
+async function loadEstimates(){
+  $('#estimates').innerHTML='<div class="empty">Loading estimates…</div>';
+  try{
+    const {data,error}=await sb.from('estimates').select('*').order('created_at',{ascending:false}).limit(100);
+    if(error)throw error; estimateCache=data||[];
+    $('#estimates').innerHTML=estimateCache.length?estimateCache.map(e=>`<article class="lead"><div class="leadtop"><div><h3>${esc(e.title||e.estimate_number||'Estimate')}</h3><div class="meta">${esc(e.status||'draft')} • ${new Date(e.created_at).toLocaleDateString()}</div></div><span class="status">${Number(e.total||e.total_amount||0).toLocaleString(undefined,{style:'currency',currency:'USD'})}</span></div>${e.description?`<div class="message">${esc(e.description)}</div>`:''}<div class="actions"><button onclick="openEstimate('${e.id}')">Review</button></div></article>`).join(''):'<div class="empty">No estimates yet.</div>';
+  }catch(err){$('#estimates').innerHTML='<div class="empty">Estimates could not load. '+esc(err?.message||String(err))+'</div>';}
+}
+$('#estimateForm').onsubmit=async e=>{
+  e.preventDefault();
+  const items=[...document.querySelectorAll('.estimate-item')].map(r=>({description:r.querySelector('.item-desc').value.trim(),quantity:Number(r.querySelector('.item-qty').value)||0,unit_price:Number(r.querySelector('.item-unit').value)||0})).filter(x=>x.description);
+  if(!items.length){showBanner('Add at least one estimate line item.','error');return;}
+  try{
+    const total=calcEstimateTotal();
+    const estimate={customer_id:$('#estCustomerId').value.trim(),title:$('#estTitle').value.trim(),description:$('#estDescription').value.trim(),status:'draft',subtotal:total,tax:0,total};
+    const job=$('#estJobId').value.trim(); if(job)estimate.job_id=job;
+    const {data,error}=await sb.from('estimates').insert(estimate).select().single(); if(error)throw error;
+    const itemRows=items.map((x,i)=>({estimate_id:data.id,description:x.description,quantity:x.quantity,unit_price:x.unit_price,line_total:x.quantity*x.unit_price,sort_order:i}));
+    const {error:itemError}=await sb.from('estimate_items').insert(itemRows); if(itemError)throw itemError;
+    showBanner('Draft estimate saved.','success'); e.target.reset(); $('#estimateItems').innerHTML=''; addEstimateItem(); await loadEstimates();
+  }catch(err){showBanner('Could not save estimate: '+(err?.message||String(err)),'error');}
+};
+
+
+window.openEstimate=async id=>{
+ const modal=$('#estimateModal'),detail=$('#estimateDetail');modal.style.display='flex';detail.innerHTML='<div class="empty">Loading estimate…</div>';
+ try{const estimate=estimateCache.find(x=>String(x.id)===String(id));const {data:items,error}=await sb.from('estimate_items').select('*').eq('estimate_id',id).order('sort_order',{ascending:true});if(error)throw error;
+ const rows=(items||[]).map(x=>`<div class="detail-row"><div><b>${esc(x.description||'Line item')}</b><div class="meta">${Number(x.quantity||0)} × ${Number(x.unit_price||0).toLocaleString(undefined,{style:'currency',currency:'USD'})}</div></div><b>${Number(x.line_total??(Number(x.quantity||0)*Number(x.unit_price||0))).toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div>`).join('');
+ const customer=customerById(estimate?.customer_id);
+ const contactButtons=customer?`${customer.phone?`<button onclick='contactDoc("estimate","call",customerById("${estimate.customer_id}"),estimateCache.find(x=>String(x.id)===String("${id}")),window._estimateItems?.["${id}"]||[])'>Call</button><button onclick='contactDoc("estimate","sms",customerById("${estimate.customer_id}"),estimateCache.find(x=>String(x.id)===String("${id}")),window._estimateItems?.["${id}"]||[])'>Text Quote</button>`:''}${customer.email?`<button class='convert' onclick="sendCustomerDocument('estimate','${id}')">Send Quote</button><button onclick='contactDoc("estimate","email",customerById("${estimate.customer_id}"),estimateCache.find(x=>String(x.id)===String("${id}")),window._estimateItems?.["${id}"]||[])'>Email Draft</button>`:''}`:'';
+ window._estimateItems=window._estimateItems||{}; window._estimateItems[id]=items||[];
+ detail.innerHTML=`<div class="eyebrow">ESTIMATE</div><h2 id="estimateModalTitle">${esc(estimate?.title||estimate?.estimate_number||'Estimate')}</h2><div class="meta">Status: ${esc(estimate?.status||'draft')}</div>${estimate?.description?`<p>${esc(estimate.description)}</p>`:''}<div>${rows||'<div class="empty">No line items.</div>'}</div><div class="detail-total"><span>Total</span><b>${Number(estimate?.total||estimate?.total_amount||0).toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div><div id="estimateAiPanel"></div>${contactButtons?`<h3>Contact / Send quote</h3><div class="actions">${contactButtons}</div><p class="meta">Send Quote emails the full branded quote as a PDF attachment. Email Draft only opens your iPhone Mail app.</p>`:''}<div class="actions"><button class="convert" onclick="openBrandedDocument('estimate','${id}')">View Quote / PDF</button><button id="aiScopeBtn-${id}" onclick="aiEstimateDescription('${id}')">✦ AI Write Scope</button><button onclick="setEstimateStatus('${id}','sent')">Mark Sent</button><button class="convert" onclick="setEstimateStatus('${id}','approved')">Mark Approved</button><button onclick="setEstimateStatus('${id}','declined')">Declined</button>${estimate?.status==='approved'?`<button class="convert" onclick="createInvoiceFromEstimate('${id}')">Create Invoice</button>`:''}</div>`;
+ }catch(err){detail.innerHTML='<div class="empty">Estimate detail could not load. '+esc(err?.message||String(err))+'</div>';}
+};
+window.setEstimateStatus=async(id,status)=>{try{const patch={status,updated_at:new Date().toISOString()};if(status==='sent')patch.sent_at=new Date().toISOString();if(status==='approved')patch.approved_at=new Date().toISOString();const {error}=await sb.from('estimates').update(patch).eq('id',id);if(error)throw error;showBanner('Estimate marked '+status+'.','success');$('#estimateModal').style.display='none';await loadEstimates();}catch(err){showBanner('Could not update estimate: '+(err?.message||String(err)),'error');}};
+$('#closeEstimateModal').onclick=()=>$('#estimateModal').style.display='none';
+$('#estimateModal').addEventListener('click',e=>{if(e.target===$('#estimateModal'))$('#estimateModal').style.display='none';});
+
+
+window.aiEstimateDescription=async id=>{
+ const estimate=estimateCache.find(x=>String(x.id)===String(id)); if(!estimate)return;
+ const panel=$('#estimateAiPanel');
+ const btn=$('#aiScopeBtn-'+id);
+ if(btn){btn.disabled=true;btn.textContent='✦ Writing…';}
+ if(panel)panel.innerHTML='<div class="empty">AI is writing a professional scope of work…</div>';
+ try{
+  const accessKey=sessionStorage.getItem('a1_fieldops_key')||'';
+  if(!accessKey)throw new Error('FieldOps access key is missing. Sign in again.');
+  const {data:items,error:ie}=await sb.from('estimate_items').select('*').eq('estimate_id',id).order('sort_order',{ascending:true}); if(ie)throw ie;
+  const payload={document_type:'estimate',title:estimate.title||'',description:estimate.description||'',notes:estimate.notes||'',items:(items||[]).map(x=>({description:x.description,quantity:x.quantity,unit_price:x.unit_price})),total:Number(estimate.total||0)};
+  const r=await fetch('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':accessKey},body:JSON.stringify(payload)});
+  const j=await r.json().catch(()=>({})); if(!r.ok)throw new Error(j?.error||'AI writer unavailable');
+  const d=j?.draft||j; const brief=String(d?.brief_description||'').trim(); if(!brief)throw new Error('AI returned no description');
+  const {error}=await sb.from('estimates').update({description:brief,updated_at:new Date().toISOString()}).eq('id',id); if(error)throw error;
+  if(panel)panel.innerHTML=`<div class="ai-note"><b>AI scope added:</b><br>${esc(brief)}</div>`;
+  showBanner('Professional scope of work added.','success');
+  await loadEstimates();
+  await openEstimate(id);
+ }catch(err){
+  if(panel)panel.innerHTML=`<div class="empty">AI scope writer failed: ${esc(err?.message||String(err))}</div>`;
+  showBanner('AI scope writer failed: '+(err?.message||String(err)),'error');
+ }finally{
+  if(btn){btn.disabled=false;btn.textContent='✦ AI Write Scope';}
+ }
+};
+let invoiceCache=[];
+async function loadInvoices(){
+  $('#invoices').innerHTML='<div class="empty">Loading invoices…</div>';
+  try{
+    const {data,error}=await sb.from('invoices').select('*').order('created_at',{ascending:false}).limit(100);
+    if(error)throw error; invoiceCache=data||[];
+    $('#invoices').innerHTML=invoiceCache.length?invoiceCache.map(i=>`<article class="lead"><div class="leadtop"><div><h3>${esc(i.invoice_number||i.title||'Invoice')}</h3><div class="meta">${esc(i.status||'draft')} • ${new Date(i.created_at).toLocaleDateString()}</div></div><span class="status">${Number(i.total||i.total_amount||0).toLocaleString(undefined,{style:'currency',currency:'USD'})}</span></div><div class="meta">${i.due_at?'Due '+new Date(i.due_at).toLocaleDateString():''}</div><div class="actions"><button onclick="openInvoice('${i.id}')">Review / Payment</button></div></article>`).join(''):'<div class="empty">No invoices yet.</div>';
+  }catch(err){$('#invoices').innerHTML='<div class="empty">Invoices could not load. '+esc(err?.message||String(err))+'</div>';}
+}
+if($('#refreshInvoices')) $('#refreshInvoices').onclick=loadInvoices;
+
+window.createInvoiceFromEstimate=async id=>{
+  try{
+    const estimate=estimateCache.find(x=>String(x.id)===String(id));
+    if(!estimate)throw new Error('Estimate not loaded');
+    const {data:existing,error:existingError}=await sb.from('invoices').select('id').eq('estimate_id',id).limit(1);
+    if(existingError)throw existingError;
+    if(existing?.length){showBanner('An invoice already exists for this estimate.','error');return;}
+    const payload={estimate_id:id,customer_id:estimate.customer_id,status:'draft',subtotal:estimate.subtotal||estimate.total||0,tax:estimate.tax||0,total:estimate.total||estimate.total_amount||0,description:estimate.description||null,title:estimate.title||null};
+    if(estimate.job_id)payload.job_id=estimate.job_id;
+    const {data:invoice,error}=await sb.from('invoices').insert(payload).select().single();
+    if(error)throw error;
+    const {data:estimateItems,error:itemReadError}=await sb.from('estimate_items').select('*').eq('estimate_id',id).order('sort_order',{ascending:true});
+    if(itemReadError)throw itemReadError;
+    if(estimateItems?.length){
+      const invoiceItems=estimateItems.map((x,i)=>({invoice_id:invoice.id,description:x.description,quantity:x.quantity,unit_price:x.unit_price,line_total:x.line_total??(Number(x.quantity||0)*Number(x.unit_price||0)),sort_order:x.sort_order??i}));
+      const {error:copyError}=await sb.from('invoice_items').insert(invoiceItems); if(copyError)throw copyError;
+    }
+    showBanner('Draft invoice created from approved estimate with line items.','success');
+    $('#estimateModal').style.display='none'; setSection('invoices'); await loadInvoices();
+  }catch(err){showBanner('Could not create invoice: '+(err?.message||String(err)),'error');}
+};
+
+
+window.openInvoice=async id=>{
+ const modal=$('#invoiceModal'),detail=$('#invoiceDetail');modal.style.display='flex';detail.innerHTML='<div class="empty">Loading invoice…</div>';
+ try{
+  const invoice=invoiceCache.find(x=>String(x.id)===String(id));
+  const [{data:payments,error},{data:invoiceItems,error:itemError}]=await Promise.all([
+    sb.from('payments').select('*').eq('invoice_id',id).order('created_at',{ascending:false}),
+    sb.from('invoice_items').select('*').eq('invoice_id',id).order('sort_order',{ascending:true})
+  ]);
+  if(error)throw error; if(itemError)throw itemError;
+  const paid=(payments||[]).filter(p=>['paid','succeeded','completed'].includes(String(p.status||'').toLowerCase())).reduce((s,p)=>s+Number(p.amount||0),0);
+  const total=Number(invoice?.total||invoice?.total_amount||0),balance=Math.max(0,total-paid);
+  const rows=(payments||[]).map(p=>`<div class="detail-row"><div><b>${esc(p.method||p.payment_method||'Payment')}</b><div class="meta">${esc(p.status||'recorded')} • ${new Date(p.created_at).toLocaleDateString()}</div></div><b>${Number(p.amount||0).toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div>`).join('');
+  const customer=customerById(invoice?.customer_id), itemRows=(invoiceItems||[]).map(x=>`<div class="detail-row"><div><b>${esc(x.description||'Line item')}</b><div class="meta">${Number(x.quantity||0)} × ${Number(x.unit_price||0).toLocaleString(undefined,{style:'currency',currency:'USD'})}</div></div><b>${Number(x.line_total??(Number(x.quantity||0)*Number(x.unit_price||0))).toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div>`).join('');
+  window._invoiceItems=window._invoiceItems||{}; window._invoiceItems[id]=invoiceItems||[];
+  const contactButtons=customer?`${customer.phone?`<button onclick='contactDoc("invoice","call",customerById("${invoice.customer_id}"),invoiceCache.find(x=>String(x.id)===String("${id}")),window._invoiceItems?.["${id}"]||[])'>Call</button><button onclick='contactDoc("invoice","sms",customerById("${invoice.customer_id}"),invoiceCache.find(x=>String(x.id)===String("${id}")),window._invoiceItems?.["${id}"]||[])'>Text Invoice</button>`:''}${customer.email?`<button class='convert' onclick="sendCustomerDocument('invoice','${id}')">Send for E-Signature</button><button onclick='contactDoc("invoice","email",customerById("${invoice.customer_id}"),invoiceCache.find(x=>String(x.id)===String("${id}")),window._invoiceItems?.["${id}"]||[])'>Email Draft</button>`:''}`:'';
+  detail.innerHTML=`<div class="eyebrow">INVOICE</div><h2 id="invoiceModalTitle">${esc(invoice?.invoice_number||invoice?.title||'Invoice')}</h2><div class="meta">Status: ${esc(invoice?.status||'draft')}</div>${invoice?.description?`<p>${esc(invoice.description)}</p>`:''}<div class="actions"><button class="convert" onclick="openBrandedDocument('invoice','${id}')">View Invoice / PDF</button><button onclick="openInvoiceEditor('${id}')">Edit Invoice</button><button onclick="aiInvoiceDraft('${id}')">✦ AI Write Invoice</button></div><div id="signatureStatus-${id}" class="signature-status"><div class="meta">Checking customer signature status…</div></div><div id="invoiceAiPanel" class="ai-panel" style="margin-top:10px"><div class="meta">AI can turn rough plumbing notes into a brief, professional customer-facing description. It will not change prices or totals.</div></div>${itemRows?`<h3>Invoice items</h3>${itemRows}`:''}<div class="detail-total"><span>Total</span><b>${total.toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div><div class="detail-total"><span>Recorded paid</span><b>${paid.toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div><div class="detail-total"><span>Balance</span><b>${balance.toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div>${contactButtons?`<h3>Contact / Send invoice</h3><div class="actions">${contactButtons}<button onclick="markInvoiceSent('${id}')">Mark Sent</button></div><p class="meta">Send Invoice emails the full branded invoice as a PDF attachment. Text/Email Draft still open your iPhone composer.</p>`:''}<h3>Payment history</h3>${rows||'<div class="empty">No payments recorded.</div>'}<form id="paymentForm" class="estimate-form"><input id="payAmount" type="number" min="0.01" step="0.01" max="${balance||total}" value="${balance||''}" placeholder="Amount" required><select id="payMethod" class="search"><option value="cash">Cash</option><option value="check">Check</option><option value="card_external">Card — external processor</option><option value="bank_external">Bank — external processor</option><option value="other">Other</option></select><button class="convert" type="submit">Record Payment</button></form><p class="meta">FieldOps records payment status only. Do not enter card or bank credentials here.</p>`;
+  $('#paymentForm').onsubmit=async e=>{e.preventDefault();await recordPayment(id,invoice,Number($('#payAmount').value),$('#payMethod').value);};
+  loadInvoiceSignatureStatus(id);
+ }catch(err){detail.innerHTML='<div class="empty">Invoice could not load. '+esc(err?.message||String(err))+'</div>';}
+};
+
+window.loadInvoiceSignatureStatus=async id=>{const el=$('#signatureStatus-'+id);if(!el)return;try{const key=getAccessKey();const r=await fetch('/api/signature-status?invoice_id='+encodeURIComponent(id),{headers:{'x-fieldops-key':key}});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Status unavailable');if(j.signed){el.innerHTML=`<b>✓ Customer signed revision ${Number(j.revision||1)}</b><div class="meta">Signed by ${esc(j.customer_name||'customer')} on ${new Date(j.signed_at).toLocaleString()}.</div><div class="actions" style="margin-top:8px"><a target="_blank" rel="noopener" href="/customer-sign.html?token=${encodeURIComponent(j.token)}">View signed copy</a></div>`;}else if(j.pending){el.innerHTML=`<b>Awaiting customer signature</b><div class="meta">Revision ${Number(j.revision||1)} was sent and is waiting to be signed.</div>`;}else{el.innerHTML='<b>Not signed yet</b><div class="meta">Send the invoice for e-signature when it is ready.</div>';}}catch(e){el.innerHTML='<div class="meta">Signature status unavailable.</div>';}};
+window.openInvoiceEditor=async id=>{const invoice=invoiceCache.find(x=>String(x.id)===String(id));if(!invoice)return;try{const {data:items,error}=await sb.from('invoice_items').select('*').eq('invoice_id',id).order('sort_order',{ascending:true});if(error)throw error;const detail=$('#invoiceDetail');detail.innerHTML=`<div class="eyebrow">EDIT INVOICE</div><h2>${esc(invoice.invoice_number||invoice.title||'Invoice')}</h2><p class="meta">You can edit this invoice. Customers cannot edit it. If a signed invoice is changed, the signed copy stays archived and the new revision must be signed again.</p><form id="invoiceEditForm" class="estimate-form"><input id="editInvTitle" value="${esc(invoice.title||'')}" placeholder="Invoice title"><textarea id="editInvDescription" placeholder="Work description">${esc(invoice.description||'')}</textarea><div id="invoiceEditItems">${(items||[]).map((x,i)=>invoiceEditRow(x.description,x.quantity,x.unit_price,i)).join('')}</div><button type="button" id="addInvoiceEditItem">+ Add line item</button><div class="actions"><button class="convert" type="submit">Save Invoice Changes</button><button type="button" onclick="openInvoice('${id}')">Cancel</button></div></form>`;$('#addInvoiceEditItem').onclick=()=>{$('#invoiceEditItems').insertAdjacentHTML('beforeend',invoiceEditRow('',1,0,document.querySelectorAll('#invoiceEditItems .invoice-edit-row').length));};$('#invoiceEditForm').onsubmit=async e=>{e.preventDefault();const lineItems=[...document.querySelectorAll('#invoiceEditItems .invoice-edit-row')].map((r,i)=>({description:r.querySelector('.edit-desc').value.trim(),quantity:Number(r.querySelector('.edit-qty').value||0),unit_price:Number(r.querySelector('.edit-price').value||0),sort_order:i})).filter(x=>x.description&&x.quantity>0);if(!lineItems.length){showBanner('Keep at least one invoice line item.','error');return;}try{const key=getAccessKey();const r=await fetch('/api/update-invoice',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':key},body:JSON.stringify({invoice_id:id,title:$('#editInvTitle').value.trim(),description:$('#editInvDescription').value.trim(),items:lineItems})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Could not update invoice');showBanner(j.requires_resign?'Invoice updated. Previous signed copy archived — customer must sign the new revision.':'Invoice updated.','success');await loadInvoices();await openInvoice(id);}catch(err){showBanner('Could not update invoice: '+(err?.message||String(err)),'error');}};}catch(err){showBanner('Could not open invoice editor: '+(err?.message||String(err)),'error');}};
+function invoiceEditRow(desc,qty,price,i){return `<div class="invoice-edit-row"><input class="edit-desc" value="${esc(desc||'')}" placeholder="Description"><input class="edit-qty" type="number" step="0.01" min="0.01" value="${Number(qty||1)}" placeholder="Qty"><input class="edit-price" type="number" step="0.01" min="0" value="${Number(price||0)}" placeholder="Unit price"><button type="button" onclick="this.closest('.invoice-edit-row').remove()">Remove</button></div>`;}
+
+
+const A1_DOCUMENT_PROFILE={
+  business:'A-1 Plumbing & Heating Co.',
+  phone:'339-224-4517',
+  email:'a1plumbingboston@gmail.com',
+  tagline:'LICENSED & INSURED • RESIDENTIAL + COMMERCIAL • PLUMBING • HEATING • WATER FILTRATION',
+  estimateTerms:'Estimate is based on the visible conditions and scope described above. Hidden conditions, code-required changes, permits, specialty access, or owner-requested additions may require a written change in scope and price. Work is scheduled after approval and subject to material availability.',
+  invoiceTerms:'Payment is due according to the terms shown on this invoice. Please reference the invoice number with payment. Customer e-signature acknowledges completion of the work described on the signed invoice, except for items specifically noted on that invoice.'
+};
+function docDate(v){if(!v)return '—';const d=new Date(v);return Number.isNaN(d.getTime())?'—':d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});}
+function docAddress(customer,job){const fromJob=job?.address?.trim();if(fromJob)return fromJob;return [customer?.address,customer?.city,customer?.state,customer?.zip].filter(Boolean).join(', ')||'—';}
+function documentNumber(kind,doc){return kind==='estimate'?(doc?.estimate_number||doc?.id?.slice(0,8)||'—'):(doc?.invoice_number||doc?.id?.slice(0,8)||'—');}
+function customerContactBlock(customer){return [customer?.name,customer?.phone,customer?.email].filter(Boolean).map(esc).join('<br>')||'Customer information not entered';}
+function buildBrandedDocument(kind,doc,items,customer,job,payments=[]){
+  const isEstimate=kind==='estimate';
+  const subtotal=Number(doc?.subtotal??doc?.total??0), tax=Number(doc?.tax||0), total=Number(doc?.total||0);
+  const paid=payments.filter(p=>['paid','succeeded','completed'].includes(String(p.status||'').toLowerCase())).reduce((a,p)=>a+Number(p.amount||0),0);
+  const balance=Math.max(0,total-paid), number=documentNumber(kind,doc), status=String(doc?.status||'draft');
+  const lineRows=(items||[]).map(x=>{const q=Number(x.quantity||0),u=Number(x.unit_price||0),lt=Number(x.line_total??q*u);return `<tr><td>${esc(x.description||'Service')}</td><td>${q}</td><td>${money(u)}</td><td>${money(lt)}</td></tr>`}).join('');
+  const title=doc?.title||doc?.description||(isEstimate?'Service Estimate':'Service Invoice');
+  const created=docDate(doc?.created_at), due=isEstimate?(doc?.valid_until?docDate(doc.valid_until):'30 days from issue'):(doc?.due_at?docDate(doc.due_at):'Due upon receipt');
+  const paidStamp=!isEstimate&&balance<=0&&total>0?'<div class="doc-paid">PAID</div>':(status==='draft'?'<div class="doc-draft">DRAFT</div>':'');
+  return `<article class="doc-sheet"><header class="doc-brand"><div class="doc-logo"><img class="doc-logo-img" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div class="doc-logo-copy"><b>${A1_DOCUMENT_PROFILE.business}</b><span>${A1_DOCUMENT_PROFILE.tagline}</span></div></div><div class="doc-kind"><h1>${isEstimate?'ESTIMATE':'INVOICE'}</h1><div class="doc-number">#${esc(String(number))}</div><div>${created}</div><div class="doc-status-pill">${esc(status)}</div>${paidStamp}</div></header><section class="doc-grid"><div class="doc-box"><div class="doc-label">Prepared for</div><div class="doc-value">${customerContactBlock(customer)}</div></div><div class="doc-box"><div class="doc-label">Service location</div><div class="doc-value">${esc(docAddress(customer,job))}</div><div class="doc-label" style="margin-top:10px">${isEstimate?'Estimate valid':'Payment terms'}</div><div class="doc-value">${esc(due)}</div></div></section><div class="doc-label">Scope of work</div><div class="doc-scope"><strong>${esc(title)}</strong>${doc?.description?`<br>${esc(doc.description)}`:`<br><span style="color:#777">Add a professional scope from FieldOps before sending.</span>`}</div><table class="doc-table"><thead><tr><th>Description</th><th>Qty</th><th>Unit price</th><th>Amount</th></tr></thead><tbody>${lineRows||`<tr><td>${esc(doc?.description||title)}</td><td>1</td><td>${money(total)}</td><td>${money(total)}</td></tr>`}</tbody></table><div class="doc-totals"><div class="doc-total-row"><span>Subtotal</span><b>${money(subtotal)}</b></div>${tax?`<div class="doc-total-row"><span>Tax</span><b>${money(tax)}</b></div>`:''}<div class="doc-total-row grand"><span>Total</span><b>${money(total)}</b></div>${!isEstimate?`<div class="doc-total-row"><span>Payments</span><b>${money(paid)}</b></div><div class="doc-total-row balance"><span>Balance due</span><b>${money(balance)}</b></div>`:''}</div>${doc?.notes?`<div class="doc-label" style="margin-top:22px">Notes</div><div class="doc-scope">${esc(doc.notes)}</div>`:''}${!isEstimate?`<div style="margin-top:26px;padding-top:18px;border-top:1px solid #ddd"><div class="doc-label">Customer e-signature</div><div style="height:72px;border:1px solid #bbb;border-radius:7px;margin:8px 0;background:#fafafa"></div><div style="font-size:10px;line-height:1.45;color:#666">By signing electronically, the customer acknowledges that the work described on this invoice has been completed and accepts the completed work, except for any items specifically noted on this invoice. The signed revision is preserved for both parties.</div></div>`:''}<div class="doc-footer"><strong>${isEstimate?'Estimate terms':'Invoice terms'}</strong><br>${esc(isEstimate?A1_DOCUMENT_PROFILE.estimateTerms:A1_DOCUMENT_PROFILE.invoiceTerms)}<div class="doc-thanks">Questions? Call ${A1_DOCUMENT_PROFILE.phone} • ${A1_DOCUMENT_PROFILE.email}</div></div></article>`;
+}
+window.openBrandedDocument=async(kind,id)=>{
+  const modal=$('#documentModal'),detail=$('#documentDetail');modal.style.display='flex';detail.innerHTML='<div class="empty">Building professional document…</div>';
+  try{
+    const doc=(kind==='estimate'?estimateCache:invoiceCache).find(x=>String(x.id)===String(id)); if(!doc)throw new Error('Document not loaded');
+    const itemTable=kind==='estimate'?'estimate_items':'invoice_items', fk=kind==='estimate'?'estimate_id':'invoice_id';
+    const itemReq=sb.from(itemTable).select('*').eq(fk,id).order('sort_order',{ascending:true});
+    const payReq=kind==='invoice'?sb.from('payments').select('*').eq('invoice_id',id).order('created_at',{ascending:false}):Promise.resolve({data:[],error:null});
+    const jobReq=doc.job_id?sb.from('jobs').select('*').eq('id',doc.job_id).single():Promise.resolve({data:null,error:null});
+    const [itemRes,payRes,jobRes]=await Promise.all([itemReq,payReq,jobReq]);
+    if(itemRes.error)throw itemRes.error;if(payRes.error)throw payRes.error;if(jobRes.error)throw jobRes.error;
+    const customer=customerById(doc.customer_id); const html=buildBrandedDocument(kind,doc,itemRes.data||[],customer,jobRes.data,payRes.data||[]);
+    window._printDocHtml=html; window._printDocTitle=`A-1 ${kind==='estimate'?'Estimate':'Invoice'} ${documentNumber(kind,doc)}`;
+    detail.innerHTML=html;
+  }catch(err){detail.innerHTML=`<div class="empty">Document could not be built. ${esc(err?.message||String(err))}</div>`;window._printDocHtml='';}
+};
+window.printCurrentDocument=()=>{
+  if(!window._printDocHtml){showBanner('Open a quote or invoice document first.','error');return;}
+  const w=window.open('','_blank'); if(!w){showBanner('Allow pop-ups once so FieldOps can open the printable document.','error');return;}
+  const css=`*{box-sizing:border-box}body{margin:0;padding:22px;background:#fff;color:#161616;font-family:Arial,Helvetica,sans-serif}.doc-sheet{max-width:800px;margin:auto;padding:12px}.doc-brand{display:flex;justify-content:space-between;gap:20px;border-bottom:4px solid #c9202f;padding-bottom:18px}.doc-logo{display:flex;align-items:center;gap:12px}.doc-logo-img{width:185px;height:92px;object-fit:contain;display:block}.doc-logo-copy b{display:block;font-size:19px}.doc-logo-copy span{font-size:12px;color:#555;line-height:1.5}.doc-kind{text-align:right}.doc-kind h1{margin:0;color:#c9202f;font-size:30px}.doc-kind div{font-size:13px;color:#555;margin-top:4px}.doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0}.doc-box{border:1px solid #ddd;border-radius:8px;padding:13px}.doc-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#777;font-weight:700;margin-bottom:5px}.doc-value{font-size:14px;line-height:1.45}.doc-scope{background:#f7f7f7;border-left:4px solid #c9202f;padding:14px;margin:18px 0;font-size:14px;line-height:1.55}.doc-table{width:100%;border-collapse:collapse;margin-top:16px}.doc-table th{font-size:10px;text-transform:uppercase;color:#666;border-bottom:2px solid #222;padding:9px 6px;text-align:left}.doc-table td{padding:11px 6px;border-bottom:1px solid #e7e7e7;font-size:13px;vertical-align:top}.doc-table th:nth-child(n+2),.doc-table td:nth-child(n+2){text-align:right}.doc-totals{margin:18px 0 0 auto;max-width:320px}.doc-total-row{display:flex;justify-content:space-between;padding:7px 0;font-size:14px}.doc-total-row.grand{font-size:19px;font-weight:900;border-top:2px solid #222;margin-top:5px;padding-top:11px}.doc-total-row.balance{color:#c9202f;font-weight:900}.doc-footer{margin-top:30px;padding-top:16px;border-top:1px solid #ddd;font-size:11px;line-height:1.55;color:#666}.doc-footer strong{color:#222}.doc-status-pill{display:inline-block;border:1px solid #bbb;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800;text-transform:uppercase}.doc-paid{display:inline-block;margin-top:10px;border:3px solid #24753d;color:#24753d;padding:7px 12px;font-weight:900;transform:rotate(-2deg)}.doc-draft{display:inline-block;margin-top:10px;border:2px solid #999;color:#777;padding:6px 10px;font-weight:800}.doc-thanks{font-size:13px;font-weight:700;margin-top:18px}@page{size:auto;margin:.45in}@media print{body{padding:0}.doc-sheet{max-width:none;padding:0}}`;
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(window._printDocTitle||'A-1 Document')}</title><style>${css}</style>
+<style id="a1-brand-v30">
+/* v30 permanent A-1 brand: exact supplied logo + Option 1 document header */
+.a1-app-logo{height:42px;width:auto;display:block;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;display:block;margin:0 auto 12px}.login>.logo{display:none}
+.doc-brand{background:#07090c!important;color:#fff!important;border-bottom:5px solid #d7192d!important;padding:16px 18px!important;align-items:center;position:relative;overflow:hidden}.doc-brand:after{content:"BUILT ON TRUST.";position:absolute;right:18px;bottom:10px;color:#e12636;font-size:9px;font-weight:900;letter-spacing:.13em}.doc-logo{gap:18px!important}.doc-logo-img{width:185px;height:92px;object-fit:contain;display:block;flex:none}.doc-logo-copy b{color:#fff!important;font-size:17px!important}.doc-logo-copy span{color:#c7cbd2!important;font-size:10px!important;line-height:1.55!important}.doc-kind{padding-right:118px}.doc-kind h1{color:#e12636!important}.doc-kind div{color:#d6d8dc!important}.doc-status-pill{border-color:#8d929b!important;color:#fff!important}.doc-paid{border-color:#65c77b!important;color:#65c77b!important}.doc-draft{border-color:#9aa0aa!important;color:#d7d9de!important}
+@media(max-width:600px){.doc-brand{display:grid!important;grid-template-columns:1fr!important;padding:12px!important}.doc-logo{display:grid!important;grid-template-columns:120px 1fr!important;gap:10px!important;align-items:center!important}.doc-logo-img{width:120px;height:68px}.doc-kind{padding-right:0!important;text-align:left!important}.doc-brand:after{right:12px;bottom:10px;font-size:7px}.doc-logo-copy b{font-size:14px!important}.doc-logo-copy span{font-size:9px!important}.a1-app-logo{height:34px}}
+</style>
+</head><body>${window._printDocHtml.replaceAll('src=\"a1-logo.png\"','src=\"'+location.origin+'/a1-logo.png\"')}</body></html>`); w.document.close(); setTimeout(()=>{w.focus();w.print();},250);
+};
+$('#printDocumentBtn')?.addEventListener('click',window.printCurrentDocument); $('#closeDocumentBtn')?.addEventListener('click',()=>$('#documentModal').style.display='none'); $('#closeDocumentModal')?.addEventListener('click',()=>$('#documentModal').style.display='none'); $('#documentModal')?.addEventListener('click',e=>{if(e.target===$('#documentModal'))$('#documentModal').style.display='none';});
+
+window.markInvoiceSent=async id=>{try{const {error}=await sb.from('invoices').update({status:'sent',sent_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);if(error)throw error;showBanner('Invoice marked sent.','success');await loadInvoices();await openInvoice(id);}catch(err){showBanner('Could not mark invoice sent: '+(err?.message||String(err)),'error');}};
+
+async function recordPayment(invoiceId,invoice,amount,method){
+ if(!(amount>0)){showBanner('Enter a valid payment amount.','error');return;}
+ try{
+  const total=Number(invoice.total||invoice.total_amount||0);
+  const {data:before,error:be}=await sb.from('payments').select('amount,status').eq('invoice_id',invoiceId);if(be)throw be;
+  const already=(before||[]).filter(p=>['paid','succeeded','completed'].includes(String(p.status||'').toLowerCase())).reduce((s,p)=>s+Number(p.amount||0),0);
+  const balance=Math.max(0,total-already);
+  if(balance<=0){showBanner('This invoice is already paid.','error');return;}
+  if(amount>balance+0.005){showBanner('Payment is greater than the remaining balance.','error');return;}
+  const {error}=await sb.from('payments').insert({invoice_id:invoiceId,amount,method,status:'succeeded'});
+  if(error)throw error;
+  const {data:payments,error:pe}=await sb.from('payments').select('amount,status').eq('invoice_id',invoiceId);if(pe)throw pe;
+  const paid=(payments||[]).filter(p=>['paid','succeeded','completed'].includes(String(p.status||'').toLowerCase())).reduce((s,p)=>s+Number(p.amount||0),0);
+  const fullyPaid=paid>=total-0.005&&total>0;
+  const patch={amount_paid:paid,status:fullyPaid?'paid':'partial',updated_at:new Date().toISOString(),paid_at:fullyPaid?new Date().toISOString():null};
+  const {error:ie}=await sb.from('invoices').update(patch).eq('id',invoiceId);if(ie)throw ie;
+  showBanner(fullyPaid?'Payment recorded — invoice paid.':'Partial payment recorded.','success');await loadInvoices();await loadTaxBooks();await openInvoice(invoiceId);
+ }catch(err){showBanner('Could not record payment: '+(err?.message||String(err)),'error');}
+}
+$('#closeInvoiceModal').onclick=()=>$('#invoiceModal').style.display='none';
+$('#invoiceModal').addEventListener('click',e=>{if(e.target===$('#invoiceModal'))$('#invoiceModal').style.display='none';});
+
+
+function initTaxYears(){
+ const el=$('#taxYear'); if(!el||el.options.length)return; const y=new Date().getFullYear();
+ for(let i=0;i<6;i++){const o=document.createElement('option');o.value=String(y-i);o.textContent=String(y-i);el.appendChild(o);}
+}
+async function taxBookRows(year){
+ const start=`${year}-01-01T00:00:00.000Z`, end=`${Number(year)+1}-01-01T00:00:00.000Z`;
+ const [pr,ir,mr]=await Promise.all([
+   sb.from('payments').select('*').order('paid_at',{ascending:true}).limit(2000),
+   sb.from('invoices').select('*').order('created_at',{ascending:true}).limit(2000),
+   sb.from('job_materials').select('*').order('created_at',{ascending:true}).limit(5000)
+ ]);
+ if(pr.error)throw pr.error;if(ir.error)throw ir.error;if(mr.error)throw mr.error;
+ const inYear=(v)=>{const t=new Date(v||0).getTime();return t>=new Date(start).getTime()&&t<new Date(end).getTime();};
+ return {payments:(pr.data||[]).filter(x=>inYear(x.paid_at||x.created_at)),invoices:(ir.data||[]).filter(x=>inYear(x.created_at)),materials:(mr.data||[]).filter(x=>inYear(x.created_at))};
+}
+async function loadTaxBooks(){
+ initTaxYears(); const year=$('#taxYear')?.value||String(new Date().getFullYear()), grid=$('#taxBooksGrid'),note=$('#taxBooksNote'); if(!grid)return;
+ grid.innerHTML='<div class="ai-stat"><span>Cash collected</span><b>…</b></div><div class="ai-stat"><span>Sales tax recorded</span><b>…</b></div><div class="ai-stat"><span>Material costs</span><b>…</b></div>';
+ try{
+   const r=await taxBookRows(year);
+   const succeeded=r.payments.filter(p=>['paid','succeeded','completed'].includes(String(p.status||'').toLowerCase()));
+   const cash=succeeded.reduce((a,p)=>a+Number(p.amount||0),0);
+   const invoiceTax=r.invoices.filter(i=>!['void','cancelled'].includes(String(i.status||'').toLowerCase())).reduce((a,i)=>a+Number(i.tax||0),0);
+   const materialCost=r.materials.reduce((a,m)=>a+(Number(m.quantity||0)*Number(m.unit_cost||0)),0);
+   const invoiced=r.invoices.filter(i=>!['void','cancelled'].includes(String(i.status||'').toLowerCase())).reduce((a,i)=>a+Number(i.total||0),0);
+   const ar=r.invoices.filter(i=>!['paid','void','cancelled'].includes(String(i.status||'').toLowerCase())).reduce((a,i)=>a+Math.max(0,Number(i.total||0)-Number(i.amount_paid||0)),0);
+   grid.innerHTML=`<div class="ai-stat"><span>Cash collected</span><b>${money(cash)}</b></div><div class="ai-stat"><span>Sales tax recorded</span><b>${money(invoiceTax)}</b></div><div class="ai-stat"><span>Material costs logged</span><b>${money(materialCost)}</b></div><div class="ai-stat"><span>Invoices issued</span><b>${money(invoiced)}</b></div><div class="ai-stat"><span>Open A/R</span><b>${money(ar)}</b></div><div class="ai-stat"><span>Payments</span><b>${succeeded.length}</b></div>`;
+   note.innerHTML=`<b>${year} bookkeeping snapshot.</b> Cash collected is based on recorded successful payments. Sales tax is the amount entered on invoices, not a determination of what Massachusetts requires you to collect or remit. Material costs come from Job Materials. Keep receipts and confirm classifications with your tax professional.`;
+   window._taxExport={year,...r};
+ }catch(err){note.textContent='Tax snapshot could not load: '+(err?.message||String(err));}
+}
+function csvCell(v){const s=String(v??'');return '"'+s.replace(/"/g,'""')+'"';}
+window.exportTaxCsv=async()=>{
+ const year=$('#taxYear')?.value||String(new Date().getFullYear());
+ try{
+  const r=window._taxExport?.year===year?window._taxExport:({year,...await taxBookRows(year)});
+  const rows=[['record_type','date','reference','status_or_method','gross_amount','tax_amount','cost_amount','notes']];
+  r.payments.forEach(p=>rows.push(['payment',p.paid_at||p.created_at,p.invoice_id||'',p.method||p.status||'',Number(p.amount||0),'','',p.processor_reference||'']));
+  r.invoices.forEach(i=>rows.push(['invoice',i.created_at,i.invoice_number||i.id,i.status||'',Number(i.total||0),Number(i.tax||0),'',i.description||i.notes||'']));
+  r.materials.forEach(m=>rows.push(['material',m.created_at,m.job_id||'',m.supplier||'',Number(m.quantity||0)*Number(m.unit_price||0),'',Number(m.quantity||0)*Number(m.unit_cost||0),m.description||'']));
+  const csv=rows.map(r=>r.map(csvCell).join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a');a.href=url;a.download=`A1-FieldOps-${year}-tax-bookkeeping.csv`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url); showBanner('Bookkeeping CSV exported.','success');
+ }catch(err){showBanner('Could not export bookkeeping CSV: '+(err?.message||String(err)),'error');}
+};
+$('#refreshTaxBooks')?.addEventListener('click',loadTaxBooks); $('#taxYear')?.addEventListener('change',loadTaxBooks); $('#exportTaxCsv')?.addEventListener('click',window.exportTaxCsv); initTaxYears();
+
+window.addEventListener('error',e=>{
+  console.error('Unhandled error',e.error||e.message);
+  if(currentSession){
+    setView(true);
+    showBanner('FieldOps hit an unexpected error. Please refresh. '+(e.message||''),'error');
+  }
+});
+window.addEventListener('unhandledrejection',e=>{
+  console.error('Unhandled promise rejection',e.reason);
+  if(currentSession){
+    setView(true);
+    showBanner('FieldOps hit an unexpected error. Please refresh. '+(e.reason?.message||String(e.reason||'')),'error');
+  }
+});
+
+if ('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js').catch(()=>{}));
+init();
+
+
+
+
+async function refreshMoneyToday(){
+  try{
+    const [er,ir]=await Promise.all([sb.from('estimates').select('*').order('created_at',{ascending:false}).limit(100),sb.from('invoices').select('*').order('created_at',{ascending:false}).limit(100)]);
+    const estimates=er.data||[], invoices=ir.data||[];
+    const hot=cache.filter(x=>['new','contacted'].includes((x.status||'new').toLowerCase()));
+    const open=estimates.filter(x=>!['approved','declined','lost'].includes((x.status||'draft').toLowerCase()));
+    const unpaid=invoices.filter(x=>!['paid','void','cancelled'].includes((x.status||'draft').toLowerCase()));
+    const estValue=open.reduce((a,x)=>a+Number(x.total||x.total_amount||0),0), ar=unpaid.reduce((a,x)=>a+Math.max(0,Number(x.total||x.total_amount||0)-Number(x.amount_paid||0)),0);
+    $('#moneyGrid').innerHTML=`<div class="ai-stat"><span>Leads to chase</span><b>${hot.length}</b></div><div class="ai-stat"><span>Open estimates</span><b>${money(estValue)}</b></div><div class="ai-stat"><span>Money to collect</span><b>${money(ar)}</b></div>`;
+    const actions=[]; if(hot.length)actions.push(`${hot.length} lead${hot.length===1?'':'s'} need attention`); if(open.length)actions.push(`${open.length} estimate${open.length===1?'':'s'} can be closed`); if(unpaid.length)actions.push(`${unpaid.length} invoice${unpaid.length===1?'':'s'} to collect`);
+    $('#moneyNext').textContent=actions.length?'Next best actions: '+actions.join(' • '):'Nothing urgent is waiting right now.';
+  }catch(e){$('#moneyNext').textContent='Command center will fill in as FieldOps data becomes available.';}
+}
+function logAiUsage(u){try{const rows=JSON.parse(localStorage.getItem('a1_ai_usage')||'[]');rows.unshift({...u,at:new Date().toISOString()});localStorage.setItem('a1_ai_usage',JSON.stringify(rows.slice(0,200)));}catch(_){}}
+
+function money(n){return (Number(n)||0).toLocaleString(undefined,{style:'currency',currency:'USD'});}
+function estimatorInputs(){return {
+  title:$('#estTitle').value.trim(), description:$('#estDescription').value.trim(), location:$('#estZip').value.trim(),
+  labor_hours:Number($('#estLaborHours').value)||0, labor_rate:Number($('#estLaborRate').value)||0,
+  material_cost:Number($('#estMaterialCost').value)||0, markup_pct:Number($('#estMarkup').value)||0,
+  contingency_pct:Number($('#estContingency').value)||0
+};}
+function quickEstimator(){
+  const x=estimatorInputs(); const labor=x.labor_hours*x.labor_rate; const materialSell=x.material_cost*(1+x.markup_pct/100);
+  const base=labor+materialSell; const contingency=base*x.contingency_pct/100; const total=base+contingency;
+  const directCost=x.material_cost; const gross=total-directCost; const margin=total?gross/total*100:0;
+  const panel=$('#aiEstimatePanel'); panel.style.display='block';
+  panel.innerHTML=`<h3>Quick price check</h3><div class="ai-grid"><div class="ai-stat"><span>Labor</span><b>${money(labor)}</b></div><div class="ai-stat"><span>Materials billed</span><b>${money(materialSell)}</b></div><div class="ai-stat"><span>Suggested total</span><b>${money(total)}</b></div></div><div class="ai-note">This is your internal math only. AI market research can compare the job against current public local pricing and flag missing scope items.</div>`;
+}
+$('#quickCalcBtn').onclick=quickEstimator;
+$('#aiEstimateBtn').onclick=async()=>{
+  const x=estimatorInputs(); const panel=$('#aiEstimatePanel'); panel.style.display='block';
+  if(!x.description && !x.title){panel.innerHTML='<div class="empty">Describe the job first so AI has something useful to estimate.</div>';return;}
+  panel.innerHTML='<div class="empty">Researching local market and building estimate guidance…</div>';
+  try{
+    const accessKey=sessionStorage.getItem('a1_fieldops_key')||''; const res=await fetch('/api/estimate-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':accessKey},body:JSON.stringify(x)});
+    const data=await res.json(); if(!res.ok) throw new Error(data.error||'AI estimator unavailable');
+    const a=data.analysis||{}; const usage=data.usage||{}; logAiUsage({request_id:data.request_id||'',input_tokens:usage.input_tokens||0,output_tokens:usage.output_tokens||0,total_tokens:usage.total_tokens||0,title:x.title||'Estimate'});
+    const lines=(a.recommended_line_items||[]).map(i=>`<div class="detail-row"><div><b>${esc(i.description||'Line item')}</b><div class="meta">${esc(i.reason||'')}</div></div><b>${money(i.price)}</b></div>`).join('');
+    const sources=(a.sources||[]).map(s=>`<a href="${esc(s.url||'#')}" target="_blank" rel="noopener">${esc(s.title||s.url||'Source')}</a>`).join('');
+    panel.innerHTML=`<h3>AI estimate guidance</h3><div class="ai-grid"><div class="ai-stat"><span>Local low</span><b>${money(a.market_low)}</b></div><div class="ai-stat"><span>Local typical</span><b>${money(a.market_typical)}</b></div><div class="ai-stat"><span>Local high</span><b>${money(a.market_high)}</b></div></div>${a.recommended_total?`<div class="detail-total"><span>Recommended A-1 price</span><b>${money(a.recommended_total)}</b></div>`:''}${a.summary?`<p class="ai-note">${esc(a.summary)}</p>`:''}${lines?`<h3>Suggested scope / line items</h3>${lines}`:''}${a.risks?.length?`<h3>Watch for</h3><div class="ai-note">${a.risks.map(esc).join(' • ')}</div>`:''}${sources?`<h3>Market references</h3><div class="ai-sources">${sources}</div>`:''}${data.usage?`<div class="ai-note"><b>AI usage receipt:</b> ${Number(data.usage.input_tokens||0).toLocaleString()} input tokens • ${Number(data.usage.output_tokens||0).toLocaleString()} output tokens • request ${esc(data.request_id||'logged')}. Every AI estimate request is logged on this device.</div>`:''}<div class="ai-note">AI pricing is decision support, not an automatic quote. Verify site conditions, code/permit requirements, material availability and your desired margin before sending.</div>`;
+    if(Array.isArray(a.recommended_line_items) && a.recommended_line_items.length){
+      $('#estimateItems').innerHTML=''; a.recommended_line_items.forEach(i=>addEstimateItem(i.description||'',i.quantity||1,i.unit_price||i.price||0));
+    }
+  }catch(err){panel.innerHTML=`<div class="empty">${esc(err?.message||String(err))}</div><div class="ai-note">The estimator needs the OPENAI_API_KEY environment variable on Vercel. The rest of FieldOps will still work without it.</div>`;}
+};
+['estLaborHours','estLaborRate','estMaterialCost','estMarkup','estContingency'].forEach(id=>$('#'+id)?.addEventListener('input',()=>{
+  const x=estimatorInputs(), labor=x.labor_hours*x.labor_rate, materialSell=x.material_cost*(1+x.markup_pct/100), base=labor+materialSell, total=base*(1+x.contingency_pct/100);
+  if(x.labor_hours||x.material_cost) $('#estimateMargin').textContent=`Internal calculator: ${money(total)} before any manually-added scope adjustments.`;
+}));
+</script>
+</body>
+</html>
