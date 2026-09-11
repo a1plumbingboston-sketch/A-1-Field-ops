@@ -20,7 +20,7 @@ test('client creation/editing, quote delivery, job ownership, scheduling, and st
  await el('#customerForm').onsubmit({preventDefault(){},target:form});
  assert.equal(notices.at(-1).type,'success');assert.ok(chosen);assert.equal(button.disabled,false);
  const customer=(await app.q('select * from customers where id=$1',[chosen]))[0];assert.equal(customer.owner_id,'0e034a68-56ff-41af-a323-80415f6570b5');assert.equal(customer.email,'new-client@example.test');
- context.customerById=id=>context.customerCache.find(x=>x.id===id);vm.runInContext(saveCode,context);
+ context.customerById=id=>context.customerCache.find(x=>x.id===id);vm.runInContext(html.slice(html.indexOf('function appendQuoteDiscount('),html.indexOf('function calcEstimateTotal(')),context);vm.runInContext(saveCode,context);
  el('#estCustomerId').value=chosen;el('#estJobId').value=app.job;el('#estTitle').value='New client faucet';
  await el('#estimateForm').onsubmit({preventDefault(){},target:form});assert.match(notices.at(-1).message,/job belonging to this client/);assert.equal((await app.q('select * from estimates where customer_id=$1',[chosen])).length,0);
  el('#estJobId').value='';await el('#estimateForm').onsubmit({preventDefault(){},target:form});assert.ok(opened);assert.equal(notices.at(-1).type,'success');

@@ -22,6 +22,7 @@ for(const [n,i]of sample.items.entries())await q('insert into estimate_items(est
 await q("update jobs set owner_id='0e034a68-56ff-41af-a323-80415f6570b5' where id=$1",[job]);
 await q("insert into leads(name,email,phone,service_type,message,source) values('Intake Test','lead@example.test','6175550101','Plumbing','Leaking pipe','website')");
 process.env.OPENAI_API_KEY='test-only-openai';process.env.SUPABASE_SERVICE_ROLE_KEY='test-only-service-role';process.env.RESEND_API_KEY='test-only-mail';process.env.FIELDOPS_FROM_EMAIL='test@example.test';delete process.env.FIELDOPS_OWNER_ID;
+await db.exec(await fs.readFile(new URL('../supabase/migrations/20260911165952_quote_discounts.sql',import.meta.url),'utf8'));
 const mails=[],realFetch=global.fetch;
 const identifier=s=>{if(!/^[a-z_][a-z_0-9]*$/i.test(s))throw new Error('Invalid identifier');return '"'+s+'"';};
 async function rest(url,options={}){const u=new URL(url),method=options.method||'GET',body=options.body?JSON.parse(options.body):null;const endpoint=u.pathname.split('/rest/v1/')[1];try{

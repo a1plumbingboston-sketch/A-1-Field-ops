@@ -32,3 +32,18 @@ test('quote save is atomic and retry-safe; signed quote schedules once and compl
  await app.db.exec('set role anon');await assert.rejects(create(),/permission denied/);await assert.rejects(schedule(),/permission denied/);await app.db.exec('reset role');
  }finally{await app.close();}
 });
+
+test('quote discounts persist, reject excess and survive invoice conversion',async()=>{
+ const app=await startServer();try{
+ await app.q('update customers set owner_id=$1 where id=$2',[owner,app.customer]);
+ const rows=[...items,{description:'Truck fee',quantity:1,unit_price:75},{description:'Discount',quantity:1,unit_price:-50}];
+ const create=r=>app.q('select fieldops_create_quote($1,$2,null,$3,$4,$5::jsonb) as result',[crypto.randomUUID(),app.customer,'Discount test','Scope',JSON.stringify(r)]).then(x=>x[0].result);
+ const saved=await create(rows);assert.equal(Number((await app.q('select total from estimates where id=$1',[saved.id]))[0].total),300);
+ await assert.rejects(create([...items,{description:'Discount',quantity:1,unit_price:-500}]),/Discount exceeds/);
+ await assert.rejects(create([...items,{description:'Other',quantity:1,unit_price:-1}]),/Invalid line/);
+ const edit=await app.q("select fieldops_edit_document('estimate',$1,'Discount test','Scope',$2::jsonb) as result",[saved.id,JSON.stringify([...items,{description:'Discount',quantity:1,unit_price:-25}])]);assert.equal(Number(edit[0].result.total),250);
+ await app.q("update estimates set status='approved' where id=$1",[saved.id]);
+ const response=await fetch(app.origin+'/api/complete-job',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':'test-key'},body:JSON.stringify({estimate_id:saved.id})});assert.equal(response.status,200);const invoice=await response.json();assert.equal(Number((await app.q('select total from invoices where id=$1',[invoice.invoice_id]))[0].total),250);
+ assert.equal(Number((await app.q("select unit_price from invoice_items where invoice_id=$1 and description='Discount'",[invoice.invoice_id]))[0].unit_price),-25);
+ }finally{await app.close();}
+});
