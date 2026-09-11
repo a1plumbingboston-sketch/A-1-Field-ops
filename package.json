@@ -1,10 +1,10 @@
 {
   "name": "a1-fieldops",
-  "version": "31.6.1",
+  "version": "31.7.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/database.test.js tests/documents.test.js tests/api.test.js tests/dashboard.test.js tests/ai-reply.test.js tests/jobs.test.js tests/send-document.test.js tests/client-quote.test.js tests/reliable-quotes.test.js tests/field-tools.test.js tests/twilio-webhook.test.js tests/payment-form.test.js tests/ai-selection.test.js",
+    "test": "node --test tests/database.test.js tests/documents.test.js tests/api.test.js tests/dashboard.test.js tests/ai-reply.test.js tests/jobs.test.js tests/send-document.test.js tests/client-quote.test.js tests/reliable-quotes.test.js tests/field-tools.test.js tests/twilio-webhook.test.js tests/payment-form.test.js tests/ai-selection.test.js tests/square.test.js tests/payment-page.test.js",
     "smoke": "bash workflow-smoke-test.sh",
     "dev": "node tests/dev-server.js",
     "test:browser": "node --test --test-force-exit tests/browser.test.js"
