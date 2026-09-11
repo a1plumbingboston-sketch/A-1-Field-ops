@@ -16,13 +16,13 @@
 .doc-modal-card{width:min(860px,100%)}.doc-preview-actions{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}.material-markup-box{display:grid;gap:6px}.mini-action{justify-self:start;border:0;background:transparent!important;color:#d7d9df!important;padding:2px 0!important;font-size:.78rem;text-decoration:underline;min-height:auto!important}.computed-price{padding:10px 12px;border:1px solid #343840;border-radius:10px;background:#111318}.computed-price b{display:block;font-size:1.05rem}.signature-status{border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px;margin:12px 0;background:rgba(255,255,255,.035)}.invoice-edit-row{display:grid;grid-template-columns:minmax(0,1fr) 90px 125px auto;gap:8px;align-items:center;margin:8px 0}.invoice-edit-row input{min-width:0}.invoice-edit-row button{padding:9px 10px}@media(max-width:650px){.invoice-edit-row{grid-template-columns:1fr 1fr}.invoice-edit-row .edit-desc{grid-column:1/-1}.invoice-edit-row button{grid-column:1/-1}}
 </style>
 
-<style id="a1-brand-v31.6">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
+<style id="a1-brand-v31.6.1">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
 <link rel="stylesheet" href="document-system.css"><script src="document-system.js"></script>
 </head>
 <body>
   <div id="login" class="login">
     <img class="a1-login-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating">
-    <h1>FieldOps <small style="font-size:12px">v31.6</small></h1>
+    <h1>FieldOps <small style="font-size:12px">v31.6.1</small></h1>
     <p>Private operations portal</p>
     <form id="loginForm" action="javascript:void(0)" onsubmit="if(window.fieldOpsLogin){window.fieldOpsLogin(event)}else{document.getElementById('loginMsg').textContent='FieldOps could not initialize. Refresh once; if this remains, use the new deployment URL.'}; return false;">
       <input id="accessKey" type="password" placeholder="Access key" autocomplete="current-password" required>
@@ -33,7 +33,7 @@
 
   <div id="app" style="display:none">
     <header>
-      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing &amp; HVAC · v31.6</small></div></div>
+      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing &amp; HVAC · v31.6.1</small></div></div>
       <button id="logout">Sign out</button>
     </header>
     <main>
@@ -81,8 +81,9 @@
 <p class="meta">Choose a client by name. You can send a quote before a job is scheduled.</p>
 <input id="estTitle" placeholder="Estimate title — e.g. 50-gal gas water heater replacement" required>
 <textarea id="estDescription" placeholder="Describe the job in plain English: existing equipment, access, venting, piping, permits, what needs to be replaced, photos/measurements you observed, etc."></textarea>
+<label>AI pricing style<select id="estPricingMode" aria-label="AI pricing style"><option value="per_task">Per-task pricing (recommended)</option><option value="hourly">Hourly pricing</option></select></label><p class="meta">Per-task pricing gives each task a fixed customer price. Labor hours help AI estimate the work internally. One $75 truck fee is added per call.</p>
 <div class="item-grid"><input id="estZip" inputmode="numeric" placeholder="Job ZIP / city"><input id="estLaborHours" type="number" step="0.25" min="0" placeholder="Labor hours"><input id="estLaborRate" type="number" step="1" min="0" value="165" placeholder="Billable labor $/hr"></div>
-<div class="item-grid"><input id="estMaterialCost" type="number" step="0.01" min="0" placeholder="Expected material cost"><input id="estMarkup" type="number" step="1" min="0" value="45" placeholder="Material markup %"><input id="estContingency" type="number" step="1" min="0" value="10" placeholder="Misc fittings %" aria-label="Misc fittings %"></div>
+<div class="item-grid"><input id="estMaterialCost" type="number" step="0.01" min="0" placeholder="Expected material cost"><input id="estMarkup" type="number" step="1" min="0" value="25" placeholder="Material markup %" aria-label="Material markup %"><input id="estContingency" type="number" step="1" min="0" value="10" placeholder="Misc fittings %" aria-label="Misc fittings %"></div>
 <div class="job-toolbar"><button type="button" id="aiEstimateBtn" class="convert">✦ AI Estimate Assist</button><button type="button" id="quickCalcBtn">Quick Price Check</button><button type="button" onclick="openPriceBook(true)">Price book</button></div>
 <div id="aiEstimatePanel" class="ai-panel" style="display:none"></div>
 <div id="estimateItems"></div>
@@ -329,10 +330,17 @@ function card(l){
       <button onclick="markLead('${l.id}','contacted')">Contacted</button>
       <button onclick="markLead('${l.id}','lost')">Lost</button>
       <button class="convert" onclick="convertLead('${l.id}')">Convert to Customer + Job</button>
+      <button onclick="deleteLead('${l.id}',this)">Delete lead</button>
     </div>
   </article>`;
 }
 
+window.deleteLead=async(id,button)=>{
+ if(!confirm('Permanently delete this lead and its notes? Existing customers, jobs, quotes and invoices will stay.'))return;
+ if(button)button.disabled=true;
+ try{await toolRequest('lead-delete',{id,confirmed:true});cache=cache.filter(l=>l.id!==id);render();await refreshMoneyToday();showBanner('Lead deleted.','success');}
+ catch(err){showBanner('Could not delete lead: '+(err?.message||String(err)),'error');if(button)button.disabled=false;}
+};
 window.markLead=async(id,status)=>{
   try{
     const notesEl=$('#n-'+id);
@@ -435,10 +443,10 @@ window.openMaterials=async id=>{
  try{
   const {data,error}=await sb.from('job_materials').select('*').eq('job_id',id).order('created_at',{ascending:false}); if(error)throw error;
   const rows=data||[]; const cost=rows.reduce((s,x)=>s+Number(x.quantity||0)*Number(x.unit_cost||0),0), sell=rows.filter(x=>x.billable!==false).reduce((s,x)=>s+Number(x.quantity||0)*Number(x.unit_price||0),0);
-  const defaultMarkup=Number(localStorage.getItem('a1_material_markup_pct')||45);
+  const defaultMarkup=Number(localStorage.getItem('a1_material_markup_pct_v2')||25);
   detail.innerHTML=`<div class="eyebrow">JOB COSTING</div><h2>Materials</h2><div class="detail-total"><span>Material cost</span><b>${cost.toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div><div class="detail-total"><span>Billable value</span><b>${sell.toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div>${rows.map(x=>`<div class="detail-row"><div><b>${esc(x.description)}</b><div class="meta">${Number(x.quantity)} × cost ${Number(x.unit_cost).toLocaleString(undefined,{style:'currency',currency:'USD'})}${x.supplier?' • '+esc(x.supplier):''}</div></div><b>${(Number(x.quantity)*Number(x.unit_price)).toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div>`).join('')||'<div class="empty">No materials logged yet.</div>'}<h3>Add material</h3><form id="materialForm" class="estimate-form"><input id="matDesc" placeholder="Material / part" required><div class="item-grid"><input id="matQty" type="number" step="0.01" min="0.01" value="1" placeholder="Qty" required><input id="matCost" type="number" step="0.01" min="0" placeholder="Our cost"><div class="material-markup-box"><input id="matMarkup" type="number" step="1" min="0" value="${defaultMarkup}" placeholder="Markup %"><button id="matNoMarkup" class="mini-action" type="button">No markup</button></div></div><div class="computed-price"><small>Customer price — calculated automatically</small><b id="matComputedPrice">$0.00</b></div><input id="matSupplier" placeholder="Supplier (optional)"><button class="convert" type="submit">Add to Job</button></form>`;
   const refreshMaterialPrice=()=>{const c=Number($('#matCost').value||0),m=Number($('#matMarkup').value||0);$('#matComputedPrice').textContent=(c*(1+m/100)).toLocaleString(undefined,{style:'currency',currency:'USD'});};
-  $('#matCost').addEventListener('input',refreshMaterialPrice);$('#matMarkup').addEventListener('input',()=>{localStorage.setItem('a1_material_markup_pct',String(Number($('#matMarkup').value||0)));refreshMaterialPrice();});$('#matNoMarkup').onclick=()=>{$('#matMarkup').value='0';refreshMaterialPrice();};refreshMaterialPrice();
+  $('#matCost').addEventListener('input',refreshMaterialPrice);$('#matMarkup').addEventListener('input',()=>{localStorage.setItem('a1_material_markup_pct_v2',String(Number($('#matMarkup').value||0)));refreshMaterialPrice();});$('#matNoMarkup').onclick=()=>{$('#matMarkup').value='0';refreshMaterialPrice();};refreshMaterialPrice();
   $('#materialForm').onsubmit=async e=>{e.preventDefault();try{const costEach=Number($('#matCost').value||0),markup=Number($('#matMarkup').value||0),customerPrice=costEach*(1+markup/100);const payload={job_id:id,description:$('#matDesc').value.trim(),quantity:Number($('#matQty').value||1),unit_cost:costEach,unit_price:Math.round(customerPrice*100)/100,supplier:$('#matSupplier').value.trim()||null,billable:true};const {error}=await sb.from('job_materials').insert(payload);if(error)throw error;showBanner('Material added — markup applied automatically.','success');await openMaterials(id);}catch(err){showBanner('Could not add material: '+(err?.message||String(err)),'error');}};
  }catch(err){detail.innerHTML='<div class="empty">Materials could not load. '+esc(err?.message||String(err))+'</div>';}
 };
@@ -612,7 +620,7 @@ $('#addEstimateItem').onclick=()=>addEstimateItem();
 $('#newEstimateBtn').onclick=async()=>{await loadCustomers();await prefillEstimate('');};
 $('#refreshEstimates').onclick=loadEstimates;
 let quoteSaveRequestId=crypto.randomUUID();
-window.prefillEstimate=async id=>{quoteSaveRequestId=crypto.randomUUID();aiQuoteSuggestions=[];$('#aiEstimatePanel').innerHTML='';$('#aiEstimatePanel').style.display='none';setSection('estimates');$('#estimateForm').reset();$('#estimateForm').style.display='grid';syncEstimateCustomers(id);$('#estimateItems').innerHTML='';addEstimateItem();await loadEstimateJobs();};
+window.prefillEstimate=async id=>{quoteSaveRequestId=crypto.randomUUID();aiQuoteSuggestions=[];$('#aiEstimatePanel').innerHTML='';$('#aiEstimatePanel').style.display='none';setSection('estimates');$('#estimateForm').reset();$('#estimateForm').style.display='grid';syncEstimateCustomers(id);$('#estimateItems').innerHTML='';addEstimateItem();addEstimateItem('Truck fee',1,75);await loadEstimateJobs();};
 
 async function loadEstimates(){
   $('#estimates').innerHTML='<div class="empty">Loading estimates…</div>';
@@ -844,7 +852,7 @@ function logAiUsage(u){try{const rows=JSON.parse(localStorage.getItem('a1_ai_usa
 
 function money(n){return (Number(n)||0).toLocaleString(undefined,{style:'currency',currency:'USD'});}
 function estimatorInputs(){return {
-  title:$('#estTitle').value.trim(), description:$('#estDescription').value.trim(), location:$('#estZip').value.trim(),
+  pricing_mode:$('#estPricingMode').value, title:$('#estTitle').value.trim(), description:$('#estDescription').value.trim(), location:$('#estZip').value.trim(),
   labor_hours:Number($('#estLaborHours').value)||0, labor_rate:Number($('#estLaborRate').value)||0,
   material_cost:Number($('#estMaterialCost').value)||0, markup_pct:Number($('#estMarkup').value)||0,
   contingency_pct:Number($('#estContingency').value)||0
@@ -854,21 +862,22 @@ function calcEditDocumentTotal(){
  const total=[...document.querySelectorAll('#invoiceEditItems .invoice-edit-row')].reduce((sum,row)=>sum+Math.round(((Number(row.querySelector('.edit-qty').value)||0)*(Number(row.querySelector('.edit-price').value)||0)+Number.EPSILON)*100)/100,0);
  $('#editDocumentTotal').textContent=money(total);return total;
 }
+function withTruckFee(items){return [...items.filter(i=>!/^truck\s*(fee|charge|roll)(?:\s.*)?$/i.test(i.description.trim())),{description:'Truck fee',reason:'One truck fee per service call',quantity:1,unit_price:75}];}
 let aiQuoteSuggestions=[];
 function aiSuggestionTotal(){return [...document.querySelectorAll('.ai-item-choice:checked')].reduce((sum,input)=>{const i=aiQuoteSuggestions[Number(input.value)];return sum+Math.round((i.quantity*i.unit_price+Number.EPSILON)*100)/100;},0);}
-function updateAiSelection(){const total=aiSuggestionTotal();$('#aiSelectedTotal').textContent=money(total);$('#applyAiQuote').disabled=!document.querySelector('.ai-item-choice:checked');}
+function updateAiSelection(){const total=aiSuggestionTotal();$('#aiSelectedTotal').textContent=money(total);$('#applyAiQuoteButton').disabled=!document.querySelector('.ai-item-choice:checked');}
 function applyAiQuote(){
- const selected=[...document.querySelectorAll('.ai-item-choice:checked')].map(input=>aiQuoteSuggestions[Number(input.value)]);if(!selected.length)return;
+ const choices=[...document.querySelectorAll('.ai-item-choice:checked')].map(input=>aiQuoteSuggestions[Number(input.value)]);if(!choices.length)return;const selected=withTruckFee(choices);
  $('#estimateItems').innerHTML='';selected.forEach(i=>addEstimateItem(i.description,i.quantity,i.unit_price));calcEstimateTotal();persistQuoteDraft();
  $('#aiAppliedStatus').textContent='Selected items applied. Edit quantities or prices below; your quote total updates immediately.';
 }
 
 function quickEstimator(){
   const x=estimatorInputs(); const labor=x.labor_hours*x.labor_rate; const materialSell=x.material_cost*(1+x.markup_pct/100);
-  const base=labor+materialSell; const contingency=base*x.contingency_pct/100; const total=base+contingency;
+  const base=labor+materialSell; const contingency=base*x.contingency_pct/100; const total=base+contingency+75;
   const directCost=x.material_cost; const gross=total-directCost; const margin=total?gross/total*100:0;
   const panel=$('#aiEstimatePanel'); panel.style.display='block';
-  panel.innerHTML=`<h3>Quick price check</h3><div class="ai-grid"><div class="ai-stat"><span>Labor</span><b>${money(labor)}</b></div><div class="ai-stat"><span>Materials billed</span><b>${money(materialSell)}</b></div><div class="ai-stat"><span>Suggested total</span><b>${money(total)}</b></div></div><div class="ai-note">This is your internal math only. AI market research can compare the job against current public local pricing and flag missing scope items.</div>`;
+  panel.innerHTML=`<h3>Quick price check</h3><div class="ai-grid"><div class="ai-stat"><span>Labor</span><b>${money(labor)}</b></div><div class="ai-stat"><span>Materials billed</span><b>${money(materialSell)}</b></div><div class="ai-stat"><span>Suggested total</span><b>${money(total)}</b></div></div><div class="ai-note">Includes one $75 truck fee. This is your internal math only. AI market research can compare the job against current public local pricing and flag missing scope items.</div>`;
 }
 $('#quickCalcBtn').onclick=quickEstimator;
 $('#aiEstimateBtn').onclick=async()=>{
@@ -880,20 +889,20 @@ $('#aiEstimateBtn').onclick=async()=>{
     const accessKey=sessionStorage.getItem('a1_fieldops_key')||''; const res=await fetch('/api/estimate-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':accessKey},body:JSON.stringify(x)});
     const data=await res.json(); if(requestDraft!==quoteSaveRequestId)return;if(!res.ok) throw new Error(data.error||'AI estimator unavailable');
     const a=data.analysis||{}; const usage=data.usage||{}; logAiUsage({request_id:data.request_id||'',input_tokens:usage.input_tokens||0,output_tokens:usage.output_tokens||0,total_tokens:usage.total_tokens||0,title:x.title||'Estimate'});
-    aiQuoteSuggestions=(a.recommended_line_items||[]).map(i=>({description:String(i.description||'Line item'),reason:String(i.reason||''),quantity:Number(i.quantity??1),unit_price:Number(i.unit_price??i.price??0)})).filter(i=>Number.isFinite(i.quantity)&&i.quantity>0&&Number.isFinite(i.unit_price)&&i.unit_price>=0).slice(0,100);
-    const lines=aiQuoteSuggestions.map((i,n)=>`<label class="detail-row"><input class="ai-item-choice" type="checkbox" value="${n}" checked onchange="updateAiSelection()"><span><b>${esc(i.description)}</b><span class="meta">${esc(i.reason)}</span><span class="meta">${i.quantity} × ${money(i.unit_price)}</span></span><b>${money(Math.round((i.quantity*i.unit_price+Number.EPSILON)*100)/100)}</b></label>`).join('');
+    aiQuoteSuggestions=withTruckFee((a.recommended_line_items||[]).map(i=>({description:String(i.description||'Line item'),reason:String(i.reason||''),quantity:Number(i.quantity??1),unit_price:Number(i.unit_price??i.price??0)})).filter(i=>Number.isFinite(i.quantity)&&i.quantity>0&&Number.isFinite(i.unit_price)&&i.unit_price>=0).slice(0,99));
+    const lines=aiQuoteSuggestions.map((i,n)=>`<label class="detail-row"><input class="ai-item-choice" type="checkbox" value="${n}" checked ${i.description==='Truck fee'?'disabled':''} onchange="updateAiSelection()"><span><b>${esc(i.description)}</b><span class="meta">${esc(i.reason)}</span><span class="meta">${i.quantity} × ${money(i.unit_price)}</span></span><b>${money(Math.round((i.quantity*i.unit_price+Number.EPSILON)*100)/100)}</b></label>`).join('');
     const sources=(a.sources||[]).map(s=>`<a href="${esc(s.url||'#')}" target="_blank" rel="noopener">${esc(s.title||s.url||'Source')}</a>`).join('');
-    panel.innerHTML=`<h3>AI estimate guidance</h3><div class="ai-grid"><div class="ai-stat"><span>Local low</span><b>${money(a.market_low)}</b></div><div class="ai-stat"><span>Local typical</span><b>${money(a.market_typical)}</b></div><div class="ai-stat"><span>Local high</span><b>${money(a.market_high)}</b></div></div>${a.recommended_total?`<div class="detail-total"><span>Recommended A-1 price</span><b>${money(a.recommended_total)}</b></div>`:''}${a.summary?`<p class="ai-note">${esc(a.summary)}</p>`:''}${lines?`<h3>Choose suggested line items</h3>${lines}<div class="detail-total"><span>Selected quote total</span><b id="aiSelectedTotal" aria-live="polite"></b></div><button type="button" class="convert" id="applyAiQuote" onclick="applyAiQuote()">Use selected items in quote</button><p class="meta">Replaces the draft line items below. The quote total is the sum of the items you choose.</p><p id="aiAppliedStatus" role="status"></p>`:''}${a.risks?.length?`<h3>Watch for</h3><div class="ai-note">${a.risks.map(esc).join(' • ')}</div>`:''}${sources?`<h3>Market references</h3><div class="ai-sources">${sources}</div>`:''}${data.usage?`<div class="ai-note"><b>AI usage receipt:</b> ${Number(data.usage.input_tokens||0).toLocaleString()} input tokens • ${Number(data.usage.output_tokens||0).toLocaleString()} output tokens • request ${esc(data.request_id||'logged')}. Every AI estimate request is logged on this device.</div>`:''}<div class="ai-note">AI pricing is decision support, not an automatic quote. Verify site conditions, code/permit requirements, material availability and your desired margin before sending.</div>`;
-    if(aiQuoteSuggestions.length)updateAiSelection();
+    panel.innerHTML=`<h3>AI estimate guidance</h3><div class="ai-grid"><div class="ai-stat"><span>Local low</span><b>${money(a.market_low)}</b></div><div class="ai-stat"><span>Local typical</span><b>${money(a.market_typical)}</b></div><div class="ai-stat"><span>Local high</span><b>${money(a.market_high)}</b></div></div>${a.recommended_total?`<div class="detail-total"><span>Recommended A-1 price</span><b>${money(aiQuoteSuggestions.reduce((sum,i)=>sum+Math.round(i.quantity*i.unit_price*100)/100,0))}</b></div>`:''}${a.summary?`<p class="ai-note">${esc(a.summary)}</p>`:''}${lines?`<h3>Choose suggested line items</h3>${lines}<div class="detail-total"><span>Selected quote total</span><b id="aiSelectedTotal" aria-live="polite"></b></div><button type="button" class="convert" id="applyAiQuoteButton">Use selected items in quote</button><p class="meta">Replaces the draft line items below. The quote total is the sum of the items you choose.</p><p id="aiAppliedStatus" role="status"></p>`:''}${a.risks?.length?`<h3>Watch for</h3><div class="ai-note">${a.risks.map(esc).join(' • ')}</div>`:''}${sources?`<h3>Market references</h3><div class="ai-sources">${sources}</div>`:''}${data.usage?`<div class="ai-note"><b>AI usage receipt:</b> ${Number(data.usage.input_tokens||0).toLocaleString()} input tokens • ${Number(data.usage.output_tokens||0).toLocaleString()} output tokens • request ${esc(data.request_id||'logged')}. Every AI estimate request is logged on this device.</div>`:''}<div class="ai-note">AI pricing is decision support, not an automatic quote. Verify site conditions, code/permit requirements, material availability and your desired margin before sending.</div>`;
+    if(aiQuoteSuggestions.length){$('#applyAiQuoteButton').onclick=applyAiQuote;updateAiSelection();}
   }catch(err){if(requestDraft===quoteSaveRequestId)panel.innerHTML=`<div class="empty">${esc(err?.message||String(err))}</div><div class="ai-note">Your draft is unchanged. Try the estimator again.</div>`;}finally{button.disabled=false;}
 };
 ['estLaborHours','estLaborRate','estMaterialCost','estMarkup','estContingency'].forEach(id=>$('#'+id)?.addEventListener('input',()=>{
-  const x=estimatorInputs(), labor=x.labor_hours*x.labor_rate, materialSell=x.material_cost*(1+x.markup_pct/100), base=labor+materialSell, total=base*(1+x.contingency_pct/100);
+  const x=estimatorInputs(), labor=x.labor_hours*x.labor_rate, materialSell=x.material_cost*(1+x.markup_pct/100), base=labor+materialSell, total=base*(1+x.contingency_pct/100)+75;
   if(x.labor_hours||x.material_cost) $('#estimateMargin').textContent=`Internal calculator: ${money(total)} before any manually-added scope adjustments.`;
 }));
 
 const quoteDraftStorageKey='a1_fieldops_quote_draft_v1';
-const quoteDraftFields=['estCustomerId','estJobId','estTitle','estDescription','estZip','estLaborHours','estLaborRate','estMaterialCost','estMarkup','estContingency'];
+const quoteDraftFields=['estCustomerId','estJobId','estTitle','estDescription','estPricingMode','estZip','estLaborHours','estLaborRate','estMaterialCost','estMarkup','estContingency'];
 let restoringQuoteDraft=false;
 function readQuoteDraft(){try{return JSON.parse(localStorage.getItem(quoteDraftStorageKey)||'null');}catch{return null;}}
 function refreshQuoteDraftNotice(){$('#quoteDraftNotice').hidden=!readQuoteDraft();}
@@ -911,7 +920,7 @@ $('#restoreQuoteDraft').onclick=async()=>{
  const draft=readQuoteDraft();if(!draft?.fields||!Array.isArray(draft.items))return;
  restoringQuoteDraft=true;
  try{await loadCustomers();await prefillEstimate(draft.fields.estCustomerId||'');quoteSaveRequestId=draft.requestId||crypto.randomUUID();
- for(const id of quoteDraftFields)if(id!=='estJobId')$('#'+id).value=draft.fields[id]||'';
+ for(const id of quoteDraftFields)if(id!=='estJobId')$('#'+id).value=draft.fields[id]||(id==='estPricingMode'?'per_task':'');
  await loadEstimateJobs();$('#estJobId').value=draft.fields.estJobId||'';$('#estimateItems').innerHTML='';draft.items.slice(0,100).forEach(i=>addEstimateItem(i.description,Number.isFinite(Number(i.quantity))?Number(i.quantity):1,Number.isFinite(Number(i.unit_price))?Number(i.unit_price):0));
  $('#quoteDraftStatus').textContent='Recovered from this device. Review before saving or sending.';
  }catch(e){showBanner('Could not restore draft: '+e.message,'error');}finally{restoringQuoteDraft=false;}

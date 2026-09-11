@@ -100,3 +100,11 @@ Job photo viewers include Download photo for manual upload to Metricool or anoth
 ## v31.6 release validation (September 11, 2026)
 
 All 30 automated API/database/UI-binding tests and workflow smoke checks passed. Manual built-in browser checks covered mobile and desktop layouts, price-book insertion, actual photo upload/view/download link, customer history, simulated quote/invoice delivery, delivery-status refresh, customer signing, separate change-order creation, job completion, payment recording, receipt and updated collection totals. Fixed the payment form passing incorrect arguments and the email-activity dialog appearing behind document dialogs. The standalone Playwright runner remains blocked by this Mac sandbox; these browser checks were manual against the isolated test server. No real customer email or card charge was sent.
+
+## v31.6.1 pricing fix
+
+AI selection now binds its button handler outside inline form scope, avoiding the button-ID/function-name collision. New quotes start with one $75 Truck fee; applying AI suggestions replaces the draft items and normalizes that fee to one line. Quote-to-invoice conversion carries the quoted fee without adding another. Existing saved or signed documents are unchanged. Material markup defaults to 25% in the estimator and job materials; the AI prompt applies markup only to material cost and excludes truck/dispatch fees because the UI adds the fixed fee. Quick price checks include the $75 fee.
+
+Validation: 31 automated tests and smoke checks passed. Built-in browser checks verified AI selection, repeat application without duplicate truck fees, edited line-item totals, the $75 starting quote and $100 material cost becoming $125. AI provider output was simulated; no customer messages were sent.
+
+This patch also adds confirmed lead deletion through the authenticated server endpoint (customer/job/document records are preserved), and a per-task AI pricing default with an hourly alternative. Tests cover deletion authorization, invalid requests, repeat deletion and preservation of linked records, plus both AI pricing prompts. Local browser checks confirmed removal and refreshed lead counts, and pricing-mode selection.

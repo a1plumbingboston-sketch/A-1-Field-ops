@@ -33,8 +33,10 @@ test('AI quote allowance uses Misc fittings without altering quantity or price',
  const {default:handler}=await import('../api/estimate-assist.js');
  const original=global.fetch;const oldKey=process.env.OPENAI_API_KEY;process.env.OPENAI_API_KEY='test-only';
  try{
-  global.fetch=async url=>String(url).includes('fieldops_key_status')?Response.json(true):Response.json({output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({recommended_line_items:[{description:'Contingency (10%)',quantity:1,unit_price:150,price:150}]})}]}]});
+  let prompt='';global.fetch=async (url,options)=>{if(String(url).includes('fieldops_key_status'))return Response.json(true);prompt=JSON.parse(options.body).input;return Response.json({output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({recommended_line_items:[{description:'Contingency (10%)',quantity:1,unit_price:150,price:150}]})}]}]});};
   let status,body;await handler({method:'POST',headers:{'x-fieldops-key':'test-key'},body:{}},{status(n){status=n;return this;},json(value){body=value;return this;}});
+  assert.match(prompt,/Per-task fixed pricing/);assert.match(prompt,/only to material cost, never to labor/);assert.match(prompt,/fixed \$75 Truck fee/);
   assert.equal(status,200);assert.deepEqual(body.analysis.recommended_line_items,[{description:'Misc fittings (10%)',quantity:1,unit_price:150,price:150}]);
+  await handler({method:'POST',headers:{'x-fieldops-key':'test-key'},body:{pricing_mode:'hourly'}},{status(){return this;},json(){return this;}});assert.match(prompt,/Hourly pricing: show labor hours/);
  }finally{global.fetch=original;if(oldKey===undefined)delete process.env.OPENAI_API_KEY;else process.env.OPENAI_API_KEY=oldKey;}
 });

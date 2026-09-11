@@ -6,6 +6,17 @@ test('private price book, customer history, photos, and live delivery status',as
  const app=await startServer();try{
  const call=async(op,body={},key='test-key')=>{const r=await fetch(app.origin+'/api/documents',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':key},body:JSON.stringify({action:'tools',op,...body})});return {status:r.status,data:await r.json()};};
  assert.equal((await call('prices',{},'')).status,401);
+ const lead=(await app.q("insert into leads(name,customer_id,job_id,status) values('Delete test',$1,$2,'converted') returning id",[app.customer,app.job]))[0].id;
+ assert.equal((await call('lead-delete',{id:lead,confirmed:true},'')).status,401);
+ assert.notEqual((await call('lead-delete',{id:lead})).status,200);
+ assert.notEqual((await call('lead-delete',{id:'invalid',confirmed:true})).status,200);
+ assert.equal((await app.q('select id from leads where id=$1',[lead])).length,1);
+ assert.equal((await call('lead-delete',{id:lead,confirmed:true})).status,200);
+ assert.equal((await app.q('select id from leads where id=$1',[lead])).length,0);
+ assert.equal((await app.q('select id from customers where id=$1',[app.customer])).length,1);
+ assert.equal((await app.q('select id from jobs where id=$1',[app.job])).length,1);
+ assert.equal((await app.q('select id from estimates where id=$1',[app.estimate])).length,1);
+ assert.equal((await call('lead-delete',{id:lead,confirmed:true})).status,200);
  const price=(await call('price-save',{name:'Faucet service',description:'Replace faucet',category:'Plumbing',quantity:2,unit_price:125})).data[0];assert.ok(price.id);
  assert.equal((await call('prices')).data[0].name,'Faucet service');
  await call('price-save',{id:price.id,name:'Faucet service',description:'Revised scope',quantity:1,unit_price:175});assert.equal(Number((await call('prices')).data[0].unit_price),175);
