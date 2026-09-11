@@ -1,0 +1,54 @@
+/* A-1 Warm Premium: shared operational palette, readable touch-first controls. */
+:root{color-scheme:light;--warm-bg:#faf7f1;--warm-paper:#fffefa;--warm-ink:#163247;--warm-muted:#55636c;--warm-line:#d9d4ca;--warm-red:#ae2332}
+body{background:var(--warm-bg);color:var(--warm-ink)}
+header,.bottom{background:var(--warm-paper);border-color:var(--warm-line)}
+header small,header button,.login p,.meta,.message,.status,.empty,.muted,small{color:var(--warm-muted)}
+.lead,.modal-card,.field-tools-card,.estimate-form,.ai-reply-box,.card,dialog{background:var(--warm-paper);color:var(--warm-ink);border-color:var(--warm-line);box-shadow:0 8px 28px #16324708;border-radius:16px}
+.ai-panel,.signature-status{background:var(--warm-paper)!important;border-color:var(--warm-line)!important}
+.ai-stat,.computed-price,.code{background:#f0ece4!important;color:var(--warm-ink);border-color:var(--warm-line)}
+input,textarea,select,.notes,.search,.login input,.estimate-form input,.estimate-form textarea,#invoiceModal select,.field-tools-card input:not([type=checkbox]),.field-tools-card textarea,.field-tools-card select{background:#fff;color:var(--warm-ink);border:1px solid #aab0ad;border-radius:10px;min-height:44px;padding:11px;font:inherit;box-sizing:border-box;max-width:100%}
+input::placeholder,textarea::placeholder{color:#69757b;opacity:1}
+input[type=checkbox],input[type=radio]{min-height:0;accent-color:var(--warm-red)}
+button,.actions a,.actions button,.job-toolbar button,.tabs button,.estimate-form>button,.field-tools-card button,.photo-download{background:#f0ece4;color:var(--warm-ink);border:1px solid var(--warm-line);border-radius:10px;min-height:44px;padding:10px 15px;font:inherit;font-weight:600;cursor:pointer}
+.login button,.primary,.actions .convert,.estimate-form>button.convert,button.convert{background:var(--warm-red)!important;color:#fff!important;border-color:var(--warm-red)!important}
+.tabs .active,.job-toolbar button.active,.bottom .active{background:var(--warm-ink);color:#fff;border-color:var(--warm-ink)}
+.bottom button{color:var(--warm-muted);border-radius:9px}.bottom .active{color:#fff}
+.modal-close{color:var(--warm-ink);background:transparent;border:0}
+.estimate-form label{color:var(--warm-ink)}
+.mini-action{color:var(--warm-ink)!important}
+.badge,.source-badge{background:#eee9df;color:var(--warm-ink);border-color:var(--warm-line)}
+.badge.hot{color:#922132}.appmsg{background:#eaf0f4;color:#163247;border-color:#bacbd4}.appmsg.error,#loginMsg{background:#fff0ee;color:#942231;border-color:#d5969e}.appmsg.success{background:#edf6ee;color:#245637;border-color:#a4c4ac}
+.eyebrow,.hero small{color:var(--warm-red)}
+#moneyToday{padding:24px}#moneyToday h2{font-size:clamp(25px,4vw,36px);letter-spacing:-.035em}
+a{color:#235774}button:disabled{cursor:not-allowed;opacity:.55}
+:focus-visible{outline:3px solid #236786;outline-offset:3px}
+.appointment{border-left-color:var(--tech,#64748b)}.review,.needs_help{background:#fff0c2;color:#654b09}.completed{background:#ddf1e4;color:#245637}
+@media(max-width:550px){#moneyToday{padding:16px}.ai-grid{gap:7px}.bottom button{padding:10px 8px}.field-tools-card{padding:16px}}
+#moneyToday .job-toolbar{display:flex;flex-wrap:wrap;gap:8px;overflow:visible}#moneyToday .job-toolbar button{flex:1 1 125px;min-width:0}
+/* Consistent presentation for the owner and technician workspaces. */
+body{line-height:1.5;-webkit-font-smoothing:antialiased}
+header{box-shadow:0 1px 0 #16324708;padding-top:16px;padding-bottom:16px}
+h1,h2,h3{letter-spacing:-.025em}h2{line-height:1.2}
+.lead,.card{padding:24px;margin-bottom:18px}.meta{font-size:13px;line-height:1.6}
+.actions{gap:10px}.actions a{text-decoration:none;display:flex;align-items:center;justify-content:center;text-align:center}
+.job-toolbar{flex-wrap:wrap}.tabs{display:flex;flex-wrap:wrap;gap:8px}
+button:hover:not(:disabled),.actions a:hover{filter:brightness(.96)}
+.modal-card,.field-tools-card{padding:26px;max-height:90dvh;overflow-y:auto;overscroll-behavior:contain}
+.modal-card h2,.field-tools-card h2{margin-top:8px}.modal-card p,.field-tools-card p{line-height:1.6}
+.modal-close{min-width:44px;min-height:44px}.modal-card input,.modal-card select,.modal-card textarea{font-size:16px}
+.estimate-form{padding:22px;gap:14px}.estimate-form label{font-size:14px;font-weight:600}
+.bottom{gap:6px;padding-top:10px;box-shadow:0 -6px 24px #16324708}.bottom button{flex:1;max-width:180px;min-height:46px}
+#notice{background:#fff2d8;color:#684919;border:1px solid #e2ca9f}
+@media(max-width:550px){.lead,.card{padding:18px}.modal-card,.field-tools-card{padding:18px}.estimate-form{padding:16px}.bottom{gap:2px}.bottom button{font-size:11px;padding:8px 4px}.actions{gap:8px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+/* Balanced dashboard actions and room to work on iPad and desktop. */
+#app>main{max-width:1120px;padding-top:28px}
+#moneyToday .job-toolbar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:0}
+#moneyToday .job-toolbar button{min-height:48px;padding:12px;font-size:14px}
+#moneyToday .ai-stat{padding:18px;border-radius:12px}
+#moneyToday .ai-stat b{font-size:26px;letter-spacing:-.03em;display:block;margin-top:5px}
+#moneyToday .ai-stat span{font-size:13px;color:var(--warm-muted)}
+#moneyNext{margin:16px 0;font-size:13px;line-height:1.6}
+@media(max-width:550px){#app>main{padding-top:16px}#moneyToday .job-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}#moneyToday .ai-stat{padding:12px}#moneyToday .ai-stat b{font-size:23px}}
+#scheduleForm button[type=submit],#scheduleForm button:not([type]),#loginForm button,#staffForm button[type=submit]{background:var(--warm-red);color:white;border-color:var(--warm-red)}
+#login>a.primary{display:inline-block;padding:12px 18px;border-radius:10px;text-decoration:none;margin-top:12px}

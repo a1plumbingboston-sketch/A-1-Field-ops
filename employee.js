@@ -1,7 +1,7 @@
 'use strict';
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ownerMode=new URLSearchParams(location.search).get('owner')==='1';
-let state={owner:false,appointments:[],staff:[],jobs:[]},detail=null,busy=false,dirty=false,pending=null;
+let state={owner:false,appointments:[],staff:[],jobs:[]},detail=null,busy=false,dirty=false,pending=null,requestWarning='';
 const labels={confirmed:'Confirmed',on_way:'On the way',working:'In progress',review:'Awaiting review',completed:'Completed',cancelled:'Cancelled',needs_help:'Needs assistance'};
 const time=s=>new Date(s).toLocaleString('en-US',{timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
 const localDate=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
@@ -9,10 +9,14 @@ function say(s){$('#notice').textContent=s;const p=$('#panelNotice');if(p)p.text
 async function request(action,data={}){
  const headers={'Content-Type':'application/json'};if(ownerMode)headers['x-fieldops-key']=sessionStorage.getItem('a1_fieldops_key')||'';
  const body=action==='login'?{action:'team',team_action:action,code:data.code}:{action:'team',team_action:action,data};
- const r=await fetch('/api/documents',{method:'POST',headers,credentials:'same-origin',body:JSON.stringify(body)});const j=await r.json();
+ const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),20000);let r,j;
+ try{r=await fetch('/api/documents',{method:'POST',headers,credentials:'same-origin',body:JSON.stringify(body),signal:controller.signal});j=await r.json();}
+ catch(e){if(e.name==='AbortError')throw Error('Connection timed out. The update may have saved. Refresh the job before trying again.');throw e;}
+ finally{clearTimeout(timeout);}
+ if(j.notification_warning)requestWarning=j.notification_warning;
  if(!r.ok){if(r.status===401){$('#workspace').hidden=true;$('#login').hidden=false;$('#panel').close();state={owner:false,appointments:[],staff:[],jobs:[]};detail=null;$('#appointments').replaceChildren();$('#panelContent').replaceChildren();}throw Error(j.error||'Could not save. Please retry.');}return j;
 }
-async function run(fn){if(busy)return;busy=true;try{await fn();}catch(e){say(e.message||'Connection lost. Your update has not been confirmed; retry.');}finally{busy=false;}}
+async function run(fn){if(busy)return;busy=true;requestWarning='';try{await fn();if(requestWarning)say(requestWarning);}catch(e){say(e.message||'Connection lost. Your update has not been confirmed; retry.');}finally{busy=false;}}
 function range(){const d=new Date($('#date').value+'T00:00:00Z');return {from:new Date(d.getTime()-86400000).toISOString(),to:new Date(d.getTime()+(Number($('#view').value)+1)*86400000).toISOString()};}
 function dayOf(s){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(s));}
 async function refresh(){
@@ -54,7 +58,7 @@ $('#teamButton').onclick=staffPanel;$('#newAppointment').onclick=()=>schedule();
 $('#closePanel').onclick=()=>{if(busy)return;if(!dirty||confirm('Close without saving this update?')){$('#panel').close();dirty=false;}};
 $('#panel').addEventListener('cancel',e=>{if(busy){e.preventDefault();return;}if(dirty&&!confirm('Close without saving this update?'))e.preventDefault();});
 $('#panel').addEventListener('input',()=>dirty=true);
-$('#logout').onclick=()=>run(async()=>{await request('logout');if(ownerMode)sessionStorage.removeItem('a1_fieldops_key');location.href='/employee';});
+$('#logout').onclick=()=>run(async()=>{await request('logout');if(ownerMode)sessionStorage.removeItem('a1_fieldops_key');location.href=ownerMode?'/':'/employee';});
 $('#attention').onclick=$('#appointments').onclick=e=>{const b=e.target.closest('[data-open]');if(b)run(()=>openJob(b.dataset.open));};
 $('#panelContent').onclick=e=>{const b=e.target.closest('button');if(!b)return;
  if(b.id==='editSchedule'){schedule(detail.appointment);return;}
@@ -69,5 +73,11 @@ $('#panelContent').onclick=e=>{const b=e.target.closest('button');if(!b)return;
 window.addEventListener('beforeunload',e=>{if(dirty||busy){e.preventDefault();e.returnValue='';}});
 window.addEventListener('offline',()=>say('Offline. Updates and photos are not saved until the connection returns.'));
 setInterval(()=>{if(!document.hidden&&!$('#panel').open&&!$('#workspace').hidden&&!busy)run(refresh);},30000);
+if(ownerMode){
+ $('#login h1').textContent='Manager sign in';
+ $('#loginForm').hidden=true;
+ const intro=$('#login p');intro.textContent='Open the owner dashboard, sign in, then choose Jobs → Team & Schedule.';
+ const link=document.createElement('a');link.href='/';link.textContent='Open owner dashboard';link.className='primary';$('#login').append(link);
+}
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/service-worker.js').catch(()=>{});
 run(async()=>{await refresh();say('');});
