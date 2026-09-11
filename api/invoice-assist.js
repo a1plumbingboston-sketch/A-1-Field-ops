@@ -31,7 +31,7 @@ Rules:
 - ${isJob?'Preserve the supplied work status and tense. Do not imply planned work is completed.':''}
 - Return ONLY valid JSON.
 - Keys: brief_description (string), line_items (array of objects with description only), customer_message (string).
-- brief_description should use a consistent professional format: Work; Location & existing conditions; Access & materials; Exclusions / remaining work. Include only sections supported by the notes, using short clear sentences. Omit unknown details and empty sections.
+- brief_description must be 1–2 short plain sentences, usually 15–35 words. No section headings or labels. State the work, equipment and customer-supplied materials when relevant. Avoid repeating line items, prices, truck fees or the same fault twice. Include an exclusion only when essential to understanding scope. Use access, condition and location details as background; mention them only if essential to the customer agreement. Never add work, testing or materials absent from the supplied facts.
 - ${isEstimate?'Describe the work as proposed/to be performed. Do not imply it is already completed.':'Describe only work supported by the supplied notes; do not invent completed work.'}
 - Rewrite each existing line item in the same order. Do not add or remove line items.
 - Do not change quantities, prices, totals, taxes, warranty terms, permit claims, inspection claims, code-compliance claims, or work that was not supplied in the notes.
