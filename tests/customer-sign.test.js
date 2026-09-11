@@ -16,3 +16,15 @@ test('signature pad handles touch coordinates, ignores a second finger, clears i
  elements.clear.onclick();assert.equal(ctx.hasInk,false);
  await vm.runInContext('sign()',ctx);assert.match(elements.msg.textContent,/draw your signature/);
 });
+test('invoice typed signature requires name, fits the canvas and clears stale signature',async()=>{
+ const html=fs.readFileSync(new URL('../customer-sign.html',import.meta.url),'utf8');const written=[];
+ const context2d={fillRect(){},fillText(...args){written.push(args)},measureText:t=>({width:t.length*15})};
+ const elements={sig:{getContext:()=>context2d},name:{value:''},sign:{},msg:{}};
+ const ctx=vm.createContext({document:{getElementById:id=>elements[id],fonts:{load:async()=>[],check:()=>true}},canvas:null,ctx:null,hasInk:false,saving:false,sign(){}});
+ vm.runInContext(html.slice(html.indexOf('async function setupTypedSignature()'),html.indexOf('function setupCanvas()')),ctx);
+ await vm.runInContext('setupTypedSignature()',ctx);assert.equal(ctx.hasInk,false);
+ elements.name.value='Sample Customer';await elements.name.oninput();assert.equal(ctx.hasInk,true);assert.equal(written.at(-1)[0],'Sample Customer');assert.equal(written.at(-1)[1],450);
+ elements.name.value='';await elements.name.oninput();assert.equal(ctx.hasInk,false);
+ assert.match(html,/required minlength="2" maxlength="120"/);
+ assert.match(html,/s.kind==='completion'\?'<label for="exceptions">/);
+});
