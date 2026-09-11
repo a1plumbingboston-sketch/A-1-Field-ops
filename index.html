@@ -844,7 +844,7 @@ window.exportTaxCsv=async()=>{
   r.payments.forEach(p=>rows.push(['payment',p.paid_at||p.created_at,p.invoice_id||'',p.method||p.status||'',Number(p.amount||0),'','',p.processor_reference||'']));
   r.invoices.forEach(i=>rows.push(['invoice',i.created_at,i.invoice_number||i.id,i.status||'',Number(i.total||0),Number(i.tax||0),'',i.description||i.notes||'']));
   r.materials.forEach(m=>rows.push(['material',m.created_at,m.job_id||'',m.supplier||'',Number(m.quantity||0)*Number(m.unit_price||0),'',Number(m.quantity||0)*Number(m.unit_cost||0),m.description||'']));
-  const csv=rows.map(r=>r.map(csvCell).join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a');a.href=url;a.download=`A1-FieldOps-${year}-tax-bookkeeping.csv`;document.body.appendChild(a);a.click();a.remove();window.URL.revokeObjectURL(url); showBanner('Bookkeeping CSV exported.','success');
+  const csv=rows.map(r=>r.map(csvCell).join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}); const url=window.URL.createObjectURL(blob); const a=document.createElement('a');a.href=url;a.download=`A1-FieldOps-${year}-tax-bookkeeping.csv`;document.body.appendChild(a);a.click();a.remove();window.URL.revokeObjectURL(url); showBanner('Bookkeeping CSV exported.','success');
  }catch(err){showBanner('Could not export bookkeeping CSV: '+(err?.message||String(err)),'error');}
 };
 $('#refreshTaxBooks')?.addEventListener('click',loadTaxBooks); $('#taxYear')?.addEventListener('change',loadTaxBooks); $('#exportTaxCsv')?.addEventListener('click',window.exportTaxCsv); initTaxYears();
