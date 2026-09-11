@@ -12,6 +12,9 @@ test('owner creates employee, employee logs in with secure cookie and posts to a
  const ap=await request('schedule',{job_id:s.job,staff_id:staff.j.id,starts_at:'2026-10-01T13:00:00Z',ends_at:'2026-10-01T14:00:00Z'},owner);assert.equal(ap.r.status,200);
  const list=await request('list',{from:'2026-10-01',to:'2026-10-02'},employee);assert.equal(list.j.appointments.length,1);assert.equal(list.j.owner,false);
  const message=await request('message',{appointment_id:ap.j.id,request_id:randomUUID(),text:'Arrived'},employee);assert.equal(message.r.status,200);
+ const deniedReview=await request('status',{appointment_id:ap.j.id,request_id:randomUUID(),status:'review',text:'Done'},employee);assert.equal(deniedReview.r.status,409);
+ const reviewed=await request('status',{appointment_id:ap.j.id,request_id:randomUUID(),status:'review',completion:{location:'Basement',performed:'Replaced valve',materials:'One owner-supplied valve',checks:'Not performed',outcome:'Return visit needed for testing'}},employee);assert.equal(reviewed.r.status,200);
+ const attention=await request('attention',{},owner);assert.equal(attention.j.appointments.length,1);assert.equal((await request('attention',{},employee)).r.status,403);
  assert.equal((await request('staff_save',{name:'Fake owner'},employee)).r.status,403);
  const ownerApi=await fetch(s.origin+'/api/documents?kind=invoice&id='+randomUUID(),{headers:employee});assert.equal(ownerApi.status,401);
  await request('staff_save',{id:staff.j.id,name:'Pilot Technician',email:'pilot@example.test',color:'#2563eb',active:false},owner);

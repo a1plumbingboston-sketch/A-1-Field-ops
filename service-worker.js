@@ -1,4 +1,4 @@
-const CACHE='a1-fieldops-v31.8.0';
+const CACHE='a1-fieldops-v31.8.1';
 const ASSETS=['./','./index.html','./styles.css','./document-system.js','./document-system.css','./a1-logo.png','./manifest.webmanifest','./employee.html','./employee.js','./employee.css','./employee.webmanifest'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('a1-fieldops-')&&k!==CACHE).map(k=>caches.delete(k))))));

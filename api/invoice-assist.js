@@ -1,3 +1,4 @@
+import {reviewedInvoiceWork} from '../lib/work-summary.js';
 const SUPABASE_URL=process.env.SUPABASE_URL||'https://dddthwakdrxxmjbfowpl.supabase.co';
 const PUBLISHABLE_KEY='sb_publishable_f3QAMeX2YKuyeOI3WMkhng_9LdWdL7O';
 const MODEL=process.env.OPENAI_INVOICE_MODEL||'gpt-5.6-luna';
@@ -18,11 +19,15 @@ export default async function handler(req,res){
     const items=Array.isArray(x.items)?x.items.slice(0,20).map(i=>({description:clean(i.description,500),quantity:Number(i.quantity||0),unit_price:Number(i.unit_price||0)})):[];
     const isEstimate=String(x.document_type||'invoice').toLowerCase()==='estimate';
     const isJob=x.document_type==='job';
+    const workContext=(!isEstimate&&!isJob)?await reviewedInvoiceWork(x.invoice_id):{manager_notes:'',technician_reports:''};
+    const fieldReport=workContext.technician_reports;
     const prompt=`You write customer-facing ${isJob?'job descriptions':isEstimate?'estimates':'invoices'} for A-1 Plumbing & Heating, a professional plumbing contractor. Turn rough field notes into concise, polished ${isEstimate?'scope-of-work wording for proposed work':'invoice wording for completed/billed work'}.
 
 Title: ${clean(x.title,300)}
 Current description: ${clean(x.description,2200)}
 Internal notes: ${clean(x.notes,2200)}
+Manager job description: ${workContext.manager_notes||'None supplied'}
+Owner-approved technician completion reports: ${fieldReport||'None supplied'}
 Total: $${Number(x.total||0).toFixed(2)}
 Line items: ${JSON.stringify(items)}
 
@@ -38,12 +43,14 @@ Rules:
 - Do not invent parts, materials, brands, diagnostics, completed work, or promises.
 - Use plain customer-friendly plumbing language; avoid legalistic wording and unnecessary jargon.
 - customer_message should be a short note suitable for text/email when sending the ${isEstimate?'quote':'invoice'}.
+- Compare the manager description/notes with the approved technician report before writing. If facts conflict, do not guess: explain the discrepancy in a review_notes string and exclude unsupported completion claims.
+- Keep full reports internal to the draft process. Include only the work performed and a relevant recorded check/result in the short description. Mention outstanding work if needed to avoid implying completion. Never convert “Not performed” into a successful test.
 - If notes are sparse, preserve uncertainty instead of guessing.`;
     const r=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({model:MODEL,input:prompt,max_output_tokens:650})});
     const j=await r.json();if(!r.ok)return res.status(r.status).json({error:j?.error?.message||'OpenAI request failed'});
     let draft;try{draft=JSON.parse(extractText(j));}catch{return res.status(502).json({error:'AI returned an unreadable invoice draft. Try again.'});}
     if(!draft||typeof draft.brief_description!=='string'||!Array.isArray(draft.line_items))return res.status(502).json({error:'AI invoice draft was incomplete. Try again.'});
     draft.line_items=draft.line_items.slice(0,items.length).map(v=>({description:clean(v?.description,500)}));
-    return res.status(200).json({draft,usage:j.usage||null,request_id:j.id||null});
+    return res.status(200).json({draft,field_report_used:!!fieldReport,usage:j.usage||null,request_id:j.id||null});
   }catch(err){return res.status(500).json({error:err?.message||'Could not write invoice'});}
 }

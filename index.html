@@ -16,13 +16,13 @@
 .doc-modal-card{width:min(860px,100%)}.doc-preview-actions{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}.material-markup-box{display:grid;gap:6px}.mini-action{justify-self:start;border:0;background:transparent!important;color:#d7d9df!important;padding:2px 0!important;font-size:.78rem;text-decoration:underline;min-height:auto!important}.computed-price{padding:10px 12px;border:1px solid #343840;border-radius:10px;background:#111318}.computed-price b{display:block;font-size:1.05rem}.signature-status{border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px;margin:12px 0;background:rgba(255,255,255,.035)}.invoice-edit-row{display:grid;grid-template-columns:minmax(0,1fr) 90px 125px auto;gap:8px;align-items:center;margin:8px 0}.invoice-edit-row input{min-width:0}.invoice-edit-row button{padding:9px 10px}@media(max-width:650px){.invoice-edit-row{grid-template-columns:1fr 1fr}.invoice-edit-row .edit-desc{grid-column:1/-1}.invoice-edit-row button{grid-column:1/-1}}
 </style>
 
-<style id="a1-brand-v31.8.0">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
+<style id="a1-brand-v31.8.1">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
 <link rel="stylesheet" href="document-system.css"><script src="document-system.js"></script>
 </head>
 <body>
   <div id="login" class="login">
     <img class="a1-login-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating">
-    <h1>FieldOps <small style="font-size:12px">v31.8.0</small></h1>
+    <h1>FieldOps <small style="font-size:12px">v31.8.1</small></h1>
     <p>Private operations portal</p>
     <form id="loginForm" action="javascript:void(0)" onsubmit="if(window.fieldOpsLogin){window.fieldOpsLogin(event)}else{document.getElementById('loginMsg').textContent='FieldOps could not initialize. Refresh once; if this remains, use the new deployment URL.'}; return false;">
       <input id="accessKey" type="password" placeholder="Access key" autocomplete="current-password" required>
@@ -33,7 +33,7 @@
 
   <div id="app" style="display:none">
     <header>
-      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing &amp; HVAC · v31.8.0</small></div></div>
+      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing &amp; HVAC · v31.8.1</small></div></div>
       <button id="logout">Sign out</button>
     </header>
     <main>
@@ -593,13 +593,13 @@ window.aiInvoiceDraft=async id=>{
   panel.innerHTML='<div class="empty">Writing a clean professional invoice description…</div>';
   try{
     const accessKey=sessionStorage.getItem('a1_fieldops_key')||'';
-    const payload={title:invoice.title||'',description:invoice.description||'',notes:invoice.notes||'',items:items.map(x=>({description:x.description,quantity:x.quantity,unit_price:x.unit_price})),total:Number(invoice.total||0)};
+    const payload={invoice_id:invoice.id,title:invoice.title||'',description:invoice.description||'',notes:invoice.notes||'',items:items.map(x=>({description:x.description,quantity:x.quantity,unit_price:x.unit_price})),total:Number(invoice.total||0)};
     const r=await fetch('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':accessKey},body:JSON.stringify(payload)});
     const j=await r.json().catch(()=>({})); if(!r.ok)throw new Error(j?.error||'AI invoice writer unavailable');
     const d=j.draft||{};
     window._invoiceAiDraft=window._invoiceAiDraft||{}; window._invoiceAiDraft[id]=d;
     const lines=(d.line_items||[]).map((x,i)=>`<div class="detail-row"><div><b>${esc(x.description||'Line item')}</b><div class="meta">Keeps quantity and price from line ${i+1}</div></div></div>`).join('');
-    panel.innerHTML=`<h3>AI professional draft</h3><p class="ai-note">${esc(d.brief_description||'')}</p>${lines?`<h3>Polished line-item wording</h3>${lines}`:''}${d.customer_message?`<h3>Customer note</h3><p class="ai-note">${esc(d.customer_message)}</p>`:''}<div class="actions"><button class="convert" onclick="applyInvoiceAiDraft('${id}')">Apply to Invoice</button></div><p class="meta">Review before applying. AI changes wording only — it does not change quantities, prices, tax, or totals.</p>`;
+    panel.innerHTML=`<h3>AI professional draft</h3><p class="meta">${j.field_report_used?'Reviewed manager notes and approved technician completion reports.':'Reviewed manager notes. No approved technician completion report was available for this invoice.'}</p>${d.review_notes?`<p role="status">Review needed: ${esc(d.review_notes)}</p>`:''}<p class="ai-note">${esc(d.brief_description||'')}</p>${lines?`<h3>Polished line-item wording</h3>${lines}`:''}${d.customer_message?`<h3>Customer note</h3><p class="ai-note">${esc(d.customer_message)}</p>`:''}<div class="actions"><button class="convert" onclick="applyInvoiceAiDraft('${id}')">Apply to Invoice</button></div><p class="meta">Review before applying. AI changes wording only — it does not change quantities, prices, tax, or totals.</p>`;
     if(j.usage)logAiUsage({request_id:j.request_id||'',input_tokens:j.usage.input_tokens||0,output_tokens:j.usage.output_tokens||0,total_tokens:j.usage.total_tokens||0,title:'Invoice writer'});
   }catch(err){panel.innerHTML=`<div class="empty">AI invoice writer failed: ${esc(err?.message||String(err))}</div>`;}
 };
