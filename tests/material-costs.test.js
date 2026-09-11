@@ -1,0 +1,20 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+test('material entry requires deliberate cost, applies material-only markup and blocks repeated saves',async()=>{
+ const source=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
+ const code=source.slice(source.indexOf('window.openMaterials='),source.indexOf("$('#closeMaterialsModal').onclick"));
+ const elements=new Map(),get=id=>{if(!elements.has(id))elements.set(id,{value:'',style:{},addEventListener(){}});return elements.get(id);};
+ let inserts=0,resolveSave,payload;const messages=[];
+ const context={window:{},materialJobId:null,$:get,esc:String,localStorage:{getItem:()=>25,setItem(){}},showBanner:m=>messages.push(m),sb:{from:()=>({select:()=>({eq:()=>({order:async()=>({data:[]})})}),insert:p=>{inserts++;payload=p;return new Promise(r=>resolveSave=r);}})}};
+ vm.createContext(context);vm.runInContext(code,context);context.openMaterials=context.window.openMaterials;
+ await context.window.openMaterials('test-job');
+ assert.match(get('#materialsDetail').innerHTML,/id="matCost"[^>]*required/);
+ const button={disabled:false};let valid=false;const form={reportValidity:()=>valid,querySelector:()=>button},event={preventDefault(){},currentTarget:form};
+ await get('#materialForm').onsubmit(event);assert.equal(inserts,0);
+ get('#matDesc').value='Supply fitting';get('#matQty').value='2';get('#matCost').value='10';get('#matMarkup').value='25';valid=true;
+ const first=get('#materialForm').onsubmit(event);await get('#materialForm').onsubmit(event);assert.equal(inserts,1);assert.equal(button.disabled,true);assert.equal(payload.unit_cost,10);assert.equal(payload.unit_price,12.5);assert.equal(payload.quantity,2);
+ resolveSave({error:{message:'offline'}});await first;assert.equal(button.disabled,false);assert.match(messages.at(-1),/Check the material list before retrying/);
+ get('#matCost').value='-5';await get('#materialForm').onsubmit(event);assert.equal(inserts,1);
+});

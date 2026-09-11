@@ -1,6 +1,20 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {startServer} from './dev-server.js';
+test('quote email uses a stable signing link without an unsigned attachment; edits replace it',async()=>{
+ const app=await startServer();try{
+  const call=async body=>{const r=await fetch(app.origin+'/api/send-document',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':'test-key'},body:JSON.stringify(body)});assert.equal(r.status,200);return r.json();};
+  const body={kind:'estimate',id:app.estimate};const first=await call({...body,action:'link'});
+  await call(body);const mail=app.mails.at(-1);assert.equal(mail.attachments,undefined);assert.ok(mail.html.includes(first.signing_url));assert.match(mail.html,/secure link/);
+  const again=await call({...body,action:'link'});assert.equal(again.signing_url,first.signing_url);
+  const session=await fetch(app.origin+'/api/signing-session?token='+new URL(first.signing_url).searchParams.get('token'));assert.equal(session.status,200);
+  // Customer token cannot authorize editing the underlying estimate.
+  const denied=await fetch(app.origin+'/api/update-invoice',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'estimate',id:app.estimate,token:new URL(first.signing_url).searchParams.get('token'),items:[{description:'Tampered price',quantity:1,unit_price:1}]})});assert.equal(denied.status,401);
+  await app.q('update estimates set description=$1 where id=$2',['Revised scope',app.estimate]);
+  const replaced=await call({...body,action:'link'});assert.notEqual(replaced.signing_url,first.signing_url);
+  const old=await fetch(app.origin+'/api/signing-session?token='+new URL(first.signing_url).searchParams.get('token'));assert.equal(old.status,409);
+ }finally{await app.close();}
+});
 test('invoice delivery: PDF, recipient, failures, and accepted email with failed status update',async()=>{
  const app=await startServer();const original=global.fetch;
  try{
