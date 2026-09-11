@@ -1,3 +1,12 @@
+# v31.4 reliable quotes and scheduling
+
+- Quote header and line items save in one transaction. A persistent request ID makes retries return the original saved quote; a changed request is rejected instead of creating a duplicate. Client/job ownership and active-job checks run inside the transaction. Line totals are rounded consistently.
+- Approved quotes create or open a job without modifying the quote. The link is stored on the job so signed snapshots and source fields remain unchanged. Job completion finds the approved source and bills the approved amount. Repeated scheduling/completion returns existing records.
+- Unfinished quote scope, prices, estimator inputs and request identity are saved locally on this device. Restore Draft recovers after reload; a successful save clears the recovery copy. Offline notices explain that database saves and sending require internet. This is recovery, not offline synchronization.
+- Apply `20260911022416_reliable_quotes_and_scheduling.sql` before deploying. New RPCs are SECURITY INVOKER and use existing table grants and RLS/access-key checks; they do not bypass policies. The current production completion function was reviewed before preparing its replacement.
+- Validation: 27 automated tests and workflow smoke checks passed. Tests inject an item-write failure and confirm full rollback, retry saves/scheduling/completion, reject unauthorized invocation, and prove signed snapshots unchanged. Live rollback rehearsal passed with synthetic records; all test changes rolled back. Browser verified draft recovery, approved quote → job → appointment → completion → correctly priced $295 invoice, and recovery at 390×844 without overflow.
+- The production migration was applied after explicit approval. Post-application rollback verification passed without retaining test data. Shared Vercel variables were rechecked: only five non-secret settings exist, so secret-key setup and real email/AI verification remain pending.
+
 # v31.3 client and job management
 
 - Edit Client changes contact details in place while retaining ownership and previously generated document snapshots.

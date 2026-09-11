@@ -26,3 +26,4 @@
 .ai-status-row{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.badge.hot{border-color:#b51f31;color:#fff}
 
 .estimate-form label{display:grid;gap:6px;min-width:0;font-size:14px;color:#c8ccd4}.estimate-form select{min-width:0;max-width:100%}.estimate-form .item-grid>*{min-width:0}button:disabled{opacity:.55;cursor:wait}.appmsg.modal-message{position:fixed;top:12px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:680px;z-index:2100;box-shadow:0 6px 24px #0008}
+.estimate-form>button{min-height:44px;padding:11px 14px;border:1px solid #30343d;border-radius:10px;background:#1a1d23;color:#fff;font:inherit;font-weight:700;cursor:pointer}.estimate-form>button.convert{background:#c9202f;border-color:#c9202f}

@@ -16,13 +16,13 @@
 .doc-modal-card{width:min(860px,100%)}.doc-preview-actions{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}.material-markup-box{display:grid;gap:6px}.mini-action{justify-self:start;border:0;background:transparent!important;color:#d7d9df!important;padding:2px 0!important;font-size:.78rem;text-decoration:underline;min-height:auto!important}.computed-price{padding:10px 12px;border:1px solid #343840;border-radius:10px;background:#111318}.computed-price b{display:block;font-size:1.05rem}.signature-status{border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px;margin:12px 0;background:rgba(255,255,255,.035)}.invoice-edit-row{display:grid;grid-template-columns:minmax(0,1fr) 90px 125px auto;gap:8px;align-items:center;margin:8px 0}.invoice-edit-row input{min-width:0}.invoice-edit-row button{padding:9px 10px}@media(max-width:650px){.invoice-edit-row{grid-template-columns:1fr 1fr}.invoice-edit-row .edit-desc{grid-column:1/-1}.invoice-edit-row button{grid-column:1/-1}}
 </style>
 
-<style id="a1-brand-v31.3">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
+<style id="a1-brand-v31.4">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
 <link rel="stylesheet" href="document-system.css"><script src="document-system.js"></script>
 </head>
 <body>
   <div id="login" class="login">
     <img class="a1-login-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating">
-    <h1>FieldOps <small style="font-size:12px">v31.3</small></h1>
+    <h1>FieldOps <small style="font-size:12px">v31.4</small></h1>
     <p>Private operations portal</p>
     <form id="loginForm" action="javascript:void(0)" onsubmit="if(window.fieldOpsLogin){window.fieldOpsLogin(event)}else{document.getElementById('loginMsg').textContent='FieldOps could not initialize. Refresh once; if this remains, use the new deployment URL.'}; return false;">
       <input id="accessKey" type="password" placeholder="Access key" autocomplete="current-password" required>
@@ -33,7 +33,7 @@
 
   <div id="app" style="display:none">
     <header>
-      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing &amp; HVAC · v31.3</small></div></div>
+      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing &amp; HVAC · v31.4</small></div></div>
       <button id="logout">Sign out</button>
     </header>
     <main>
@@ -71,6 +71,7 @@
 <div class="actions"><button id="saveClientBtn" type="submit" class="convert">Save Client &amp; Create Quote</button><button id="cancelCustomerBtn" type="button">Cancel</button></div>
 </form><div id="customers" class="leads"><div class="empty">Choose Customers below to load customers.</div></div></section>
 <section id="estimateView" style="display:none"><div class="job-toolbar"><button id="newEstimateBtn" class="active">New Estimate</button><button id="refreshEstimates">Refresh</button></div>
+<div id="quoteDraftNotice" class="ai-panel" hidden><p id="quoteDraftText">An unfinished quote is saved on this device.</p><div class="actions"><button id="restoreQuoteDraft" type="button">Restore Draft</button><button id="discardQuoteDraft" type="button">Discard Draft</button></div></div>
 <form id="estimateForm" class="estimate-form ai-estimator" style="display:none">
 <div class="eyebrow">SMART ESTIMATOR</div>
 <h2>Build a profitable estimate</h2>
@@ -87,7 +88,7 @@
 <div id="estimateItems"></div>
 <button type="button" id="addEstimateItem">+ Add line item</button>
 <div class="estimate-total">Estimate total: <b id="estimateTotal">$0.00</b></div>
-<div id="estimateMargin" class="meta"></div>
+<div id="estimateMargin" class="meta"></div><p id="quoteDraftStatus" class="meta" role="status"></p>
 <button type="submit" class="convert">Save Draft Estimate</button>
 </form>
 <div id="estimates" class="leads"><div class="empty">Choose Estimates below to load estimates.</div></div></section>
@@ -424,7 +425,7 @@ window.archiveJob=async(id,archive)=>{try{
 }catch(e){showBanner('Could not update job: '+(e?.message||String(e)),'error');}};
 window.updateJobStatus=async(id,status)=>{try{const {error}=await sb.from('jobs').update({status,updated_at:new Date().toISOString()}).eq('id',id);if(error)throw error;showBanner('Job started.','success');await loadJobs();}catch(err){showBanner('Could not update job: '+(err?.message||String(err)),'error');}};
 window.completeJob=async id=>{try{const key=getAccessKey();if(!key)throw new Error('FieldOps access key is missing. Sign in again.');showBanner('Completing job and preparing invoice…');const r=await fetch('/api/complete-job',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':key},body:JSON.stringify({job_id:id})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Could not complete job');showBanner(j.existing?'Job completed — existing invoice opened.':'Job completed — invoice is ready in Money to Collect.','success');await loadJobs();setSection('invoices');await Promise.all([loadCustomers(),loadInvoices()]);if(j.invoice_id)await openInvoice(j.invoice_id);await loadTaxBooks();}catch(err){showBanner('Could not complete job: '+(err?.message||String(err)),'error');}};
-window.openMoneyToCollectForJob=async id=>{setSection('invoices');await Promise.all([loadCustomers(),loadInvoices()]);const inv=invoiceCache.find(x=>String(x.job_id)===String(id));if(inv)openInvoice(inv.id);else showBanner('No invoice is attached to this completed job yet.','error');};
+window.openMoneyToCollectForJob=async id=>{setSection('invoices');await Promise.all([loadCustomers(),loadInvoices()]);const job=jobCache.find(j=>String(j.id)===String(id));const inv=invoiceCache.find(x=>String(x.job_id)===String(id)||(job?.source_estimate_id&&x.estimate_id===job.source_estimate_id));if(inv)openInvoice(inv.id);else showBanner('No invoice is attached to this completed job yet.','error');};
 
 
 let customerCache=[],estimateCache=[];
@@ -603,14 +604,15 @@ function addEstimateItem(description='',qty=1,unit=0){
   $('#estimateItems').appendChild(row); calcEstimateTotal();
 }
 function calcEstimateTotal(){
-  let total=0; document.querySelectorAll('.estimate-item').forEach(r=>total+=(Number(r.querySelector('.item-qty').value)||0)*(Number(r.querySelector('.item-unit').value)||0));
+  let total=0; document.querySelectorAll('.estimate-item').forEach(r=>total+=Math.round(((Number(r.querySelector('.item-qty').value)||0)*(Number(r.querySelector('.item-unit').value)||0)+Number.EPSILON)*100)/100);
   $('#estimateTotal').textContent=total.toLocaleString(undefined,{style:'currency',currency:'USD'});
   return total;
 }
 $('#addEstimateItem').onclick=()=>addEstimateItem();
 $('#newEstimateBtn').onclick=async()=>{await loadCustomers();await prefillEstimate('');};
 $('#refreshEstimates').onclick=loadEstimates;
-window.prefillEstimate=async id=>{setSection('estimates');$('#estimateForm').reset();$('#estimateForm').style.display='grid';syncEstimateCustomers(id);$('#estimateItems').innerHTML='';addEstimateItem();await loadEstimateJobs();};
+let quoteSaveRequestId=crypto.randomUUID();
+window.prefillEstimate=async id=>{quoteSaveRequestId=crypto.randomUUID();setSection('estimates');$('#estimateForm').reset();$('#estimateForm').style.display='grid';syncEstimateCustomers(id);$('#estimateItems').innerHTML='';addEstimateItem();await loadEstimateJobs();};
 
 async function loadEstimates(){
   $('#estimates').innerHTML='<div class="empty">Loading estimates…</div>';
@@ -625,15 +627,13 @@ $('#estimateForm').onsubmit=async e=>{
   const items=[...document.querySelectorAll('.estimate-item')].map(r=>({description:r.querySelector('.item-desc').value.trim(),quantity:Number(r.querySelector('.item-qty').value)||0,unit_price:Number(r.querySelector('.item-unit').value)||0})).filter(x=>x.description);
   if(!items.length){showBanner('Add at least one estimate line item.','error');return;}
   const button=e.target.querySelector('[type="submit"]');if(button.disabled)return;button.disabled=true;
+  persistQuoteDraft();
   try{
     if(!customerById($('#estCustomerId').value))throw new Error('Choose a client before saving the quote.');
     if(items.some(x=>!Number.isFinite(x.quantity)||!Number.isFinite(x.unit_price)||x.quantity<=0||x.unit_price<0))throw new Error('Use a positive quantity and a valid price for each item.');
-    const total=calcEstimateTotal();
-    const estimate={owner_id:currentSession.user.id,customer_id:$('#estCustomerId').value.trim(),title:$('#estTitle').value.trim(),description:$('#estDescription').value.trim(),status:'draft',subtotal:total,tax:0,total};
-    const job=$('#estJobId').value.trim(); if(job){const {data:linked,error:jobError}=await sb.from('jobs').select('id').eq('id',job).eq('customer_id',estimate.customer_id);if(jobError)throw jobError;if(!linked?.length)throw new Error('Choose a job belonging to this client, or leave Job blank.');estimate.job_id=job;}
-    const {data,error}=await sb.from('estimates').insert(estimate).select().single(); if(error)throw error;
-    const itemRows=items.map((x,i)=>({estimate_id:data.id,description:x.description,quantity:x.quantity,unit_price:x.unit_price,line_total:x.quantity*x.unit_price,sort_order:i}));
-    const {error:itemError}=await sb.from('estimate_items').insert(itemRows); if(itemError)throw itemError;
+    const {data,error}=await sb.rpc('fieldops_create_quote',{p_request_id:quoteSaveRequestId,p_customer_id:$('#estCustomerId').value,p_job_id:$('#estJobId').value||null,p_title:$('#estTitle').value.trim(),p_description:$('#estDescription').value.trim(),p_items:items});
+    if(error)throw error;if(!data?.id)throw new Error('Save confirmation was not received. Retry this draft to check its saved status.');
+    quoteSaveRequestId=crypto.randomUUID();clearQuoteDraft();
     e.target.reset(); $('#estimateItems').innerHTML=''; addEstimateItem();await loadEstimateJobs();await loadEstimates();showBanner('Quote saved. Review it, then choose Send Quote.','success');await openEstimate(data.id);
   }catch(err){showBanner('Could not save estimate: '+(err?.message||String(err)),'error');}finally{button.disabled=false;}
 };
@@ -646,9 +646,18 @@ window.openEstimate=async id=>{
  const customer=customerById(estimate?.customer_id);
  const contactButtons=customer?`${customer.phone?`<button onclick='contactDoc("estimate","call",customerById("${estimate.customer_id}"),estimateCache.find(x=>String(x.id)===String("${id}")),window._estimateItems?.["${id}"]||[])'>Call</button><button onclick='contactDoc("estimate","sms",customerById("${estimate.customer_id}"),estimateCache.find(x=>String(x.id)===String("${id}")),window._estimateItems?.["${id}"]||[])'>Text Quote</button>`:''}${customer.email?`<button class='convert' onclick="sendCustomerDocument('estimate','${id}')">Send Quote</button><button onclick='contactDoc("estimate","email",customerById("${estimate.customer_id}"),estimateCache.find(x=>String(x.id)===String("${id}")),window._estimateItems?.["${id}"]||[])'>Email Draft</button>`:''}`:'';
  window._estimateItems=window._estimateItems||{}; window._estimateItems[id]=items||[];
- detail.innerHTML=`<div class="eyebrow">ESTIMATE</div><h2 id="estimateModalTitle">${esc(estimate?.title||estimate?.estimate_number||'Estimate')}</h2><div class="meta" id="documentStatus-estimate-${id}">Status: ${esc(estimate?.status||'draft')}</div>${estimate?.description?`<p>${esc(estimate.description)}</p>`:''}<div>${rows||'<div class="empty">No line items.</div>'}</div><div class="detail-total"><span>Total</span><b>${Number(estimate?.total||estimate?.total_amount||0).toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div><div id="estimateAiPanel"></div><div id="signatureStatus-${id}" class="signature-status"></div>${contactButtons?`<h3>Contact / Send quote</h3><div class="actions">${contactButtons}</div><p class="meta">Send Quote emails the full branded quote as a PDF attachment. Email Draft only opens your iPhone Mail app.</p>`:''}<div class="actions"><button class="convert" onclick="openBrandedDocument('estimate','${id}')">View Quote / PDF</button><button onclick="openInvoiceEditor('${id}','estimate')">Edit / Change Order</button><button id="aiScopeBtn-${id}" onclick="aiEstimateDescription('${id}')">✦ AI Write Scope</button><button onclick="setEstimateStatus('${id}','sent')">Mark Sent</button><button class="convert" onclick="setEstimateStatus('${id}','approved')">Mark Approved</button><button onclick="setEstimateStatus('${id}','declined')">Declined</button>${estimate?.status==='approved'?`<button class="convert" onclick="createInvoiceFromEstimate('${id}')">Create Invoice</button>`:''}</div>`;
+ detail.innerHTML=`<div class="eyebrow">ESTIMATE</div><h2 id="estimateModalTitle">${esc(estimate?.title||estimate?.estimate_number||'Estimate')}</h2><div class="meta" id="documentStatus-estimate-${id}">Status: ${esc(estimate?.status||'draft')}</div>${estimate?.description?`<p>${esc(estimate.description)}</p>`:''}<div>${rows||'<div class="empty">No line items.</div>'}</div><div class="detail-total"><span>Total</span><b>${Number(estimate?.total||estimate?.total_amount||0).toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div><div id="estimateAiPanel"></div><div id="signatureStatus-${id}" class="signature-status"></div>${contactButtons?`<h3>Contact / Send quote</h3><div class="actions">${contactButtons}</div><p class="meta">Send Quote emails the full branded quote as a PDF attachment. Email Draft only opens your iPhone Mail app.</p>`:''}<div class="actions"><button class="convert" onclick="openBrandedDocument('estimate','${id}')">View Quote / PDF</button><button onclick="openInvoiceEditor('${id}','estimate')">Edit / Change Order</button><button id="aiScopeBtn-${id}" onclick="aiEstimateDescription('${id}')">✦ AI Write Scope</button><button onclick="setEstimateStatus('${id}','sent')">Mark Sent</button><button class="convert" onclick="setEstimateStatus('${id}','approved')">Mark Approved</button><button onclick="setEstimateStatus('${id}','declined')">Declined</button>${['approved','converted'].includes(estimate?.status)?`<button onclick="scheduleApprovedQuote('${id}')">Create / Schedule Job</button>`:''}${estimate?.status==='approved'?`<button class="convert" onclick="createInvoiceFromEstimate('${id}')">Create Invoice</button>`:''}</div>`;
  await loadInvoiceSignatureStatus(id,'estimate');
  }catch(err){detail.innerHTML='<div class="empty">Estimate detail could not load. '+esc(err?.message||String(err))+'</div>';}
+};
+const schedulingQuotes=new Set();
+window.scheduleApprovedQuote=async id=>{
+ if(schedulingQuotes.has(id))return;schedulingQuotes.add(id);
+ try{const {data,error}=await sb.rpc('fieldops_schedule_quote',{p_estimate_id:id,p_scheduled_at:null});if(error)throw error;if(!data?.job_id)throw new Error('Job confirmation was not received. Retry to check its status.');
+ $('#estimateModal').style.display='none';setSection('jobs');jobMode='all';syncJobMode();await loadJobs();
+ const job=jobCache.find(j=>j.id===data.job_id);if(job&&!['completed','cancelled'].includes(job.status))await openJobForm(job.customer_id,job.id);
+ showBanner(data.existing?'The existing job is ready. No duplicate was created.':'Job created from the approved quote. Add an appointment when ready.','success');
+ }catch(e){showBanner('Could not schedule quote: '+(e.message||String(e)),'error');}finally{schedulingQuotes.delete(id);}
 };
 window.setEstimateStatus=async(id,status)=>{try{const patch={status,updated_at:new Date().toISOString()};if(status==='sent')patch.sent_at=new Date().toISOString();if(status==='approved')patch.approved_at=new Date().toISOString();const {error}=await sb.from('estimates').update(patch).eq('id',id);if(error)throw error;showBanner('Estimate marked '+status+'.','success');$('#estimateModal').style.display='none';await loadEstimates();}catch(err){showBanner('Could not update estimate: '+(err?.message||String(err)),'error');}};
 $('#closeEstimateModal').onclick=()=>$('#estimateModal').style.display='none';
@@ -868,6 +877,36 @@ $('#aiEstimateBtn').onclick=async()=>{
   const x=estimatorInputs(), labor=x.labor_hours*x.labor_rate, materialSell=x.material_cost*(1+x.markup_pct/100), base=labor+materialSell, total=base*(1+x.contingency_pct/100);
   if(x.labor_hours||x.material_cost) $('#estimateMargin').textContent=`Internal calculator: ${money(total)} before any manually-added scope adjustments.`;
 }));
+
+const quoteDraftStorageKey='a1_fieldops_quote_draft_v1';
+const quoteDraftFields=['estCustomerId','estJobId','estTitle','estDescription','estZip','estLaborHours','estLaborRate','estMaterialCost','estMarkup','estContingency'];
+let restoringQuoteDraft=false;
+function readQuoteDraft(){try{return JSON.parse(localStorage.getItem(quoteDraftStorageKey)||'null');}catch{return null;}}
+function refreshQuoteDraftNotice(){$('#quoteDraftNotice').hidden=!readQuoteDraft();}
+function clearQuoteDraft(){try{localStorage.removeItem(quoteDraftStorageKey);}catch{}$('#quoteDraftStatus').textContent='';refreshQuoteDraftNotice();}
+function persistQuoteDraft(){
+ if(restoringQuoteDraft||$('#estimateForm').style.display==='none')return;
+ const fields=Object.fromEntries(quoteDraftFields.map(id=>[id,$('#'+id).value]));const items=[...document.querySelectorAll('.estimate-item')].map(row=>({description:row.querySelector('.item-desc').value,quantity:row.querySelector('.item-qty').value,unit_price:row.querySelector('.item-unit').value}));
+ if(!fields.estTitle&&!fields.estDescription&&!items.some(i=>i.description))return;
+ try{localStorage.setItem(quoteDraftStorageKey,JSON.stringify({fields,items,requestId:quoteSaveRequestId,savedAt:new Date().toISOString()}));$('#quoteDraftStatus').textContent='Draft saved on this device. It has not been sent.';refreshQuoteDraftNotice();}
+ catch{$('#quoteDraftStatus').textContent='This browser could not save a recovery copy. Keep this page open until you save the quote.';}
+}
+$('#estimateForm').addEventListener('input',persistQuoteDraft);$('#estimateForm').addEventListener('change',persistQuoteDraft);
+$('#estimateForm').addEventListener('click',()=>setTimeout(persistQuoteDraft,0));
+$('#restoreQuoteDraft').onclick=async()=>{
+ const draft=readQuoteDraft();if(!draft?.fields||!Array.isArray(draft.items))return;
+ restoringQuoteDraft=true;
+ try{await loadCustomers();await prefillEstimate(draft.fields.estCustomerId||'');quoteSaveRequestId=draft.requestId||crypto.randomUUID();
+ for(const id of quoteDraftFields)if(id!=='estJobId')$('#'+id).value=draft.fields[id]||'';
+ await loadEstimateJobs();$('#estJobId').value=draft.fields.estJobId||'';$('#estimateItems').innerHTML='';draft.items.slice(0,100).forEach(i=>addEstimateItem(i.description,Number.isFinite(Number(i.quantity))?Number(i.quantity):1,Number.isFinite(Number(i.unit_price))?Number(i.unit_price):0));
+ $('#quoteDraftStatus').textContent='Recovered from this device. Review before saving or sending.';
+ }catch(e){showBanner('Could not restore draft: '+e.message,'error');}finally{restoringQuoteDraft=false;}
+};
+$('#discardQuoteDraft').onclick=clearQuoteDraft;
+window.addEventListener('pagehide',persistQuoteDraft);
+window.addEventListener('offline',()=>showBanner('Offline. Your quote can be kept as a draft on this device; saving to FieldOps and sending need internet.','error'));
+window.addEventListener('online',()=>showBanner('Connection restored. Review your draft, then save or send when ready.','success'));
+refreshQuoteDraftNotice();
 </script>
 </body>
 </html>

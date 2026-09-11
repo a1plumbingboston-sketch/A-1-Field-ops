@@ -10,6 +10,7 @@ await db.exec(`create table leads(id uuid primary key default gen_random_uuid(),
 await db.exec("create table auth.users(id uuid primary key);insert into auth.users values('0e034a68-56ff-41af-a323-80415f6570b5'),('969120b1-57fa-4c59-aeee-2673388f037b');alter table customers add column notes text;");
 await db.exec(await fs.readFile(new URL('./legacy-lead-conversion.sql',import.meta.url),'utf8'));
 await db.exec(await fs.readFile(new URL('../supabase/migrations/20260910232443_job_archive_owner_resolution.sql',import.meta.url),'utf8'));
+await db.exec(await fs.readFile(new URL('../supabase/migrations/20260911022416_reliable_quotes_and_scheduling.sql',import.meta.url),'utf8'));
 const q=async(sql,args=[]) => (await db.query(sql,args)).rows;
 const customer=(await q("insert into customers(name,email,phone,address,city,state,zip) values($1,$2,$3,$4,$5,$6,$7) returning id",[sample.customer.name,sample.customer.email,sample.customer.phone,sample.customer.address,sample.customer.city,sample.customer.state,sample.customer.zip]))[0].id;
 const job=(await q("insert into jobs(customer_id,title,address,status) values($1,'Water heater replacement','100 Sample Street, Boston','scheduled') returning id",[customer]))[0].id;

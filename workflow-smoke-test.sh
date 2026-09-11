@@ -11,7 +11,7 @@ checks={
  'customer loading': 'loadCustomers',
  'job loading': 'loadJobs',
  'materials': 'openMaterials',
- 'estimate save': "sb.from('estimates').insert",
+ 'estimate save': 'fieldops_create_quote',
  'estimate send': 'setEstimateStatus',
  'estimate approval': "setEstimateStatus('${id}','approved')",
  'invoice creation': 'createInvoiceFromEstimate',
@@ -38,5 +38,5 @@ PY
 node --check "$ROOT/_inline.js"
 rm "$ROOT/_inline.js"
 for f in "$ROOT"/api/*.js "$ROOT"/lib/*.js "$ROOT"/document-system.js; do node --check "$f"; done
-grep -q "a1-fieldops-v31.3" "$ROOT/service-worker.js"
+grep -q "a1-fieldops-v31.4" "$ROOT/service-worker.js"
 echo "All local workflow smoke tests passed."
