@@ -30,7 +30,13 @@ test('archive completed job and restore preserve invoice; active jobs cannot be 
 });
 test('job page filters archives out of active views and offers restore',()=>{
  const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');const start=html.indexOf('function renderJobs()'),end=html.indexOf('window.archiveJob=',start);const el={};
- const context=vm.createContext({jobMode:'all',jobCache:[{id:'a',title:'Active job',status:'completed'},{id:'b',title:'Archived job',status:'completed',archived_at:'2026-09-10'}],$:()=>el,esc:s=>s||'',jobDate:()=>'',isToday:()=>true});
+ const context=vm.createContext({jobMode:'all',jobCache:[{id:'a',title:'Active job',status:'completed'},{id:'b',title:'Archived job',status:'completed',archived_at:'2026-09-10'}],$:()=>el,esc:s=>s||'',customerById:()=>null,jobDate:()=>'',isToday:()=>true});
  vm.runInContext(html.slice(start,end)+';renderJobs()',context);assert.match(el.innerHTML,/Active job/);assert.doesNotMatch(el.innerHTML,/Archived job/);assert.match(el.innerHTML,/Remove from page/);
  vm.runInContext("jobMode='archived';renderJobs()",context);assert.match(el.innerHTML,/Archived job/);assert.match(el.innerHTML,/Restore job/);assert.doesNotMatch(el.innerHTML,/Active job/);
+});
+
+
+test('Today uses an appointment date, not the job creation date',()=>{
+ const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');const start=html.indexOf('function jobDate('),end=html.indexOf('function isToday(',start);const context=vm.createContext({});vm.runInContext(html.slice(start,end),context);
+ assert.equal(context.jobDate({created_at:new Date().toISOString()}),'');assert.equal(context.jobDate({scheduled_at:'2026-10-02T14:30:00Z'}),'2026-10-02T14:30:00Z');
 });

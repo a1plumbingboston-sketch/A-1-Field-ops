@@ -1,3 +1,13 @@
+# v31.3 client and job management
+
+- Edit Client changes contact details in place while retaining ownership and previously generated document snapshots.
+- New Job is available from Customers and Jobs. It selects clients by name, fills the service address, and supports an optional appointment and internal job notes.
+- Schedule / Edit preserves a job's original client, completed records, and in-progress status. Conditional updates reject stale edits when a job has been completed elsewhere.
+- Unscheduled jobs appear under My Jobs; Today uses the appointment date rather than the creation timestamp. Cancelled/completed jobs are excluded from quote job choices.
+- Create Quote on an active job carries the client, job and title into the estimator. Internal job notes are not copied into customer-facing scope. Job cards display the client name and can use the client's phone.
+- Validation: all 26 automated tests and workflow smoke checks passed. Browser checks verified client email editing, new unscheduled job, Today filtering, scheduling, mobile job editing at 390×844 without overflow/errors, job → quote → approved $275 estimate → completed job → $275 invoice in Money to Collect. All records were synthetic. No schema migration is needed; required fields and statuses were checked against the live schema.
+- Production delivery and AI remain dependent on the outstanding secret-key configuration described below.
+
 # v31.2 client creation and document delivery
 
 - Customers → New Client → Save Client & Create Quote captures contact details and supplies the required owner. Quotes use client names and optional job selections instead of raw IDs. Changing clients clears the previous job; only that client's active jobs are offered and the selected job is checked again on save.
