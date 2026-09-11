@@ -18,3 +18,12 @@ test('pending checkout retries without collecting another card; closed and paid 
  assert.equal(loaded,0);if(status==='processing'){await els.pay.onclick();assert.equal(requests,1);assert.match(els.message.textContent,/recorded/);}else{assert.equal(els.pay.disabled,true);assert.equal(requests,0);}
  }
 });
+test('card verification includes billing contact and empty errors produce visible guidance without charging',async()=>{
+ const html=await fs.readFile(new URL('../pay.html',import.meta.url),'utf8');
+ const els=Object.fromEntries(['pay','apple','message','title','amount'].map(k=>[k,{style:{},disabled:false}]));let charges=0,mode='empty',tokenizations=0;
+ const context=vm.createContext({URLSearchParams,location:{search:'?token=test'},document:{querySelector:s=>els[s.slice(1)],createElement:()=>({}),head:{append:s=>s.onload()}},Square:{payments:()=>({card:async()=>({attach:async()=>{},tokenize:async details=>{tokenizations++;assert.equal(typeof details.billingContact,'object');assert.equal(details.amount,'180.00');if(mode==='empty')throw {};if(mode==='postal')return {status:'Invalid',errors:[{field:'postalCode'}]};return {status:'OK',token:'card-token'};}}),paymentRequest:v=>v,applePay:async()=>{throw Error('unavailable');}})},fetch:async(url,options)=>{if(options.body){charges++;return {ok:true,json:async()=>({status:'COMPLETED'})};}return {ok:true,json:async()=>({amount:180,title:'Test',status:'open',application_id:'test',location_id:'test'})};}});
+ vm.runInContext(html.match(/<script>([\s\S]*?)<\/script>/)[1],context);for(let i=0;i<30;i++)await Promise.resolve();
+ await els.pay.onclick();assert.match(els.message.textContent,/could not verify/);assert.equal(charges,0);
+ mode='postal';await els.pay.onclick();assert.match(els.message.textContent,/billing ZIP/);assert.equal(charges,0);
+ mode='success';await Promise.all([els.pay.onclick(),els.pay.onclick()]);assert.equal(charges,1);await els.pay.onclick();assert.equal(charges,1);assert.equal(tokenizations,3);
+});
