@@ -37,8 +37,9 @@ test('client creation/editing, quote delivery, job ownership, scheduling, and st
  el('#jobClient').value=chosen;el('#jobTitle').value='New client repair';el('#jobSchedule').value='';
  await el('#jobForm').onsubmit({preventDefault(){},target:form});assert.equal(notices.at(-1).type,'success');
  const job=(await app.q('select * from jobs where customer_id=$1',[chosen]))[0];assert.equal(job.status,'new');assert.equal(job.scheduled_at,null);assert.equal(job.owner_id,customer.owner_id);assert.equal(job.assigned_to,customer.owner_id);
- context.jobCache=[job];await context.window.openJobForm(chosen,job.id);el('#jobSchedule').value='2026-10-02T10:30';
- await el('#jobForm').onsubmit({preventDefault(){},target:form});assert.equal(notices.at(-1).type,'success');assert.equal((await app.q('select status from jobs where id=$1',[job.id]))[0].status,'scheduled');
+ await app.q("update jobs set scheduled_at='2026-10-01T14:00:00Z' where id=$1",[job.id]);context.jobCache=[job];await context.window.openJobForm(chosen,job.id);el('#jobSchedule').value='2026-10-02T10:30';
+ await el('#jobForm').onsubmit({preventDefault(){},target:form});assert.equal(notices.at(-1).type,'success');assert.equal((await app.q('select status from jobs where id=$1',[job.id]))[0].status,'new');
+ assert.equal(new Date((await app.q('select scheduled_at from jobs where id=$1',[job.id]))[0].scheduled_at).toISOString(),'2026-10-01T14:00:00.000Z');
  await app.q("update jobs set status='in_progress' where id=$1",[job.id]);context.jobCache=await app.q('select * from jobs where id=$1',[job.id]);await context.window.openJobForm(chosen,job.id);el('#jobNotes').value='Keep current work status';
  await el('#jobForm').onsubmit({preventDefault(){},target:form});assert.equal(notices.at(-1).type,'success');assert.equal((await app.q('select status from jobs where id=$1',[job.id]))[0].status,'in_progress');
  // A stale editor must not reopen a job completed by another action.
