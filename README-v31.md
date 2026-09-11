@@ -1,3 +1,12 @@
+# v31.2 client creation and document delivery
+
+- Customers → New Client → Save Client & Create Quote captures contact details and supplies the required owner. Quotes use client names and optional job selections instead of raw IDs. Changing clients clears the previous job; only that client's active jobs are offered and the selected job is checked again on save.
+- New quotes open for review after saving. Quote creation does not require a scheduled job. Existing Auto Markup, AI assist, conversion, signature and payment paths remain.
+- Send Invoice has a consistent label. Repeated clicks are blocked while sending. Confirmation stays visible above the review dialog, and the displayed status/signature state refreshes.
+- Missing email configuration or an invalid customer email is rejected before creating a signing session. Provider rejection, uncertain confirmation, and an accepted email followed by a failed status update have distinct messages. A paid invoice stays paid when a copy is sent.
+- Validation: 24 automated tests plus workflow smoke checks passed. Built-in browser verified desktop new client → quote without job → simulated quote email → invoice → simulated invoice email; mobile new client → quote → simulated email at 390×844, no horizontal overflow or browser errors. Client switching cleared the other client's job. Standalone Playwright could not run because its Chromium executable is not installed; the built-in browser supplied visual workflow coverage.
+- No live customer was created or emailed. Production email delivery remains blocked until the server database key, Resend key and verified sender are configured and deployed. OpenAI's key is also still needed for production AI features. No database migration is required for this release.
+
 # v31.1 follow-up fixes
 
 - AI Approve/Hold use the actual live lead columns and retain edited reply text. Failed draft saves no longer report success.
