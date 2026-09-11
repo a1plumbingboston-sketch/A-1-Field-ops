@@ -9,3 +9,12 @@ test('Apple Pay cancellation makes no charge; successful wallet payment sends ve
  assert.equal(els.apple.style.display,'block');await els.apple.onclick();assert.equal(charges.length,0);assert.equal(els.apple.disabled,false);
  canceled=false;await els.apple.onclick();assert.equal(charges.length,1);assert.equal(charges[0].source_id,'wallet-token');assert.equal(charges[0].verification_token,'verified-token');assert.equal(els.pay.disabled,true);assert.equal(els.apple.style.display,'none');assert.match(els.message.textContent,/recorded/);
 });
+test('pending checkout retries without collecting another card; closed and paid links cannot charge',async()=>{
+ const html=await fs.readFile(new URL('../pay.html',import.meta.url),'utf8');
+ for(const status of ['processing','paid','failed']){
+ const els=Object.fromEntries(['pay','apple','message','title','amount'].map(k=>[k,{style:{},disabled:k==='pay'}]));let requests=0,loaded=0;
+ const context=vm.createContext({URLSearchParams,location:{search:'?token=test'},document:{querySelector:s=>els[s.slice(1)],createElement:()=>({}),head:{append:()=>loaded++}},fetch:async(url,options)=>{if(options.body){requests++;const body=JSON.parse(options.body);assert.equal(body.source_id,'');return {ok:true,json:async()=>({status:'COMPLETED'})};}return {ok:true,json:async()=>({amount:75,title:'Test',status,expired:status==='failed'})};}});
+ vm.runInContext(html.match(/<script>([\s\S]*?)<\/script>/)[1],context);for(let i=0;i<30;i++)await Promise.resolve();
+ assert.equal(loaded,0);if(status==='processing'){await els.pay.onclick();assert.equal(requests,1);assert.match(els.message.textContent,/recorded/);}else{assert.equal(els.pay.disabled,true);assert.equal(requests,0);}
+ }
+});
