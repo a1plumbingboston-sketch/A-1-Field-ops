@@ -1,3 +1,7 @@
+# v31.5 selectable AI quote items and live totals
+
+AI suggestions stay separate until selected and applied. Selected line totals and revised quote/invoice totals recalculate immediately. Signed document edits continue to create change orders.
+
 # v31.4 reliable quotes and scheduling
 
 - Quote header and line items save in one transaction. A persistent request ID makes retries return the original saved quote; a changed request is rejected instead of creating a duplicate. Client/job ownership and active-job checks run inside the transaction. Line totals are rounded consistently.
