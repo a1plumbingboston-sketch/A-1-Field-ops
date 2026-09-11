@@ -16,13 +16,13 @@
 .doc-modal-card{width:min(860px,100%)}.doc-preview-actions{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}.material-markup-box{display:grid;gap:6px}.mini-action{justify-self:start;border:0;background:transparent!important;color:#d7d9df!important;padding:2px 0!important;font-size:.78rem;text-decoration:underline;min-height:auto!important}.computed-price{padding:10px 12px;border:1px solid #343840;border-radius:10px;background:#111318}.computed-price b{display:block;font-size:1.05rem}.signature-status{border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px;margin:12px 0;background:rgba(255,255,255,.035)}.invoice-edit-row{display:grid;grid-template-columns:minmax(0,1fr) 90px 125px auto;gap:8px;align-items:center;margin:8px 0}.invoice-edit-row input{min-width:0}.invoice-edit-row button{padding:9px 10px}@media(max-width:650px){.invoice-edit-row{grid-template-columns:1fr 1fr}.invoice-edit-row .edit-desc{grid-column:1/-1}.invoice-edit-row button{grid-column:1/-1}}
 </style>
 
-<style id="a1-brand-v31.7.11">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
+<style id="a1-brand-v31.8.0">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
 <link rel="stylesheet" href="document-system.css"><script src="document-system.js"></script>
 </head>
 <body>
   <div id="login" class="login">
     <img class="a1-login-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating">
-    <h1>FieldOps <small style="font-size:12px">v31.7.11</small></h1>
+    <h1>FieldOps <small style="font-size:12px">v31.8.0</small></h1>
     <p>Private operations portal</p>
     <form id="loginForm" action="javascript:void(0)" onsubmit="if(window.fieldOpsLogin){window.fieldOpsLogin(event)}else{document.getElementById('loginMsg').textContent='FieldOps could not initialize. Refresh once; if this remains, use the new deployment URL.'}; return false;">
       <input id="accessKey" type="password" placeholder="Access key" autocomplete="current-password" required>
@@ -33,7 +33,7 @@
 
   <div id="app" style="display:none">
     <header>
-      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing &amp; HVAC · v31.7.11</small></div></div>
+      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing &amp; HVAC · v31.8.0</small></div></div>
       <button id="logout">Sign out</button>
     </header>
     <main>
@@ -51,16 +51,16 @@
         <button data-filter="lost">Lost</button>
       </nav>
       <section id="leadView"><div id="leads" class="leads"><div class="empty">Loading…</div></div></section>
-<section id="jobView" style="display:none"><div class="job-toolbar"><button id="newJobBtn" class="convert">New Job</button><button type="button" onclick="window.open('https://calendar.google.com/calendar/u/0?cid=YmQyZjNjNTcyZWM1NzcyYmZjNTg1M2NlY2IxOTZkYWY1NWQ4N2U5ODI2YmE0NTkyNWIwZjZjMDE1ZDBkZDk5OEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t','_blank','noopener')">Google Calendar</button><button id="allMyJobs" class="active">My Jobs</button><button id="archivedJobs">Archived</button></div><form id="jobForm" class="estimate-form" style="display:none">
+<section id="jobView" style="display:none"><div class="job-toolbar"><button id="newJobBtn" class="convert">New Job</button><button type="button" onclick="location.href='/employee?owner=1'">Team &amp; Schedule</button><button id="allMyJobs" class="active">My Jobs</button><button id="archivedJobs">Archived</button></div><form id="jobForm" class="estimate-form" style="display:none">
 <h2 id="jobFormTitle">New job</h2>
 <label>Client<select id="jobClient" class="search" required></select></label>
 <label>Job title<input id="jobTitle" required maxlength="200" placeholder="e.g. Water heater replacement"></label>
 <label>Service address<input id="jobAddress" maxlength="500"></label>
 
 <label>Job notes<textarea id="jobNotes" maxlength="4000" placeholder="Access instructions, equipment, and work to prepare"></textarea></label>
-<p class="meta">Manage appointments in the shared A-1 Job Schedule in Google Calendar. Saving job details here does not change calendar appointments.</p>
+<p class="meta">Assign technicians and manage appointments in Team & Schedule. Saving job details here does not change appointments.</p>
 <div class="actions"><button type="submit" class="convert">Save Job</button><button type="button" id="cancelJobBtn">Cancel</button></div>
-</form><p class="meta">Use Google Calendar to view or change existing appointments. New calendar appointment opens a draft: choose A-1 Job Schedule, set the time, then save in Google. Check for an existing appointment before adding another.</p><div id="jobs" class="leads"><div class="empty">Choose Jobs below to load your work.</div></div></section>
+</form><p class="meta">Use Team & Schedule to book and assign work in FieldOps. Existing Google Calendar appointments must be reconciled before booking them again.</p><div id="jobs" class="leads"><div class="empty">Choose Jobs below to load your work.</div></div></section>
 <section id="customerView" style="display:none"><div class="job-toolbar"><button id="newCustomerBtn" type="button" class="convert">New Client</button><input id="customerSearch" class="search" type="search" placeholder="Search customers" aria-label="Search customers"></div><form id="customerForm" class="estimate-form" style="display:none">
 <h2 id="clientFormTitle">New client</h2>
 <label>Name<input id="clientName" required maxlength="160" autocomplete="name"></label>
@@ -425,7 +425,7 @@ function jobDate(j){return j.scheduled_for||j.scheduled_at||j.start_at||j.appoin
 function isToday(v){if(!v)return false;const d=new Date(v),n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate();}
 function renderJobs(){const rows=jobCache.filter(j=>jobMode==='archived'?!!j.archived_at:!j.archived_at);$('#jobs').innerHTML=rows.length?rows.map(jobCard).join(''):'<div class="empty">'+(jobMode==='archived'?'No archived jobs.':'No jobs yet.')+'</div>';}
 function googleJobUrl(job){const q=new URLSearchParams({action:'TEMPLATE',src:'bd2f3c572ec5772bfc5853cecb196daf55d87e9826ba45925b0f6c015d0dd998@group.calendar.google.com',text:'A-1 · '+(job.title||'Service job'),location:job.address||'',details:'FieldOps job: '+job.id+'\nJob records: https://a-1-field-ops.vercel.app/'});return 'https://calendar.google.com/calendar/render?'+q.toString();}
-function jobCard(j){const title=j.title||j.service_type||j.job_type||'Service Job',status=j.status||'scheduled',address=[j.address,j.city,j.state,j.zip].filter(Boolean).join(', '),when=jobDate(j);let displayWhen='Appointments managed in Google Calendar';const phone=(j.phone||j.customer_phone||customerById(j.customer_id)?.phone||'').replace(/[^+\d]/g,'');return `<article class="lead job-card"><div class="leadtop"><div><h3>${esc(title)}</h3><div class="meta">${esc(displayWhen)}</div></div><span class="status">${esc(status)}</span></div>${address?`<div class="message">${esc(address)}</div>`:''}${customerById(j.customer_id)?`<div class="meta">${esc(customerById(j.customer_id).name)}</div>`:''}${j.notes?`<div class="meta">${esc(j.notes)}</div>`:''}<div class="actions">${address?`<a href="https://maps.apple.com/?q=${encodeURIComponent(address)}" target="_blank" rel="noopener">Directions</a>`:''}${phone?`<a href="tel:${phone}">Call</a>`:''}<button onclick="openMaterials('${j.id}')">Materials</button><button onclick="openJobPhotos('${j.id}')">Photos</button>${!['completed','cancelled'].includes(status)?`<button onclick="openJobForm('${j.customer_id||''}','${j.id}')">Edit job</button><a href="${esc(googleJobUrl(j))}" target="_blank" rel="noopener">New calendar appointment</a><button onclick="quoteForJob('${j.id}')">Create Quote</button>`:''}${status!=='completed'?`<button onclick="updateJobStatus('${j.id}','in_progress')">Start Job</button>`:''}${String(status).toLowerCase()==='completed'?`<button class="convert" onclick="openMoneyToCollectForJob('${j.id}')">Money to Collect</button>`:`<button class="convert" onclick="completeJob('${j.id}')">Complete → Invoice</button>`}<button onclick="archiveJob('${j.id}',${!j.archived_at})">${j.archived_at?'Restore job':'Delete from list'}</button></div></article>`;}
+function jobCard(j){const title=j.title||j.service_type||j.job_type||'Service Job',status=j.status||'scheduled',address=[j.address,j.city,j.state,j.zip].filter(Boolean).join(', '),when=jobDate(j);let displayWhen='Appointments managed in Team & Schedule';const phone=(j.phone||j.customer_phone||customerById(j.customer_id)?.phone||'').replace(/[^+\d]/g,'');return `<article class="lead job-card"><div class="leadtop"><div><h3>${esc(title)}</h3><div class="meta">${esc(displayWhen)}</div></div><span class="status">${esc(status)}</span></div>${address?`<div class="message">${esc(address)}</div>`:''}${customerById(j.customer_id)?`<div class="meta">${esc(customerById(j.customer_id).name)}</div>`:''}${j.notes?`<div class="meta">${esc(j.notes)}</div>`:''}<div class="actions">${address?`<a href="https://maps.apple.com/?q=${encodeURIComponent(address)}" target="_blank" rel="noopener">Directions</a>`:''}${phone?`<a href="tel:${phone}">Call</a>`:''}<button onclick="openMaterials('${j.id}')">Materials</button><button onclick="openJobPhotos('${j.id}')">Photos</button>${!['completed','cancelled'].includes(status)?`<button onclick="openJobForm('${j.customer_id||''}','${j.id}')">Edit job</button><a href="/employee?owner=1">Schedule in FieldOps</a><button onclick="quoteForJob('${j.id}')">Create Quote</button>`:''}${status!=='completed'?`<button onclick="updateJobStatus('${j.id}','in_progress')">Start Job</button>`:''}${String(status).toLowerCase()==='completed'?`<button class="convert" onclick="openMoneyToCollectForJob('${j.id}')">Money to Collect</button>`:`<button class="convert" onclick="completeJob('${j.id}')">Complete → Invoice</button>`}<button onclick="archiveJob('${j.id}',${!j.archived_at})">${j.archived_at?'Restore job':'Delete from list'}</button></div></article>`;}
 window.archiveJob=async(id,archive)=>{if(archive&&!confirm('Remove this job from the list? You can restore it under Archived. Appointments in Google Calendar are unchanged.'))return;try{
  const {data,error}=await sb.from('jobs').update({archived_at:archive?new Date().toISOString():null,updated_at:new Date().toISOString()}).eq('id',id).select('id');
  if(error)throw error;if(!data?.length)throw new Error('Job could not be updated.');
@@ -538,7 +538,7 @@ $('#jobForm').onsubmit=async e=>{
  if(!existing)Object.assign(payload,{customer_id:client.id,owner_id:currentSession.user.id,assigned_to:currentSession.user.id,status:'new'});
  const query=existing?sb.from('jobs').update(payload).eq('id',existing.id).eq('status',existing.status):sb.from('jobs').insert(payload);
  const {data,error}=await query.select().single();if(error)throw error;if(!data?.id)throw new Error('The job changed while saving. Refresh and try again.');
- $('#jobForm').style.display='none';e.target.reset();editingJobId=null;jobMode='all';syncJobMode();await loadJobs();showBanner('Job saved. Manage its appointments in Google Calendar.','success');
+ $('#jobForm').style.display='none';e.target.reset();editingJobId=null;jobMode='all';syncJobMode();await loadJobs();showBanner('Job saved. Manage its appointments in Team & Schedule.','success');
  }catch(err){showBanner('Could not save job: '+(err.message||String(err)),'error');}finally{button.disabled=false;}
 };
 
@@ -680,7 +680,7 @@ window.scheduleApprovedQuote=async id=>{
  try{const {data,error}=await sb.rpc('fieldops_schedule_quote',{p_estimate_id:id,p_scheduled_at:null});if(error)throw error;if(!data?.job_id)throw new Error('Job confirmation was not received. Retry to check its status.');
  $('#estimateModal').style.display='none';setSection('jobs');jobMode='all';syncJobMode();await loadJobs();
  const job=jobCache.find(j=>j.id===data.job_id);if(job&&!['completed','cancelled'].includes(job.status))await openJobForm(job.customer_id,job.id);
- showBanner(data.existing?'The existing job is ready. No duplicate was created.':'Job created from the approved quote. Schedule its appointment in Google Calendar.','success');
+ showBanner(data.existing?'The existing job is ready. No duplicate was created.':'Job created from the approved quote. Schedule it in Team & Schedule.','success');
  }catch(e){showBanner('Could not schedule quote: '+(e.message||String(e)),'error');}finally{schedulingQuotes.delete(id);}
 };
 window.setEstimateStatus=async(id,status)=>{try{const patch={status,updated_at:new Date().toISOString()};if(status==='sent')patch.sent_at=new Date().toISOString();if(status==='approved')patch.approved_at=new Date().toISOString();const {error}=await sb.from('estimates').update(patch).eq('id',id);if(error)throw error;showBanner('Estimate marked '+status+'.','success');$('#estimateModal').style.display='none';await loadEstimates();}catch(err){showBanner('Could not update estimate: '+(err?.message||String(err)),'error');}};
