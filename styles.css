@@ -30,3 +30,9 @@
 
 /* Selectable AI guidance remains separate from the working quote. */
 #aiEstimatePanel label.detail-row{display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:12px;border:1px solid #343941;border-radius:10px;margin:8px 0} #aiEstimatePanel label.detail-row>span{flex:1;min-width:0} #aiEstimatePanel label.detail-row .meta{display:block} #aiEstimatePanel .ai-item-choice{width:22px;height:22px;flex:0 0 22px;margin:2px 0;accent-color:#d71920} #applyAiQuote{min-height:44px}
+
+.field-tools-modal{position:fixed;inset:0;background:#000b;z-index:2200;align-items:flex-start;justify-content:center;overflow:auto;padding:16px}.field-tools-card{background:#12151a;color:#fff;border:1px solid #343941;border-radius:16px;padding:20px;width:min(760px,100%);box-sizing:border-box}.field-tools-card input:not([type=checkbox]),.field-tools-card textarea,.field-tools-card select{box-sizing:border-box;width:100%;min-height:44px}.field-tools-card button{min-height:44px;margin:4px}.field-tools-card .detail-row{overflow-wrap:anywhere}.field-tools-card .detail-row>div{width:100%;min-width:0}
+
+.field-tools-card button,.field-tools-card input:not([type=checkbox]),.field-tools-card select,.field-tools-card textarea{background:#1a1d23;color:#fff;border:1px solid #343941;border-radius:10px;padding:10px;font:inherit}.field-tools-card button{cursor:pointer}.field-tools-card input[type=file]{font-size:13px}
+
+.photo-download{display:block;padding:12px;margin-top:8px;border:1px solid #343941;border-radius:10px;color:#fff;text-align:center;text-decoration:none;background:#1a1d23}

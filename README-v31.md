@@ -1,3 +1,9 @@
+# v31.6 customer history and field tools
+
+Customer History includes previous and archived jobs, job photos, quotes and invoices. Private job photos are compressed to JPEG (maximum 1 MB each) and stored in Supabase; removal hides them from the app while preserving records. Price book services can be saved, searched, edited, archived, and copied into new quotes. Email activity records new sends and refreshes the most recent five statuses from Resend; older sends are not backfilled. No additional keys are required.
+
+Apply `supabase/migrations/20260911044830_field_tools.sql` before deploying this release. The three new tables are server-only with RLS and no anonymous/authenticated grants. Existing access-key authorization protects all new routes.
+
 # v31.5 selectable AI quote items and live totals
 
 AI suggestions stay separate until selected and applied. Selected line totals and revised quote/invoice totals recalculate immediately. Signed document edits continue to create change orders.
@@ -76,7 +82,21 @@ Deploy through the existing GitHub → Vercel integration after tests and the da
 
 - `pnpm test`: PostgreSQL/PGlite database, PDF, and real API-handler integration tests against synthetic data. No production writes or external email.
 - `pnpm smoke`: existing workflow reference tests and JavaScript syntax checks, updated for v31 and actual API locations.
-- `pnpm test:browser`: Playwright desktop/mobile workflow test; requires a working Chromium installation (`pnpm exec playwright install chromium`). This Mac sandbox blocks Chromium process launch; built-in browser checks are being performed separately.
+- `pnpm test:browser`: Playwright desktop/mobile workflow test; requires a working Chromium installation (`pnpm exec playwright install chromium`). This Mac sandbox blocks Chromium process launch; built-in browser checks are performed separately.
 - `pnpm dev`: isolated in-memory test server at `http://127.0.0.1:4173`; login `test-key`. Never deploy this test server. Production entry points remain the static files and Vercel API handlers.
 
 Release validation on September 10, 2026: all 17 automated tests and existing smoke checks passed. Built-in browser checks covered desktop/mobile documents, markup controls, job completion, blank-signature validation, Clear/Redo, successful synthetic signing and the preserved mobile signed copy with no overflow or browser errors. The live-database rollback rehearsal passed, and the migration was applied successfully. Public access to the new records and signing functions is denied. Existing auth/key-function advisor warnings remain unchanged; the new server-only tables intentionally have no client policies. Email delivery and billable AI-provider calls were simulated in tests. GitHub/Vercel deployment status is verified separately after publishing.
+
+## Twilio inbound webhook (prepared; not live yet)
+
+Endpoint: POST `https://a-1-field-ops.vercel.app/api/documents?webhook=twilio-sms`. Do not configure Twilio to send traffic here until deployment and credential checks pass.
+
+Required server environment: `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER` (E.164), and `TWILIO_SMS_WEBHOOK_URL` (the exact URL above). Apply `20260911052145_twilio_inbound.sql` before activation. This migration is separate from the already-applied field-tools migration.
+
+Incoming form requests must have a valid Twilio signature, matching account and recipient. Message SIDs prevent duplicate storage. Failed storage returns 503 instead of falsely acknowledging a message. The response sends no automatic text. Media metadata is preserved; media downloading, the customer conversation interface, outbound texting and AI reply options remain to be implemented before the number transfer.
+
+Job photo viewers include Download photo for manual upload to Metricool or another approved destination. Downloads use the resized JPEG stored by FieldOps. No automatic social publishing or marketing permission is implied.
+
+## v31.6 release validation (September 11, 2026)
+
+All 30 automated API/database/UI-binding tests and workflow smoke checks passed. Manual built-in browser checks covered mobile and desktop layouts, price-book insertion, actual photo upload/view/download link, customer history, simulated quote/invoice delivery, delivery-status refresh, customer signing, separate change-order creation, job completion, payment recording, receipt and updated collection totals. Fixed the payment form passing incorrect arguments and the email-activity dialog appearing behind document dialogs. The standalone Playwright runner remains blocked by this Mac sandbox; these browser checks were manual against the isolated test server. No real customer email or card charge was sent.
