@@ -18,9 +18,10 @@ test('lead conversion resolves established owner despite two auth users, stays i
   await app.db.exec('set role anon');await assert.rejects(app.q('select fieldops_convert_lead($1,null)',[lead]),/permission denied/);await app.db.exec('reset role');
  }finally{await app.close();}
 });
-test('archive completed job and restore preserve invoice; active jobs cannot be archived',async()=>{
+test('archive completed job and restore preserve invoice; active jobs can be archived',async()=>{
  const app=await startServer();try{
-  await assert.rejects(app.q('update jobs set archived_at=now() where id=$1',[app.job]),/jobs_archive_completed_only/);
+  await app.q('update jobs set archived_at=now() where id=$1',[app.job]);
+  await app.q('update jobs set archived_at=null where id=$1',[app.job]);
   const completion=(await app.q('select fieldops_complete_job($1,null) as result',[app.job]))[0].result;
   await app.q('update jobs set archived_at=now() where id=$1',[app.job]);
   assert.equal((await app.q('select id from jobs where archived_at is null and id=$1',[app.job])).length,0);
@@ -31,7 +32,7 @@ test('archive completed job and restore preserve invoice; active jobs cannot be 
 test('job page filters archives out of active views and offers restore',()=>{
  const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');const start=html.indexOf('function renderJobs()'),end=html.indexOf('window.archiveJob=',start);const el={};
  const context=vm.createContext({jobMode:'all',jobCache:[{id:'a',title:'Active job',status:'completed'},{id:'b',title:'Archived job',status:'completed',archived_at:'2026-09-10'}],$:()=>el,esc:s=>s||'',customerById:()=>null,jobDate:()=>'',isToday:()=>true});
- vm.runInContext(html.slice(start,end)+';renderJobs()',context);assert.match(el.innerHTML,/Active job/);assert.doesNotMatch(el.innerHTML,/Archived job/);assert.match(el.innerHTML,/Remove from page/);
+ vm.runInContext(html.slice(start,end)+';renderJobs()',context);assert.match(el.innerHTML,/Active job/);assert.doesNotMatch(el.innerHTML,/Archived job/);assert.match(el.innerHTML,/Delete from list/);
  vm.runInContext("jobMode='archived';renderJobs()",context);assert.match(el.innerHTML,/Archived job/);assert.match(el.innerHTML,/Restore job/);assert.doesNotMatch(el.innerHTML,/Active job/);
 });
 

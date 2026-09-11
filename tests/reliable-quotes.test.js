@@ -47,3 +47,17 @@ test('quote discounts persist, reject excess and survive invoice conversion',asy
  assert.equal(Number((await app.q("select unit_price from invoice_items where invoice_id=$1 and description='Discount'",[invoice.invoice_id]))[0].unit_price),-25);
  }finally{await app.close();}
 });
+
+test('custom invoice creation is authenticated, atomic and retry-safe without a job',async()=>{
+ const app=await startServer();try{
+ await app.q('update customers set owner_id=$1 where id=$2',[owner,app.customer]);
+ const payload={action:'create',kind:'invoice',id:crypto.randomUUID(),customer_id:app.customer,title:'Custom repair',description:'Replaced faucet',items:[...items,{description:'Discount',quantity:1,unit_price:-25}]};
+ const create=(body=payload,key='test-key')=>fetch(app.origin+'/api/update-invoice',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':key},body:JSON.stringify(body)});
+ assert.equal((await create(payload,'')).status,401);
+ assert.equal((await create()).status,200);assert.equal((await (await create()).json()).existing,true);
+ const invoice=(await app.q('select * from invoices where id=$1',[payload.id]))[0];assert.equal(Number(invoice.total),250);assert.equal(invoice.job_id,null);assert.equal(invoice.owner_id,owner);
+ assert.notEqual((await create({...payload,title:'Changed'})).status,200);
+ const bad={...payload,id:crypto.randomUUID(),items:[{description:'Discount',quantity:1,unit_price:-500}]};assert.notEqual((await create(bad)).status,200);assert.equal((await app.q('select id from invoices where id=$1',[bad.id])).length,0);
+ await app.q('update invoices set archived_at=now() where id=$1',[payload.id]);await app.q('update invoices set archived_at=null where id=$1',[payload.id]);assert.equal(Number((await app.q('select total from invoices where id=$1',[payload.id]))[0].total),250);
+ }finally{await app.close();}
+});

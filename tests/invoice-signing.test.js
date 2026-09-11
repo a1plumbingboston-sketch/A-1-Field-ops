@@ -15,6 +15,9 @@ test('invoice link prevents customer price edits and preserves signed PDF and si
  const signature='data:image/jpeg;base64,'+(await fs.readFile(new URL('./signature-fixture.jpg',import.meta.url))).toString('base64');
  const signed=await call('/api/sign-invoice',{token,customer_name:'Invoice Test Customer',signature_data:signature,total:1,snapshot:{doc:{total:1}},items:[]});assert.equal(signed.status,200);
  const before=(await app.q('select snapshot,signed_pdf,signed_pdf_sha256,customer_name,signature_data from fieldops_documents where token=$1',[token]))[0];assert.equal(Number(before.snapshot.doc.total),750);assert.equal(before.signature_data,signature);assert.equal(Number((await app.q('select total from invoices where id=$1',[id]))[0].total),750);
+ await app.q('update invoices set archived_at=now() where id=$1',[id]);
+ await assert.rejects(app.q('update invoices set total=1 where id=$1',[id]),/Signed document/);
+ await app.q('update invoices set archived_at=null where id=$1',[id]);
  const download=await call('/api/signing-session?token='+token+'&download=pdf');assert.equal(download.status,200);const pdf=Buffer.from(await download.arrayBuffer());assert.deepEqual(pdf,Buffer.from(before.signed_pdf,'base64'));await fs.writeFile('test-results/invoice-signing-signed.pdf',pdf);
  const retry=await call('/api/sign-invoice',{token,customer_name:'Replacement Signer',signature_data:signature});assert.equal((await retry.json()).already_signed,true);assert.deepEqual((await app.q('select snapshot,signed_pdf,signed_pdf_sha256,customer_name,signature_data from fieldops_documents where token=$1',[token]))[0],before);
  }finally{await app.close();}
