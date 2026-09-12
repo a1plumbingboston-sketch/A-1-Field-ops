@@ -14,7 +14,7 @@ test('signature pad handles touch coordinates, ignores a second finger, clears i
  elements.sig.onpointermove(e(1,190,90));assert.deepEqual(paths[1],[450,175]);assert.equal(ctx.hasInk,true);
  elements.sig.onpointercancel(e(1));assert.equal(ctx.drawing,false);
  elements.clear.onclick();assert.equal(ctx.hasInk,false);
- await vm.runInContext('sign()',ctx);assert.match(elements.msg.textContent,/draw your signature/);
+ await vm.runInContext('sign()',ctx);assert.match(elements.msg.textContent,/full name/);
 });
 test('invoice typed signature requires name, fits the canvas and clears stale signature',async()=>{
  const html=fs.readFileSync(new URL('../customer-sign.html',import.meta.url),'utf8');const written=[];
@@ -26,5 +26,5 @@ test('invoice typed signature requires name, fits the canvas and clears stale si
  elements.name.value='Sample Customer';await elements.name.oninput();assert.equal(ctx.hasInk,true);assert.equal(written.at(-1)[0],'Sample Customer');assert.equal(written.at(-1)[1],450);
  elements.name.value='';await elements.name.oninput();assert.equal(ctx.hasInk,false);
  assert.match(html,/required minlength="2" maxlength="120"/);
- assert.match(html,/s.kind==='completion'\?'<label for="exceptions">/);
+ assert.doesNotMatch(html,/<textarea/);assert.doesNotMatch(html,/id="clear"/);assert.match(html,/Preview of your typed signature/);
 });
