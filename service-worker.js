@@ -1,4 +1,4 @@
-const CACHE='a1-fieldops-v31.8.3-calendar';
+const CACHE='a1-fieldops-v31.8.3-schedule-search';
 const ASSETS=['./calendar-export.js','./finance-workspace.js','./finance-workspace.css','./finance-charts.js','./hourly-cost.js','./','./index.html','./styles.css','./warm-premium.css?v=31.8.3','./document-system.js','./document-system.css','./a1-logo.png','./manifest.webmanifest','./employee.html','./employee.js','./employee.css','./employee.webmanifest'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('a1-fieldops-')&&k!==CACHE).map(k=>caches.delete(k))))));
