@@ -132,5 +132,11 @@
     }
   ],
   "buildCommand": "node scripts/build-release.mjs",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "functions": {
+    "api/estimate-assist.js": {
+      "maxDuration": 300,
+      "supportsCancellation": true
+    }
+  }
 }
