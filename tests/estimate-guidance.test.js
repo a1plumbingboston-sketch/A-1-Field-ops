@@ -18,10 +18,10 @@ test('AI estimator authenticates first, uses structured price-book context and r
  global.fetch=async(url,opt={})=>{
   if(String(url).includes('fieldops_key_status'))return Response.json(allowed);
   if(String(url).includes('fieldops_pricebook'))return Response.json([{name:'Toilet replacement',quantity:1,unit_price:300}]);
-  calls++;const req=JSON.parse(opt.body);assert.equal(req.store,false);assert.equal(req.text.format.strict,true);assert.equal(req.model,'gpt-6-astra');assert.ok(opt.signal);assert.equal(JSON.parse(req.input).matching_pricebook[0].unit_price,300);
+  calls++;const req=JSON.parse(opt.body);assert.equal(req.store,false);assert.equal(req.text.format.strict,true);assert.equal(req.model,'gpt-6-astra');assert.ok(opt.signal);assert.equal(JSON.parse(req.input).matching_pricebook[0].unit_price,300);assert.equal(JSON.parse(req.input).job.labor_rate,225);assert.equal(JSON.parse(req.input).job.job_difficulty,'moderate');assert.match(req.instructions,/Never substitute a market rate/);
   const a=advice();if(mode==='bad')a.recommended_line_items[0].quantity=-2;
   return Response.json({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(a)}]}]});
  };
- const run=async()=>{const res={statusCode:200,setHeader(){},status(n){this.statusCode=n;return this;},json(value){this.body=value;return this;}};await handler({method:'POST',headers:{'x-fieldops-key':'test'},body:{title:'Replace toilet'}},res);return res;};
+ const run=async()=>{const res={statusCode:200,setHeader(){},status(n){this.statusCode=n;return this;},json(value){this.body=value;return this;}};await handler({method:'POST',headers:{'x-fieldops-key':'test'},body:{title:'Replace toilet',job_difficulty:'moderate',labor_rate:165}},res);return res;};
  try{assert.equal((await run()).statusCode,401);assert.equal(calls,0);allowed=true;const good=await run();assert.equal(good.statusCode,200);assert.equal(good.body.analysis.recommended_total,25);assert.equal(good.body.pricebook_matches,1);mode='bad';assert.equal((await run()).statusCode,502);}finally{global.fetch=previous;if(key===undefined)delete process.env.OPENAI_API_KEY;else process.env.OPENAI_API_KEY=key;if(dbKey===undefined)delete process.env.SUPABASE_SERVICE_ROLE_KEY;else process.env.SUPABASE_SERVICE_ROLE_KEY=dbKey;}
 });
