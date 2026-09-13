@@ -34,5 +34,6 @@ test('all page scripts parse and the quote form keeps one persistent difficulty 
   for(const [,attrs,body] of html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g))if(body.trim()&&!attrs.includes('application/ld+json'))new vm.Script(body);
   assert.equal((html.match(/id="estDescriptionQuestion8"/g)||[]).length,1);
   assert.match(html,/job_difficulty:labor.difficulty/);
-  assert.match(html,/JSON.stringify\(x\)!==JSON.stringify\(estimatorInputs\(\)\)/);
+  assert.match(html,/requestContext!==currentAiQuoteContext\(\)/);
+  assert.match(html,/aiQuoteContext!==currentAiQuoteContext\(\)/);
 });

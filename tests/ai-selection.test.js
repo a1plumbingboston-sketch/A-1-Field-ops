@@ -7,10 +7,10 @@ test('AI selection binds a callable handler and applies only checked items with 
  assert.ok(!html.includes('id="applyAiQuote"'),'form controls must not shadow the handler');
  assert.ok(!html.includes('onclick="applyAiQuote()"'),'bind outside inline form scope');
  const source=html.slice(html.indexOf('function withTruckFee('),html.indexOf('function quickEstimator()'));
- const controls={'#applyAiQuoteButton':{},'#aiSelectedTotal':{},'#estimateItems':{},'#aiAppliedStatus':{}};
+ const controls={'#applyAiQuoteButton':{},'#aiSelectedTotal':{},'#estimateItems':{},'#aiAppliedStatus':{},'#estCustomerId':{value:'client'},'#estJobId':{value:'job'},'#estQuoteMode':{value:'service'}};
  let chosen=[{value:'0'},{value:'1'}],rows=[],saved=0,total=0;
- const context=vm.createContext({$:s=>controls[s],document:{querySelectorAll:()=>chosen,querySelector:()=>chosen[0]},money:n=>String(n),addEstimateItem:(...args)=>rows.push(args),calcEstimateTotal:()=>{total=rows.reduce((n,r)=>n+r[1]*r[2],0);},persistQuoteDraft:()=>saved++});
- vm.runInContext(source+"aiQuoteSuggestions=[{description:'Labor',quantity:2,unit_price:125},{description:'Misc fittings',quantity:1,unit_price:50}];"+html.match(/if\(aiQuoteSuggestions.length\)\{\$\('#applyAiQuoteButton'\).*?\}/)[0],context);
+ const context=vm.createContext({quoteSaveRequestId:'draft',estimatorInputs:()=>({pricing_mode:'per_task',title:'Fixture replacement'}),$:s=>controls[s],document:{querySelectorAll:()=>chosen,querySelector:()=>chosen[0]},money:n=>String(n),addEstimateItem:(...args)=>rows.push(args),calcEstimateTotal:()=>{total=rows.reduce((n,r)=>n+r[1]*r[2],0);},persistQuoteDraft:()=>saved++});
+ vm.runInContext(source+"aiQuoteSuggestions=[{description:'Labor',quantity:2,unit_price:125},{description:'Misc fittings',quantity:1,unit_price:50}];aiQuoteContext=currentAiQuoteContext();"+html.match(/if\(aiQuoteSuggestions.length\)\{\$\('#applyAiQuoteButton'\).*?\}/)[0],context);
  assert.equal(controls['#aiSelectedTotal'].textContent,'300');
  controls['#applyAiQuoteButton'].onclick();assert.equal(total,375);assert.equal(saved,1);
  rows=[];chosen=[{value:'1'}];vm.runInContext('updateAiSelection()',context);controls['#applyAiQuoteButton'].onclick();assert.deepEqual(rows,[['Misc fittings',1,50],['Truck fee',1,75]]);assert.equal(total,125);
