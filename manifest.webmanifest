@@ -1,3 +1,19 @@
 {
-  "name":"A-1 FieldOps","short_name":"FieldOps","start_url":"./","display":"standalone","background_color":"#0a0b0e","theme_color":"#0a0b0e","description":"A-1 Plumbing & Heating FieldOps"
+  "name": "A-1 FieldOps",
+  "short_name": "FieldOps",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf6ee",
+  "theme_color": "#382923",
+  "description": "A-1 Plumbing & Heating FieldOps",
+  "id": "/",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/a1-logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
 }

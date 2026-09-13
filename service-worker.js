@@ -1,6 +1,15 @@
-const CACHE='a1-fieldops-v31.8.5-remodel-quoter';
-const ASSETS=['./receipt-preferences.js?v=31.8.5','./remodel-quoter.js?v=31.8.5','./remodel-quoter.css?v=31.8.5','./remodel-pricing.js','./estimate-labor.js','./estimate-labor.js?v=31.8.5','./calendar-export.js','./finance-workspace.js','./finance-workspace.css','./finance-charts.js','./hourly-cost.js','./','./index.html','./styles.css','./warm-premium.css?v=31.8.5','./document-system.js','./document-system.css','./a1-logo.png','./manifest.webmanifest','./employee.html','./employee.js','./employee.css','./employee.webmanifest'];
-self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
-self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('a1-fieldops-')&&k!==CACHE).map(k=>caches.delete(k))))));
-self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.origin!==self.location.origin||u.pathname.startsWith('/api/')||u.pathname.includes('customer-sign')||u.pathname.includes('/pay'))return;e.respondWith(fetch(e.request).catch(()=>caches.match(e.request).then(r=>r||(e.request.mode==='navigate'?caches.match(u.pathname.startsWith('/employee')?'./employee.html':'./index.html'):Response.error()))));});
-
+const CACHE='a1-fieldops-31.8.6';
+const ASSETS=['/','/index.html','/employee.html','/app-updates.js','/manifest.webmanifest','/employee.webmanifest','/a1-logo.png'];
+self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS))));
+self.addEventListener('message',event=>{if(event.data?.type==='ACTIVATE_UPDATE')event.waitUntil(self.skipWaiting());});
+self.addEventListener('activate',event=>event.waitUntil((async()=>{await Promise.all((await caches.keys()).filter(key=>key.startsWith('a1-fieldops-')&&key!==CACHE).map(key=>caches.delete(key)));await self.clients.claim();})()));
+self.addEventListener('fetch',event=>{
+ const req=event.request,url=new URL(req.url);
+ if(req.method!=='GET'||url.origin!==self.location.origin||url.pathname.startsWith('/api/')||url.pathname.includes('customer-sign')||url.pathname.includes('/pay')||url.pathname==='/release.json')return;
+ event.respondWith((async()=>{
+  const cache=await caches.open(CACHE);
+  const cached=()=>cache.match(req).then(hit=>hit||(req.mode==='navigate'?cache.match(url.pathname.startsWith('/employee')?'/employee.html':'/index.html'):undefined));
+  try{const response=await fetch(req,{cache:'no-cache'});if(response.status>=500)return await cached()||response;return response;}
+  catch{return await cached()||Response.error();}
+ })());
+});

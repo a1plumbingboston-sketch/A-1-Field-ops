@@ -80,5 +80,6 @@ if(ownerMode){
  const intro=$('#login p');intro.textContent='Open the owner dashboard, sign in, then choose Jobs → Team & Schedule.';
  const link=document.createElement('a');link.href='/';link.textContent='Open owner dashboard';link.className='primary';$('#login').append(link);
 }
-if('serviceWorker' in navigator)navigator.serviceWorker.register('/service-worker.js').catch(()=>{});
+
 run(async()=>{await refresh();say('');});
+
