@@ -7,6 +7,7 @@ test('invoice AI reads manager job notes and approved technician facts through a
  global.fetch=async(url,options={})=>{const u=String(url);
  if(u.includes('fieldops_key_status'))return Response.json(true);
  if(u.includes('/invoices?'))return Response.json([{job_id:job}]);
+ if(u.includes('/fieldops_change_orders?'))return Response.json([]);
  if(u.includes('/jobs?'))return Response.json([{title:'Valve repair',notes:'Manager: customer supplied the valve.'}]);
  if(u.includes('/fieldops_appointments?')){appointmentQuery=u;return Response.json([{id:appointment}]);}
  if(u.includes('/fieldops_team_events?'))return Response.json([{text:'completed: Approved'},{text:'review: Work location: Private basement\nWork performed: Replaced valve\nChecks performed and results: Not performed\nOutcome and outstanding work: Testing pending'}]);
@@ -19,3 +20,4 @@ test('invoice AI reads manager job notes and approved technician facts through a
  assert.equal(res.code,200);assert.equal(res.body.field_report_used,true);assert.match(appointmentQuery,/status=eq.completed/);assert.match(prompt,/Manager: customer supplied the valve/);assert.match(prompt,/Checks performed and results: Not performed/);assert.match(prompt,/Manager invoice description/);assert.ok(!prompt.includes('Private basement'));assert.match(prompt,/If facts conflict, do not guess/);
  }finally{global.fetch=original;if(previous===undefined)delete process.env.OPENAI_API_KEY;else process.env.OPENAI_API_KEY=previous;if(oldService===undefined)delete process.env.SUPABASE_SERVICE_ROLE_KEY;else process.env.SUPABASE_SERVICE_ROLE_KEY=oldService;}
 });
+

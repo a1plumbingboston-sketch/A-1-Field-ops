@@ -1,5 +1,6 @@
-const CACHE='a1-fieldops-v31.8.4-difficulty-rates';
-const ASSETS=['./estimate-labor.js?v=31.8.4','./calendar-export.js','./finance-workspace.js','./finance-workspace.css','./finance-charts.js','./hourly-cost.js','./','./index.html','./styles.css','./warm-premium.css?v=31.8.4','./document-system.js','./document-system.css','./a1-logo.png','./manifest.webmanifest','./employee.html','./employee.js','./employee.css','./employee.webmanifest'];
+const CACHE='a1-fieldops-v31.8.5-remodel-quoter';
+const ASSETS=['./receipt-preferences.js?v=31.8.5','./remodel-quoter.js?v=31.8.5','./remodel-quoter.css?v=31.8.5','./remodel-pricing.js','./estimate-labor.js','./estimate-labor.js?v=31.8.5','./calendar-export.js','./finance-workspace.js','./finance-workspace.css','./finance-charts.js','./hourly-cost.js','./','./index.html','./styles.css','./warm-premium.css?v=31.8.5','./document-system.js','./document-system.css','./a1-logo.png','./manifest.webmanifest','./employee.html','./employee.js','./employee.css','./employee.webmanifest'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('a1-fieldops-')&&k!==CACHE).map(k=>caches.delete(k))))));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.origin!==self.location.origin||u.pathname.startsWith('/api/')||u.pathname.includes('customer-sign')||u.pathname.includes('/pay'))return;e.respondWith(fetch(e.request).catch(()=>caches.match(e.request).then(r=>r||(e.request.mode==='navigate'?caches.match(u.pathname.startsWith('/employee')?'./employee.html':'./index.html'):Response.error()))));});
+
