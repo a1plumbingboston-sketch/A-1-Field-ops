@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {remodelInput,priceRemodel} from '../remodel-pricing.js';
-import handler from '../api/remodel-assist.js';
+import handler from '../lib/remodel-assist.js';
 const input=()=>({project:'Bathroom remodel',scope:'Replace toilet and vanity, relocate shower drain.',location:'Bathroom',fixtures:'Customer-supplied fixtures',layout:'Relocate drain',conditions:'Open wall access',responsibilities:'GC handles finishes',permits:'A-1 obtains permit',difficulty:'moderate',markup:25,fees:250,phases:[{hours:2,materials:100},{hours:10,materials:1000},{hours:6,materials:100},{hours:2,materials:0}]});
 const draft=()=>({summary:'Proposed bathroom plumbing remodel with a relocated shower drain.',phases:[0,1,2,3].map(i=>({description:['Protect room','Install rough plumbing','Install fixtures and test','Coordinate inspections'][i],hours:99,reason:'Based on reported scope.'})),exclusions:['Tile and wall repairs by others'],questions:[]});
 test('fixed stage price uses authoritative difficulty rate and material-only markup exactly once',()=>{const x=input(),q=priceRemodel({...x,rate:1,labor_rate:1},draft());assert.equal(q.rate,225);assert.equal(q.total,6250);assert.equal(q.phases[0].total,575);assert.equal(q.items.length,5);assert.ok(!q.items.some(i=>/truck/i.test(i.description)));assert.equal(q.isBudget,false);assert.match(q.description,/change order/);});

@@ -15,7 +15,7 @@ test('confirmed payment receipt sends once, survives replays, and preserves miss
 test('text fallback requires enabled service, current customer permission and no later STOP',async()=>{
  const old=global.fetch,env={...process.env};Object.assign(process.env,{SUPABASE_SERVICE_ROLE_KEY:'test',TWILIO_SMS_ENABLED:'true',TWILIO_ACCOUNT_SID:'AC'+'a'.repeat(32),TWILIO_AUTH_TOKEN:'test',TWILIO_MESSAGING_SERVICE_SID:'MG'+'b'.repeat(32),FIELDOPS_PUBLIC_URL:'https://fieldops.example.test'});const rows=new Map();let allow=false,stop=false,sends=0;
  const snapshot={kind:'receipt',doc:{id:invoice,total:100,invoice_number:42},customer:{id:customer,name:'Sample Homeowner',phone:'6175550100'},items:[],payments:[{amount:100,status:'succeeded'}],job:{}};
- global.fetch=async(url,o={})=>{const u=new URL(String(url));if(u.hostname==='api.twilio.com'){sends++;const b=new URLSearchParams(o.body);assert.equal(b.get('To'),'+16175550100');assert.match(b.get('Body'),/https:\/\/fieldops.example.test\/api\/payment-receipt\?token=/);return Response.json({sid:'SM'+'c'.repeat(32)});}const b=o.body?JSON.parse(o.body):null;
+ global.fetch=async(url,o={})=>{const u=new URL(String(url));if(u.hostname==='api.twilio.com'){sends++;const b=new URLSearchParams(o.body);assert.equal(b.get('To'),'+16175550100');assert.match(b.get('Body'),/https:\/\/fieldops.example.test\/api\/documents\?feature=payment-receipt&token=/);return Response.json({sid:'SM'+'c'.repeat(32)});}const b=o.body?JSON.parse(o.body):null;
  if(u.pathname.endsWith('/rpc/fieldops_document_data'))return Response.json(snapshot);
  if(u.pathname.endsWith('/rpc/fieldops_start_document'))return Response.json({token:'a'.repeat(43),snapshot:b.p_snapshot});
  if(u.pathname.endsWith('/fieldops_documents'))return Response.json([]);
