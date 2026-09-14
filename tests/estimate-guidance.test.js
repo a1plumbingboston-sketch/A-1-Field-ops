@@ -18,7 +18,7 @@ test('AI estimator authenticates first, uses structured price-book context and r
  global.fetch=async(url,opt={})=>{
   if(String(url).includes('fieldops_key_status'))return Response.json(allowed);
   if(String(url).includes('fieldops_pricebook'))return Response.json([{name:'Toilet replacement',quantity:1,unit_price:300}]);
-  calls++;const req=JSON.parse(opt.body);assert.equal(req.store,false);assert.equal(req.text.format.strict,true);assert.equal(req.model,'gpt-6-astra');assert.ok(opt.signal);assert.equal(JSON.parse(req.input).matching_pricebook[0].unit_price,300);assert.equal(JSON.parse(req.input).job.labor_rate,225);assert.equal(JSON.parse(req.input).job.job_difficulty,'moderate');assert.match(req.instructions,/Never substitute a market rate/);
+  calls++;const req=JSON.parse(opt.body);assert.equal(req.store,false);assert.equal(req.text.format.strict,true);assert.equal(req.model,'gpt-6-astra');assert.ok(opt.signal);assert.equal(JSON.parse(req.input).matching_pricebook[0].unit_price,300);assert.equal(JSON.parse(req.input).job.labor_rate,165);assert.equal(JSON.parse(req.input).job.job_difficulty,'moderate');assert.match(req.instructions,/Never substitute a market rate/);
   const a=advice();if(mode==='bad')a.recommended_line_items[0].quantity=-2;
   return Response.json({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(a)}]}]});
  };

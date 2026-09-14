@@ -1,4 +1,4 @@
-// Shared by the estimate form and server so hourly guidance stays consistent.
+// Difficulty supplies estimating context only. The user-entered hourly rate remains authoritative.
 export function normalizeDifficulty(value) {
   const label = String(value ?? '').trim().toLowerCase();
   for (const key of ['standard', 'moderate', 'difficult', 'specialist']) {
@@ -20,11 +20,8 @@ if (typeof window !== 'undefined') {
     const input = document.getElementById('estLaborRate');
     if (!selected || !input) return;
     const result = laborRateForDifficulty(selected.value);
-    input.value = String(result.rate);
     const note = document.getElementById('estLaborRateNote');
-    if (note) note.textContent = result.provisional
-      ? `$${result.rate}/hour is provisional. Confirm site conditions before quoting. Existing line items change only when you edit or apply a new recommendation.`
-      : `$${result.rate}/hour based on job difficulty. Used by Quick Price Check and AI. Existing line items change only when you edit or apply a new recommendation.`;
+    if (note) note.textContent = 'Job difficulty gives AI context only. It does not change your hourly rate.';
     return result;
   };
   window.A1EstimateLabor = Object.freeze({normalizeDifficulty, laborRateForDifficulty, sync});

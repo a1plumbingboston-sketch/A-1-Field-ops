@@ -35,7 +35,7 @@ test('researched estimate completes after 70 seconds without reducing quality or
  t.mock.timers.tick(56000);await flush();assert.equal(res.body,undefined);assert.equal(providerSignal.aborted,false);
  t.mock.timers.tick(14000);await promise;
  assert.equal(res.statusCode,200);assert.equal(res.body.analysis.recommended_total,225);assert.equal(calls,1);
- assert.equal(providerInput.model,'gpt-6-astra');assert.equal(providerInput.store,false);assert.equal(providerInput.reasoning.effort,'high');assert.deepEqual(providerInput.tools,[{type:'web_search'}]);assert.equal(providerInput.text.format.strict,true);assert.equal(JSON.parse(providerInput.input).job.labor_rate,225);
+ assert.equal(providerInput.model,'gpt-6-astra');assert.equal(providerInput.store,false);assert.equal(providerInput.reasoning.effort,'high');assert.deepEqual(providerInput.tools,[{type:'web_search'}]);assert.equal(providerInput.text.format.strict,true);assert.equal(JSON.parse(providerInput.input).job.labor_rate,1);
  t.mock.timers.tick(300000);assert.equal(providerSignal.aborted,false,'successful request must clear its deadline');assert.equal(res.listenerCount('close'),0);
 });
 
