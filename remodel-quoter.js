@@ -21,13 +21,14 @@ box.innerHTML=`<div class="remodel-heading"><div><p class="eyebrow">PROJECT STUD
 <div class="remodel-actions"><button class="convert" type="submit">Build proposal</button><button type="button" id="aiRemodel">✦ Optional: polish scope with AI</button><button type="button" id="clearRemodel">Clear intake</button></div>
 <p id="remodelStatus" role="status" class="meta"></p></form><div id="remodelResult" aria-live="polite"></div>`;
 $('#estimateForm').before(box);
-const open=document.createElement('button');open.id='newRemodelBtn';open.type='button';open.textContent='✦ Remodel Estimator';$('#newEstimateBtn').after(open);
+const open=$('#newEstimateBtn');open.textContent='Start Estimate';const type=document.createElement('select');type.id='estimateType';type.setAttribute('aria-label','Estimate type');type.innerHTML='<option value="service">Service / Repair</option><option value="remodel">New Construction / Remodel</option>';open.before(type);
 const form=$('#remodelForm');let draft=null,inputSnapshot='';
 function inputs(){return Object.fromEntries(new FormData(form));}
 function resetResult(){draft=null;$('#remodelResult').innerHTML='';}
 function save(){try{localStorage.setItem(key,JSON.stringify(inputs()));$('#remodelStatus').textContent='Intake saved on this device. Nothing has been sent.';}catch{$('#remodelStatus').textContent='Recovery storage is unavailable. Keep this page open.';}}
 try{const v=JSON.parse(localStorage.getItem(key)||'null');if(v)for(const el of form.elements)if(el.name&&v[el.name]!==undefined)el.value=v[el.name];}catch{}
-open.onclick=()=>{box.hidden=false;box.scrollIntoView({behavior:'smooth',block:'start'});};
+open.addEventListener('click',e=>{if(type.value!=='remodel'){box.hidden=true;return;}e.preventDefault();e.stopImmediatePropagation();$('#estimateForm').style.display='none';box.hidden=false;box.scrollIntoView({behavior:'smooth',block:'start'});},true);
+type.addEventListener('change',()=>{box.hidden=true;$('#remodelStatus').textContent=type.value==='remodel'?'Click Start Estimate to open the construction/remodel form.':'Click Start Estimate to open the service/repair form.';});
 $('#closeRemodel').onclick=()=>{box.hidden=true;open.focus();};
 $('#clearRemodel').onclick=()=>{if(!confirm('Clear this remodel intake? Saved quotes stay unchanged.'))return;form.reset();form.laborRate.value='200';form.markup.value='25';resetResult();localStorage.removeItem(key);$('#remodelStatus').textContent='';};
 form.addEventListener('input',()=>{draft=null;$('#remodelResult').innerHTML='';save();});
