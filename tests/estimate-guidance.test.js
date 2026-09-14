@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {estimateInput,relevantPrices,validateEstimate} from '../lib/estimate-guidance.js';
+import {estimateInput,relevantPrices,validateEstimate,estimateLineItemTarget,reconcileEstimateTotal} from '../lib/estimate-guidance.js';
 import handler from '../api/estimate-assist.js';
 const advice=()=>({recommended_total:99999,market_low:200,market_typical:300,market_high:400,summary:'Review fittings.',risks:[],sources:[{title:'Reference',url:'https://example.com/prices'},{title:'Unsafe',url:'javascript:alert(1)'}],recommended_line_items:[{description:'Contingency fittings',quantity:2,unit_price:12.5,reason:'Allow fittings'}]});
 test('estimate validation computes totals and rejects invalid numbers or duplicate call fees',()=>{
@@ -8,6 +8,12 @@ test('estimate validation computes totals and rejects invalid numbers or duplica
  for(const patch of [{quantity:-1},{unit_price:NaN},{description:'Truck fee'},{description:'Dispatch fee'},{description:'Service-call charge'},{unit_price:'25'}]){const v=advice();Object.assign(v.recommended_line_items[0],patch);assert.throws(()=>validateEstimate(v));}
  const missing=advice();missing.sources=[];assert.equal(validateEstimate(missing).market_low,null);
  assert.throws(()=>estimateInput({title:'Test',labor_hours:-1}));assert.throws(()=>estimateInput({}));assert.equal(estimateInput({title:'Test'}).markup_pct,25);
+});
+test('allocation mode keeps user math exact and distributes it across consolidated lines',()=>{
+ const input=estimateInput({title:'Whole-house finish',allocation_mode:true,labor_hours:40,labor_rate:187,material_cost:1000,markup_pct:25,contingency_pct:10});
+ assert.equal(input.allocation_mode,true);assert.equal(estimateLineItemTarget(input),8855);
+ const a=validateEstimate({recommended_total:3,market_low:null,market_typical:null,market_high:null,summary:'Grouped by room.',risks:[],sources:[],recommended_line_items:[{description:'Basement Bathroom — fixtures',quantity:1,unit_price:2,reason:'Larger share'},{description:'Kitchen — connections',quantity:1,unit_price:1,reason:'Smaller share'}]});
+ const fixed=reconcileEstimateTotal(a,8855);assert.equal(fixed.recommended_total,8855);assert.equal(fixed.recommended_line_items.reduce((n,i)=>n+i.price,0),8855);assert.deepEqual(fixed.recommended_line_items.map(i=>i.quantity),[1,1]);assert.equal(fixed.recommended_line_items[0].price,5903.33);assert.equal(fixed.recommended_line_items[1].price,2951.67);
 });
 test('price book selection is bounded and keeps saved selling prices unchanged',()=>{
  const input=estimateInput({title:'Replace toilet'});const rows=[{name:'Toilet replacement',description:'Existing fixture',quantity:1,unit_price:300},{name:'Water heater',description:'Tank',quantity:1,unit_price:2500},{name:'Toilet',quantity:1,unit_price:'bad'}];

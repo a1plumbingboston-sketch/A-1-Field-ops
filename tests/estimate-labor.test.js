@@ -35,6 +35,7 @@ test('all page scripts parse and the quote form keeps one persistent difficulty 
   assert.equal((html.match(/id="estDescriptionQuestion8"/g)||[]).length,1);
   assert.match(html,/id="estLaborRate"[^>]*inputmode="decimal"/);
   assert.doesNotMatch(html,/id="estLaborRate"[^>]*readonly/);
+  assert.match(html,/labor_rate:Number\(\$\('#estLaborRate'\)\.value\)\|\|0/);
   assert.match(html,/job_difficulty:labor.difficulty/);
   assert.match(html,/requestContext!==currentAiQuoteContext\(\)/);
   assert.match(html,/aiQuoteContext!==currentAiQuoteContext\(\)/);

@@ -1,8 +1,8 @@
 <!doctype html>
 <html>
 <head>
-  <meta name="fieldops-release" content="31.8.9">
-  <script src="/app-updates.js?v=31.8.9" defer></script>
+  <meta name="fieldops-release" content="31.9.0">
+  <script src="/app-updates.js?v=31.9.0" defer></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0a0b0e">
@@ -30,18 +30,18 @@
 @media(max-width:600px){#estimateForm .entry-grid{grid-template-columns:1fr}}
 </style>
 
-<style id="a1-brand-v31.8.9">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
+<style id="a1-brand-v31.9.0">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
 <link rel="stylesheet" href="document-system.css"><script src="document-system.js"></script>
-<link rel="stylesheet" href="warm-premium.css?v=31.8.9"><link rel="stylesheet" href="/finance-workspace.css">
+<link rel="stylesheet" href="warm-premium.css?v=31.9.0"><link rel="stylesheet" href="/finance-workspace.css">
 <script type="module" src="/finance-workspace.js"></script>
-<script type="module" src="/estimate-labor.js?v=31.8.9"></script>
-<script type="module" src="/estimate-request.js?v=31.8.9"></script>
-<link rel="stylesheet" href="/remodel-quoter.css?v=31.8.9"><script type="module" src="/remodel-quoter.js?v=31.8.9"></script>
-<script type="module" src="/receipt-preferences.js?v=31.8.9"></script></head>
+<script type="module" src="/estimate-labor.js?v=31.9.0"></script>
+<script type="module" src="/estimate-request.js?v=31.9.0"></script>
+<link rel="stylesheet" href="/remodel-quoter.css?v=31.9.0"><script type="module" src="/remodel-quoter.js?v=31.9.0"></script>
+<script type="module" src="/receipt-preferences.js?v=31.9.0"></script></head>
 <body>
   <div id="login" class="login">
     <img class="a1-login-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating">
-    <h1>FieldOps <small style="font-size:12px">v31.8.9</small></h1>
+    <h1>FieldOps <small style="font-size:12px">v31.9.0</small></h1>
     <p>Private operations portal</p>
     <form id="loginForm" action="javascript:void(0)" onsubmit="if(window.fieldOpsLogin){window.fieldOpsLogin(event)}else{document.getElementById('loginMsg').textContent='FieldOps could not initialize. Refresh once; if this remains, use the new deployment URL.'}; return false;">
       <input id="accessKey" type="password" placeholder="Access key" autocomplete="current-password" required>
@@ -52,7 +52,7 @@
 
   <div id="app" style="display:none">
     <header>
-      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing &amp; HVAC · v31.8.9</small></div></div>
+      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing &amp; HVAC · v31.9.0</small></div></div>
       <button id="logout">Sign out</button>
     </header>
     <main>
@@ -105,7 +105,7 @@
 <h3 class="entry-section">Location &amp; labor</h3><div class="item-grid entry-grid"><label>Job ZIP code or city<input id="estZip" placeholder="e.g. 01960 or Peabody"></label><label>Estimated labor hours<input id="estLaborHours" type="number" step="0.25" min="0" placeholder="e.g. 4"></label><label>Your hourly rate ($/hour)<input id="estLaborRate" type="number" step="1" min="0" value="200" inputmode="decimal" aria-describedby="estLaborRateNote estLaborHelp"></label></div><p id="estLaborHelp" class="entry-help">Enter the customer-facing hourly rate you want to charge. This is not employee pay.</p>
 <p id="estLaborRateNote" class="meta" role="status">Job difficulty gives AI context only. It does not change your hourly rate.</p>
 <h3 class="entry-section">Materials &amp; allowances</h3><div class="item-grid entry-grid"><label>Material purchase cost ($)<input id="estMaterialCost" type="number" step="0.01" min="0" placeholder="e.g. 300" aria-describedby="estMaterialsHelp"></label><label>Material markup (%)<input id="estMarkup" type="number" step="1" min="0" value="25" aria-describedby="estMaterialsHelp"></label><label>Misc. fittings allowance (%)<input id="estContingency" type="number" step="1" min="0" value="10" aria-describedby="estFittingsHelp"></label></div><p id="estMaterialsHelp" class="entry-help">Enter your total material cost before markup. A 25% markup turns $100 of purchased materials into $125 billed to the customer.</p><p id="estFittingsHelp" class="entry-help">The fittings allowance is a percentage of material purchase cost only, with material markup applied once. It never increases labor charges. Enter 0 when those fittings are already included.</p>
-<div class="job-toolbar"><button type="button" id="aiEstimateBtn" class="convert">✦ AI Estimate Assist</button><button type="button" id="quickCalcBtn">Quick Price Check</button><button type="button" onclick="openPriceBook(true)">Price book</button></div>
+<div class="job-toolbar"><button type="button" id="aiAllocateBtn" class="convert">✦ Build Items to My Total</button><button type="button" id="aiEstimateBtn">Research Market Price</button><button type="button" id="quickCalcBtn">Quick Price Check</button><button type="button" onclick="openPriceBook(true)">Price book</button></div><p class="meta">Build Items uses your numbers as the final price, then groups a long scope by room or major task. Research Market Price is optional.</p>
 <div id="aiEstimatePanel" class="ai-panel" style="display:none"></div></div><p id="remodelAppliedNote" class="meta" hidden>Remodel proposal: stage pricing includes the listed labor and material allowances. No automatic service-call fee. Reopen Remodel Quoter to revise the intake.</p>
 <h3 class="entry-section">Customer line items</h3><p id="estimateItemsHelp" class="entry-help">Use quantity 1 for a fixed-price task, or enter the number of units or hours. Enter the customer price per unit, including any material markup; these rows do not add markup automatically.</p><div id="estimateItems"></div>
 <button type="button" id="addEstimateItem">+ Add line item</button>
@@ -910,7 +910,7 @@ function logAiUsage(u){try{const rows=JSON.parse(localStorage.getItem('a1_ai_usa
 function money(n){return (Number(n)||0).toLocaleString(undefined,{style:'currency',currency:'USD'});}
 function estimatorInputs(){const labor=window.A1EstimateLabor.sync();return {
   pricing_mode:$('#estPricingMode').value, title:$('#estTitle').value.trim(), description:[$('#estDescription').value.trim(),workContext('estDescription')].filter(Boolean).join('\n'), location:$('#estZip').value.trim(),
-  labor_hours:Number($('#estLaborHours').value)||0, labor_rate:labor.rate, job_difficulty:labor.difficulty,
+  labor_hours:Number($('#estLaborHours').value)||0, labor_rate:Number($('#estLaborRate').value)||0, job_difficulty:labor.difficulty,
   material_cost:Number($('#estMaterialCost').value)||0, markup_pct:Number($('#estMarkup').value)||0,
   contingency_pct:Number($('#estContingency').value)||0
 };}
@@ -920,8 +920,8 @@ function calcEditDocumentTotal(){
  total-=Number($('#editDiscount')?.value||0);$('#editDocumentTotal').textContent=money(total);return total;
 }
 function withTruckFee(items){return [...items.filter(i=>!/^truck\s*(fee|charge|roll)(?:\s.*)?$/i.test(i.description.trim())),{description:'Truck fee',reason:'One truck fee per service call',quantity:1,unit_price:75}];}
-let aiQuoteSuggestions=[],aiQuoteContext=null;
-function currentAiQuoteContext(input=estimatorInputs()){return JSON.stringify({draft:quoteSaveRequestId,customer:$('#estCustomerId').value,job:$('#estJobId').value,quoteMode:$('#estQuoteMode').value,input});}
+let aiQuoteSuggestions=[],aiQuoteContext=null,aiQuoteAllocationMode=false,requestedAllocationMode=false;
+function currentAiQuoteContext(input=estimatorInputs(),allocationMode=aiQuoteAllocationMode){return JSON.stringify({draft:quoteSaveRequestId,customer:$('#estCustomerId').value,job:$('#estJobId').value,quoteMode:$('#estQuoteMode').value,allocationMode,input:{...input,allocation_mode:allocationMode}});}
 function invalidateAiQuote(){
  if(!aiQuoteContext&&!aiQuoteSuggestions.length)return;
  aiQuoteContext=null;aiQuoteSuggestions=[];
@@ -948,24 +948,31 @@ function quickEstimator(){
   panel.innerHTML=`<h3>Quick price check</h3><div class="ai-grid"><div class="ai-stat"><span>Labor</span><b>${money(labor)}</b></div><div class="ai-stat"><span>Materials billed</span><b>${money(materialSell)}</b></div><div class="ai-stat"><span>Misc. fittings allowance</span><b>${money(fittingsSell)}</b></div><div class="ai-stat"><span>Suggested total</span><b>${money(total)}</b></div></div><div class="ai-note">Includes one $75 truck fee. Fittings are calculated from material cost only; labor is not marked up. This is your internal math only. AI market research can compare the job against current public local pricing and flag missing scope items.</div>`;
 }
 $('#quickCalcBtn').onclick=quickEstimator;
+$('#aiAllocateBtn').onclick=()=>{requestedAllocationMode=true;$('#aiEstimateBtn').click();};
 $('#aiEstimateBtn').onclick=async()=>{
-  const x=estimatorInputs(); const panel=$('#aiEstimatePanel'); panel.style.display='block';
-  if(!x.description && !x.title){panel.innerHTML='<div class="empty">Describe the job first so AI has something useful to estimate.</div>';return;}
-  const requestDraft=quoteSaveRequestId,button=$('#aiEstimateBtn');if(button.disabled)return;button.disabled=true;button.textContent='Researching estimate…';
-  const researchController=new AbortController(),requestContext=currentAiQuoteContext(x);aiQuoteSuggestions=[];aiQuoteContext=null;
-  panel.innerHTML='<div class="empty" id="estimateResearchStatus" role="status">Researching your estimate…</div><p class="ai-note">Detailed research can take a few minutes. Keep FieldOps open. Your draft stays unchanged until you choose suggested items.</p><button type="button" id="cancelEstimateResearch">Cancel research</button>';
+  const allocationMode=requestedAllocationMode;requestedAllocationMode=false;
+  const x=estimatorInputs();x.allocation_mode=allocationMode;const panel=$('#aiEstimatePanel');panel.style.display='block';
+  if(!x.description && !x.title){panel.innerHTML='<div class="empty">Describe the job first so AI can organize the work.</div>';return;}
+  if(allocationMode&&estimatePricingBreakdown(x).total<=75){panel.innerHTML='<div class="empty">Enter labor hours and your hourly rate, or enter material costs, before building line items.</div>';return;}
+  const requestDraft=quoteSaveRequestId,button=allocationMode?$('#aiAllocateBtn'):$('#aiEstimateBtn');if($('#aiEstimateBtn').disabled||$('#aiAllocateBtn').disabled)return;
+  $('#aiEstimateBtn').disabled=true;$('#aiAllocateBtn').disabled=true;button.textContent=allocationMode?'Building line items…':'Researching estimate…';
+  aiQuoteAllocationMode=allocationMode;
+  const researchController=new AbortController(),requestContext=currentAiQuoteContext(x,allocationMode);aiQuoteSuggestions=[];aiQuoteContext=null;
+  panel.innerHTML=allocationMode
+    ? '<div class="empty" id="estimateResearchStatus" role="status">Grouping the scope and matching line items to your total…</div><p class="ai-note">Your labor and material math stays fixed. AI is only organizing it by room or major task.</p><button type="button" id="cancelEstimateResearch">Cancel</button>'
+    : '<div class="empty" id="estimateResearchStatus" role="status">Researching your estimate…</div><p class="ai-note">Detailed research can take a few minutes. Keep FieldOps open. Your draft stays unchanged until you choose suggested items.</p><button type="button" id="cancelEstimateResearch">Cancel research</button>';
   $('#cancelEstimateResearch').onclick=()=>researchController.abort();
   try{
-    const accessKey=sessionStorage.getItem('a1_fieldops_key')||''; const data=await window.A1EstimateRequest(x,{accessKey,signal:researchController.signal,onProgress:seconds=>{const status=$('#estimateResearchStatus');if(status&&requestDraft===quoteSaveRequestId)status.textContent='Researching local pricing and building your estimate · '+seconds+' seconds';}});
-     if(requestDraft!==quoteSaveRequestId)return;if(requestContext!==currentAiQuoteContext()){panel.innerHTML='<p>Job details changed. Run AI Estimate Assist again for current pricing.</p>';return;}
+    const accessKey=sessionStorage.getItem('a1_fieldops_key')||''; const data=await window.A1EstimateRequest(x,{accessKey,signal:researchController.signal,onProgress:seconds=>{const status=$('#estimateResearchStatus');if(status&&requestDraft===quoteSaveRequestId)status.textContent=(allocationMode?'Organizing your line items':'Researching local pricing and building your estimate')+' · '+seconds+' seconds';}});
+     if(requestDraft!==quoteSaveRequestId)return;if(requestContext!==currentAiQuoteContext({...estimatorInputs(),allocation_mode:allocationMode},allocationMode)){panel.innerHTML='<p>Job details changed. Run the AI again before applying line items.</p>';return;}
     aiQuoteContext=requestContext;
     const a=data.analysis||{}; const usage=data.usage||{}; logAiUsage({request_id:data.request_id||'',input_tokens:usage.input_tokens||0,output_tokens:usage.output_tokens||0,total_tokens:usage.total_tokens||0,title:x.title||'Estimate'});
     aiQuoteSuggestions=withTruckFee((a.recommended_line_items||[]).map(i=>({description:String(i.description||'Line item'),reason:String(i.reason||''),quantity:Number(i.quantity??1),unit_price:Number(i.unit_price??i.price??0)})).filter(i=>Number.isFinite(i.quantity)&&i.quantity>0&&Number.isFinite(i.unit_price)&&i.unit_price>=0).slice(0,99));
     const lines=aiQuoteSuggestions.map((i,n)=>`<label class="detail-row"><input class="ai-item-choice" type="checkbox" value="${n}" checked ${i.description==='Truck fee'?'disabled':''} onchange="updateAiSelection()"><span><b>${esc(i.description)}</b><span class="meta">${esc(i.reason)}</span><span class="meta">${i.quantity} × ${money(i.unit_price)}</span></span><b>${money(Math.round((i.quantity*i.unit_price+Number.EPSILON)*100)/100)}</b></label>`).join('');
     const sources=(a.sources||[]).map(s=>`<a href="${esc(s.url||'#')}" target="_blank" rel="noopener">${esc(s.title||s.url||'Source')}</a>`).join('');
-    panel.innerHTML=`<h3>AI estimate guidance</h3><p class="meta">${data.pricebook_available?String(data.pricebook_matches||0)+' matching saved price-book entries considered.':'Price book unavailable for this review.'} Prices are suggestions; review scope before applying.</p><div class="ai-grid"><div class="ai-stat"><span>Local low</span><b>${a.market_low==null?'Not enough evidence':money(a.market_low)}</b></div><div class="ai-stat"><span>Local typical</span><b>${a.market_typical==null?'Not enough evidence':money(a.market_typical)}</b></div><div class="ai-stat"><span>Local high</span><b>${a.market_high==null?'Not enough evidence':money(a.market_high)}</b></div></div>${a.recommended_total?`<div class="detail-total"><span>Recommended A-1 price</span><b>${money(aiQuoteSuggestions.reduce((sum,i)=>sum+Math.round(i.quantity*i.unit_price*100)/100,0))}</b></div>`:''}${a.summary?`<p class="ai-note">${esc(a.summary)}</p>`:''}${lines?`<h3>Choose suggested line items</h3>${lines}<div class="detail-total"><span>Selected quote total</span><b id="aiSelectedTotal" aria-live="polite"></b></div><button type="button" class="convert" id="applyAiQuoteButton">Use selected items in quote</button><p class="meta">Replaces the draft line items below. The quote total is the sum of the items you choose.</p><p id="aiAppliedStatus" role="status"></p>`:''}${a.risks?.length?`<h3>Watch for</h3><div class="ai-note">${a.risks.map(esc).join(' • ')}</div>`:''}${sources?`<h3>Market references</h3><div class="ai-sources">${sources}</div>`:''}${data.usage?`<div class="ai-note"><b>AI usage receipt:</b> ${Number(data.usage.input_tokens||0).toLocaleString()} input tokens • ${Number(data.usage.output_tokens||0).toLocaleString()} output tokens • request ${esc(data.request_id||'logged')}. Every AI estimate request is logged on this device.</div>`:''}<div class="ai-note">AI pricing is decision support, not an automatic quote. Verify site conditions, code/permit requirements, material availability and your desired margin before sending.</div>`;
+    panel.innerHTML=`<h3>${allocationMode?'Line items matched to your total':'AI estimate guidance'}</h3><p class="meta">${allocationMode?'Grouped by room or major task. Repetitive work may be consolidated, and the complete quote will equal your calculated total.':(data.pricebook_available?String(data.pricebook_matches||0)+' matching saved price-book entries considered.':'Price book unavailable for this review.')+' Prices are suggestions; review scope before applying.'}</p>${allocationMode?'':`<div class="ai-grid"><div class="ai-stat"><span>Local low</span><b>${a.market_low==null?'Not enough evidence':money(a.market_low)}</b></div><div class="ai-stat"><span>Local typical</span><b>${a.market_typical==null?'Not enough evidence':money(a.market_typical)}</b></div><div class="ai-stat"><span>Local high</span><b>${a.market_high==null?'Not enough evidence':money(a.market_high)}</b></div></div>`}${a.recommended_total?`<div class="detail-total"><span>${allocationMode?'Your calculated total':'Recommended A-1 price'}</span><b>${money(aiQuoteSuggestions.reduce((sum,i)=>sum+Math.round(i.quantity*i.unit_price*100)/100,0))}</b></div>`:''}${a.summary?`<p class="ai-note">${esc(a.summary)}</p>`:''}${lines?`<h3>Choose suggested line items</h3>${lines}<div class="detail-total"><span>Selected quote total</span><b id="aiSelectedTotal" aria-live="polite"></b></div><button type="button" class="convert" id="applyAiQuoteButton">Use selected items in quote</button><p class="meta">Replaces the draft line items below. The quote total is the sum of the items you choose.</p><p id="aiAppliedStatus" role="status"></p>`:''}${a.risks?.length?`<h3>Watch for</h3><div class="ai-note">${a.risks.map(esc).join(' • ')}</div>`:''}${sources?`<h3>Market references</h3><div class="ai-sources">${sources}</div>`:''}${data.usage?`<div class="ai-note"><b>AI usage receipt:</b> ${Number(data.usage.input_tokens||0).toLocaleString()} input tokens • ${Number(data.usage.output_tokens||0).toLocaleString()} output tokens • request ${esc(data.request_id||'logged')}. Every AI estimate request is logged on this device.</div>`:''}<div class="ai-note">${allocationMode?'Your inputs control the price; AI only organizes the scope. Review the grouping before sending.':'AI pricing is decision support, not an automatic quote. Verify site conditions, code/permit requirements, material availability and your desired margin before sending.'}</div>`;
     if(aiQuoteSuggestions.length){$('#applyAiQuoteButton').onclick=applyAiQuote;updateAiSelection();}
-  }catch(err){if(requestDraft===quoteSaveRequestId)panel.innerHTML=`<div class="empty">${esc(err?.message||String(err))}</div><div class="ai-note">Your draft is unchanged. You can run AI Estimate Assist again when ready.</div>`;}finally{button.disabled=false;button.textContent='✦ AI Estimate Assist';}
+  }catch(err){if(requestDraft===quoteSaveRequestId)panel.innerHTML=`<div class="empty">${esc(err?.message||String(err))}</div><div class="ai-note">Your draft is unchanged. You can run the AI again when ready.</div>`;}finally{$('#aiEstimateBtn').disabled=false;$('#aiAllocateBtn').disabled=false;$('#aiEstimateBtn').textContent='Research Market Price';$('#aiAllocateBtn').textContent='✦ Build Items to My Total';}
 };
 const aiEstimateInputIds=new Set(['estQuoteMode','estCustomerId','estJobId','estTitle','estDescription','estPricingMode','estZip','estLaborHours','estLaborRate','estMaterialCost','estMarkup','estContingency',...Array.from({length:9},(_,i)=>'estDescriptionQuestion'+i)]);
 function onEstimateInputsChanged(event){
