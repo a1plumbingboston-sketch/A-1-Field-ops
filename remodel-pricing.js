@@ -34,7 +34,8 @@ export function priceRemodel(input, draft=null) {
   const aiSummary=text(draft?.summary,800);
   const sections=[
     `Scope of Work — ${x.project||'Remodel'}`,
-    aiSummary||x.scope,
+    aiSummary?`Project summary:\n${aiSummary}`:'',
+    x.scope,
     x.contractorMaterials?`Materials supplied by A-1:\n${x.contractorMaterials}`:'',
     x.customerMaterials?`Materials supplied by customer:\n${x.customerMaterials}`:'',
     x.responsibilities?`Responsibilities:\n${x.responsibilities}`:'',
