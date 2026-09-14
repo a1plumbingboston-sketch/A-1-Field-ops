@@ -137,6 +137,10 @@
     "api/estimate-assist.js": {
       "maxDuration": 300,
       "supportsCancellation": true
+    },
+    "api/documents.js": {
+      "maxDuration": 300,
+      "supportsCancellation": true
     }
   }
 }
