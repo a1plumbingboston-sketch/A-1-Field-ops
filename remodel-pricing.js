@@ -1,6 +1,5 @@
-import {laborRateForDifficulty} from './estimate-labor.js';
 export const PHASES = ['Preparation & protection', 'Rough-in plumbing', 'Fixture installation & testing', 'Coordination & return visits'];
-const text = (v, max=2400) => String(v ?? '').trim().slice(0,max);
+const text = (v, max=4000) => String(v ?? '').trim().slice(0,max);
 function amount(v, name, max, optional=false) {
   if(optional && (v==='' || v===null || v===undefined)) return null;
   if(typeof v==='boolean' || (typeof v!=='number' && typeof v!=='string')) throw Error(`Enter a valid ${name}.`);
@@ -10,38 +9,37 @@ function amount(v, name, max, optional=false) {
 export function remodelInput(v={}) {
   if(!v || typeof v!=='object') throw Error('Complete the remodel details.');
   const x={};
-  for(const key of ['project','scope','location','fixtures','layout','conditions','responsibilities','permits','schedule','exclusions']) x[key]=text(v[key]);
-  if(x.scope.length<15) throw Error('Describe the remodel scope, including the rooms and fixtures.');
-  Object.assign(x,laborRateForDifficulty(v.difficulty));
+  for(const key of ['project','scope','location','contractorMaterials','customerMaterials','conditions','responsibilities','permits','schedule','exclusions']) x[key]=text(v[key]);
+  if(x.scope.length<15) throw Error('Describe the remodel scope, including the rooms and work involved.');
+  x.laborRate=amount(v.laborRate ?? v.rate,'hourly labor rate',5000);
+  x.laborHours=amount(v.laborHours,'labor hours',5000);
+  x.materialCost=amount(v.materialCost,'A-1 material cost',1000000,true);
   x.markup=amount(v.markup,'material markup',100);
   x.fees=amount(v.fees,'permit and outside costs',100000,true);
-  x.phases=PHASES.map((name,i)=>({name,hours:amount(v.phases?.[i]?.hours,`${name} hours`,1000,true),materials:amount(v.phases?.[i]?.materials,`${name} material cost`,100000,true)}));
   return x;
 }
 const money=n=>Math.round((n+Number.EPSILON)*100)/100;
-export function priceRemodel(input, draft) {
-  const x=remodelInput(input);
-  if(!draft || !Array.isArray(draft.phases)||draft.phases.length!==4 || !text(draft.summary)) throw Error('The remodel draft is incomplete. Generate it again.');
-  const checks=[];
-  if(x.provisional) checks.push('Confirm the job difficulty on site.');
-  for(const key of ['location','fixtures','layout','conditions','responsibilities','permits']) if(!x[key]) checks.push(`Confirm ${key}.`);
-  const phases=x.phases.map((phase,i)=>{
-    const ai=draft.phases[i];
-    const suggested=amount(ai.hours,'AI labor hours',1000);
-    const hours=phase.hours ?? suggested;
-    if(phase.hours===null) checks.push(`Confirm ${phase.name.toLowerCase()}: ${hours} AI-estimated hours.`);
-    if(phase.materials===null) checks.push(`Price materials for ${phase.name.toLowerCase()} (currently excluded).`);
-    const labor=money(hours*x.rate), materials=money((phase.materials??0)*(1+x.markup/100));
-    return {...phase,hours,labor,materials,total:money(labor+materials),description:text(ai.description,300)||phase.name,reason:text(ai.reason,600)};
-  });
+export function priceRemodel(input, draft=null) {
+  const x=remodelInput(input),checks=[];
+  if(x.materialCost===null) checks.push('Confirm the cost of materials supplied by A-1 (currently excluded).');
   if(x.fees===null) checks.push('Confirm permit and outside costs (currently excluded).');
-  checks.push(...(Array.isArray(draft.questions)?draft.questions:[]).map(q=>text(q,400)).filter(Boolean));
-  const items=phases.filter(p=>p.total>0).map(p=>({description:p.description,quantity:1,unit_price:p.total}));
-  if(x.fees>0)items.push({description:'Permit and outside costs — allowance',quantity:1,unit_price:money(x.fees)});
+  const labor=money(x.laborHours*x.laborRate);
+  const materials=money((x.materialCost??0)*(1+x.markup/100));
+  const items=[];
+  if(labor>0) items.push({description:`Labor — ${x.laborHours} hours at $${x.laborRate}/hour`,quantity:1,unit_price:labor});
+  if(materials>0) items.push({description:'Materials supplied by A-1 (including markup)',quantity:1,unit_price:materials});
+  if(x.fees>0) items.push({description:'Permit and outside costs — allowance',quantity:1,unit_price:money(x.fees)});
   const total=money(items.reduce((n,i)=>n+i.unit_price,0));
   if(total<=0) throw Error('Add labor hours or material costs before creating a quote.');
-  const exclusions=[x.exclusions,...(Array.isArray(draft.exclusions)?draft.exclusions:[])].map(s=>text(s,600)).filter(Boolean);
-  const isBudget=checks.length>0;
-  const description=[`Remodel ${isBudget?'budget estimate':'proposed scope'}: ${text(draft.summary,800)}`,isBudget?'Budget only; unresolved scope and allowances require confirmation before a fixed-price agreement.':'',exclusions.length?'Exclusions: '+[...new Set(exclusions)].join('; '):'','Changes to scope or concealed conditions require a separately priced change order approved before additional work.'].filter(Boolean).join('\n\n');
-  return {phases,items,total,rate:x.rate,checks:[...new Set(checks)],description,isBudget};
+  const aiSummary=text(draft?.summary,800);
+  const sections=[
+    `Scope of Work — ${x.project||'Remodel'}`,
+    aiSummary||x.scope,
+    x.contractorMaterials?`Materials supplied by A-1:\n${x.contractorMaterials}`:'',
+    x.customerMaterials?`Materials supplied by customer:\n${x.customerMaterials}`:'',
+    x.responsibilities?`Responsibilities:\n${x.responsibilities}`:'',
+    x.exclusions?`Exclusions:\n${x.exclusions}`:'',
+    'Changes to scope or concealed conditions require a separately priced change order approved before additional work.'
+  ].filter(Boolean);
+  return {items,total,rate:x.laborRate,laborHours:x.laborHours,labor,materials,checks,description:sections.join('\n\n'),isBudget:checks.length>0};
 }
