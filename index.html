@@ -797,8 +797,8 @@ function installAllocateAssist(){
  allocateBtn.onclick=async()=>{
   const totalText=prompt('Total price already agreed with the customer ($):','');
   if(totalText===null)return;
-  const total=Number(totalText);
-  if(!Number.isFinite(total)||total<=0){showBanner('Enter a total greater than $0.','error');return;}
+  const total=Number(totalText.replace(/[$,\s]/g,''));
+  if(!Number.isFinite(total)||total<=0){showBanner(`Enter a total greater than $0 (numbers only, e.g. 1200 or 1200.50) — got "${totalText}".`,'error');return;}
   const description=($('#editInvDescription')?.value||'').trim();
   if(!description){showBanner('Describe the work first, then ask AI to split the total.','error');return;}
   if(!confirm(`Replace the current line items with an AI split of ${money(total)}? This does not change the total or send anything.`))return;
