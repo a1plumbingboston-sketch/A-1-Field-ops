@@ -74,3 +74,52 @@ test('allocate mode authenticates before calling AI, same as the wording-only mo
   assert.equal(res.code, 401);
   assert.equal(aiCalls, 0);
 }));
+
+test('generate mode reads a description and prices its own AI-proposed line items from the authoritative rate', withEnv(async () => {
+  global.fetch = async (url, opt) => {
+    const u = String(url);
+    if (u.includes('fieldops_key_status') || u.includes('fieldops_ai_usage')) return authed(true)(url, opt);
+    if (u.includes('fieldops_labor_rate_settings')) return Response.json([{profile: 'service', min_rate: 120, max_rate: 200}]);
+    if (u.includes('api.openai.com')) {
+      const body = JSON.parse(opt.body);
+      assert.match(body.input, /\$120 standard, \$160 moderate, \$200 difficult/);
+      return Response.json({output: [{type: 'message', content: [{type: 'output_text', text: JSON.stringify({
+        items: [
+          {description: 'Replace failed water heater', hours: 3, difficulty: 'moderate', reason: 'Standard swap, tight closet access'},
+          {description: 'Install expansion tank', hours: 1, difficulty: 'standard', reason: 'Straightforward add-on'}
+        ],
+        summary: 'Water heater replacement with expansion tank.'
+      })}]}]});
+    }
+    throw Error('unexpected: ' + u);
+  };
+  const res = response();
+  await handler({method: 'POST', headers: {'x-fieldops-key': 'test'}, body: {mode: 'generate', description: 'Water heater failed, replacing with new unit and adding expansion tank per code.'}}, res);
+  assert.equal(res.code, 200);
+  assert.equal(res.body.items.length, 2);
+  assert.equal(res.body.items[0].unit_price, 480); // 3hr * $160 moderate
+  assert.equal(res.body.items[1].unit_price, 120); // 1hr * $120 standard
+  assert.equal(res.body.total, 600);
+}));
+
+test('generate mode rejects a too-short description without calling AI', withEnv(async () => {
+  global.fetch = authed(true);
+  const res = response();
+  await handler({method: 'POST', headers: {'x-fieldops-key': 'test'}, body: {mode: 'generate', description: 'fix it'}}, res);
+  assert.equal(res.code, 400);
+}));
+
+test('generate mode discards any item with no usable hours or a disallowed call-fee description', withEnv(async () => {
+  global.fetch = async (url, opt) => {
+    const u = String(url);
+    if (u.includes('fieldops_key_status') || u.includes('fieldops_ai_usage')) return authed(true)(url, opt);
+    if (u.includes('fieldops_labor_rate_settings')) return Response.json([]);
+    if (u.includes('api.openai.com')) return Response.json({output: [{type: 'message', content: [{type: 'output_text', text: JSON.stringify({items: [{description: 'Truck fee', hours: 1, difficulty: 'standard', reason: ''}, {description: 'Repair valve', hours: 'lots', difficulty: 'standard', reason: ''}, {description: 'Replace faucet cartridge', hours: 0.5, difficulty: 'standard', reason: ''}], summary: ''})}]}]});
+    throw Error('unexpected: ' + u);
+  };
+  const res = response();
+  await handler({method: 'POST', headers: {'x-fieldops-key': 'test'}, body: {mode: 'generate', description: 'Replace kitchen faucet cartridge, minor leak repair on valve.'}}, res);
+  assert.equal(res.code, 200);
+  assert.equal(res.body.items.length, 1);
+  assert.equal(res.body.items[0].description, 'Replace faucet cartridge');
+}));

@@ -792,8 +792,24 @@ function installAllocateAssist(){
  const addBtn=document.getElementById('addInvoiceEditItem')||document.getElementById('addCustomItem');
  if(!addBtn||addBtn.dataset.allocateAssist)return;
  addBtn.dataset.allocateAssist='1';
+ const generateBtn=document.createElement('button');generateBtn.type='button';generateBtn.textContent='✦ AI: Create line items from description';
+ addBtn.insertAdjacentElement('afterend',generateBtn);
  const allocateBtn=document.createElement('button');allocateBtn.type='button';allocateBtn.textContent='✦ AI: Split total into line items';
- addBtn.insertAdjacentElement('afterend',allocateBtn);
+ generateBtn.insertAdjacentElement('afterend',allocateBtn);
+ generateBtn.onclick=async()=>{
+  const description=($('#editInvDescription')?.value||'').trim();
+  if(!description){showBanner('Describe the work first, then ask AI to create line items.','error');return;}
+  if(!confirm('Replace the current line items with AI-created, AI-priced line items based on the description? This uses your Service labor rate.'))return;
+  generateBtn.disabled=true;
+  try{
+   const r=await fetch('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':getAccessKey()},body:JSON.stringify({mode:'generate',description,notes:workContext('editInvDescription')})}),j=await r.json();
+   if(!r.ok)throw new Error(j.error);
+   $('#invoiceEditItems').innerHTML=j.items.map((i,idx)=>invoiceEditRow(i.description,i.quantity,i.unit_price,idx)).join('');
+   calcEditDocumentTotal();
+   showBanner('Line items created and priced by AI from your description. Review hours/pricing before saving.','success');
+  }catch(e){showBanner(e.message,'error');}
+  finally{generateBtn.disabled=false;}
+ };
  allocateBtn.onclick=async()=>{
   const totalText=prompt('Total price already agreed with the customer ($):','');
   if(totalText===null)return;
