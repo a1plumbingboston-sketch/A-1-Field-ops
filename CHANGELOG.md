@@ -5,6 +5,21 @@ the repo root. Each entry is what that release actually changed, kept for
 history — it does not describe the current state of the app (see `README.md`
 for that).
 
+## v31.9.0 — Configurable labor rates, unified task-list estimator, invoice line-item AI
+- Labor rates are now owner-configurable instead of hardcoded, as two independent
+  ranges (Service calls, Remodel/construction builds), editable from the app
+  itself (⚙ Labor rates). Standard/unassessed bills at the low end, difficult/
+  specialist at the high end, moderate at the midpoint.
+- Replaced the separate Remodel Quoter and single-job AI Estimate Assist with
+  one unified Task Estimator: an itemized list of named tasks, each with its
+  own quantity, difficulty, hours and materials — built for punch lists that
+  don't fit a single job or four fixed remodel phases. Both AI entry points
+  (quick inline estimate and the full Task Estimator) now share one pricing
+  engine and one AI endpoint.
+- Added an AI mode on the invoice editor that splits an already-agreed total
+  into sensible line items from the job description (dollar amounts are
+  always computed server-side to sum exactly to the given total).
+
 ## v31.x — Customer history, field tools, pricing fixes
 - Customer History: previous/archived jobs, job photos, quotes, invoices.
 - Price Book: save, search, edit, archive, and copy services into new quotes.
