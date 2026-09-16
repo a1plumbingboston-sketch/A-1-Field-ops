@@ -123,3 +123,26 @@ test('generate mode discards any item with no usable hours or a disallowed call-
   assert.equal(res.body.items.length, 1);
   assert.equal(res.body.items[0].description, 'Replace faucet cartridge');
 }));
+
+test('allocate and generate modes accept a full multi-section scope document without truncating it', withEnv(async () => {
+  const longScope = 'PLUMBING SCOPE OF WORK\n'.repeat(1) + 'BATHROOMS (QTY: 3) — rough-in and fixtures. '.repeat(60) + 'WATER HEATER / BOILER — replacement and venting at the very end of the document.';
+  assert.ok(longScope.length > 2200 && longScope.length < 6000, 'fixture should exceed the old 2200 cap but stay under the new 6000 cap: ' + longScope.length);
+  let capturedPrompt = '';
+  global.fetch = async (url, opt) => {
+    const u = String(url);
+    if (u.includes('fieldops_key_status') || u.includes('fieldops_ai_usage')) return authed(true)(url, opt);
+    if (u.includes('fieldops_labor_rate_settings')) return Response.json([]);
+    if (u.includes('api.openai.com')) {
+      capturedPrompt = JSON.parse(opt.body).input;
+      return Response.json({output: [{type: 'message', content: [{type: 'output_text', text: JSON.stringify({items: [{description: 'Bathroom rough-in, 3 bathrooms', weight: 3}, {description: 'Water heater replacement', weight: 1}], reasoning: ''})}]}]});
+    }
+    throw Error('unexpected: ' + u);
+  };
+  const res = response();
+  await handler({method: 'POST', headers: {'x-fieldops-key': 'test'}, body: {mode: 'allocate', total: 4000, description: longScope}}, res);
+  assert.equal(res.code, 200);
+  assert.match(capturedPrompt, /at the very end of the document/); // proves it wasn't truncated before reaching AI
+  assert.equal(res.body.items.length, 2);
+  assert.equal(res.body.items[0].unit_price, 3000); // weight 3 of 4 total shares
+  assert.equal(res.body.items[1].unit_price, 1000);
+}));
