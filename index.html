@@ -178,7 +178,7 @@ window.supabase={createClient:(u,k)=>new Client(u,k)};
 
 </script>
   <script>
-const URL='https://dddthwakdrxxmjbfowpl.supabase.co';
+const SUPABASE_URL='https://dddthwakdrxxmjbfowpl.supabase.co';
 const KEY='sb_publishable_f3QAMeX2YKuyeOI3WMkhng_9LdWdL7O';
 let sb=null;
 let filter='all',cache=[],currentSession=null;
@@ -232,7 +232,7 @@ async function init(){
   try{
     setView(false);
     if(!window.supabase) throw new Error('Built-in FieldOps module is missing.');
-    sb=window.supabase.createClient(URL,KEY);
+    sb=window.supabase.createClient(SUPABASE_URL,KEY);
     const saved=sessionStorage.getItem('a1_fieldops_key')||'';
     if(saved){
       $('#loginMsg').textContent='Unlocking FieldOps…';
@@ -407,7 +407,7 @@ window.setAiDisposition=async(id,status)=>{
     const reply=$('#airtxt-'+id);
     if(!reply||reply.disabled||!reply.value.trim())throw new Error('Wait for a reply, then review it before saving.');
     const patch={ai_reply_status:status,ai_reply_draft:reply.value.trim(),updated_at:new Date().toISOString()};
-    const r=await fetch(`${URL}/rest/v1/leads?id=eq.${encodeURIComponent(id)}`,{
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/leads?id=eq.${encodeURIComponent(id)}`,{
       method:'PATCH',
       headers:{apikey:KEY,'Content-Type':'application/json','Prefer':'return=representation','x-fieldops-key':accessKey},
       body:JSON.stringify(patch)
