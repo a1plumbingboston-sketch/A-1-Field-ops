@@ -31,11 +31,15 @@ test('text fallback uses real inbound timestamps, enforces consent and STOP, and
  try{
   assert.equal((await receipt('no-permission')).status,'needs_contact');assert.equal(sends,0);allow=true;
   process.env.TWILIO_SMS_ENABLED='false';assert.equal((await receipt('disabled')).status,'needs_contact');assert.equal(sends,0);process.env.TWILIO_SMS_ENABLED='true';
+  await pg.query('insert into fieldops_text_messages(message_sid,from_number,to_number,body,received_at) values($1,$2,$3,$4,$5)',['SM'+'e'.repeat(32),'+16175550100','+13392244517','Stop by tomorrow; the sink will not stop leaking.','2026-09-13T12:30:00Z']);
   assert.equal((await receipt('allowed')).status,'sent');assert.equal(sends,1);
   await pg.query('insert into fieldops_text_messages(message_sid,from_number,to_number,body,received_at) values($1,$2,$3,$4,$5)',['SM'+'d'.repeat(32),'+16175550100','+13392244517','STOP','2026-09-13T13:00:00Z']);
   assert.equal((await receipt('stopped')).status,'needs_contact');assert.equal(sends,1);
   preferenceTime='2026-09-13T13:00:00Z';assert.equal((await receipt('same-time')).status,'needs_contact');assert.equal(sends,1);
   preferenceTime='2026-09-13T14:00:00Z';assert.equal((await receipt('explicit-opt-in-after-stop')).status,'sent');assert.equal(sends,2);
+  await pg.exec('alter table fieldops_text_messages add column opt_out_type text');
+  await pg.query('insert into fieldops_text_messages(message_sid,from_number,to_number,body,received_at,opt_out_type) values($1,$2,$3,$4,$5,$6)',['SM'+'f'.repeat(32),'+16175550100','+13392244517','A custom opt-out phrase','2026-09-13T15:00:00Z','STOP']);
+  assert.equal((await receipt('provider-classified-stop')).status,'needs_contact');assert.equal(sends,2);
   await pg.exec('drop table fieldops_text_messages');assert.equal((await receipt('history-unavailable')).status,'failed');assert.equal(sends,2);
   assert.equal(rows.get(receiptId('history-unavailable')).status,'failed');
  }finally{global.fetch=old;for(const k of ['SUPABASE_SERVICE_ROLE_KEY','TWILIO_SMS_ENABLED','TWILIO_ACCOUNT_SID','TWILIO_AUTH_TOKEN','TWILIO_MESSAGING_SERVICE_SID','FIELDOPS_PUBLIC_URL'])if(env[k]===undefined)delete process.env[k];else process.env[k]=env[k];await pg.close();}

@@ -19,6 +19,6 @@ test('Twilio webhook verifies signatures and destination, persists once and fail
  assert.equal((await post(b)).status,200);const rows=await app.q('select * from fieldops_text_messages');assert.equal(rows.length,1);assert.equal(rows[0].body,b.Body);assert.equal(rows[0].media.length,1);
  const extra={...b,MessageSid:'SM'+'d'.repeat(32),NewTwilioParameter:'future compatible'};assert.equal((await post(extra)).status,200);
  delete process.env.TWILIO_AUTH_TOKEN;assert.equal((await post(b)).status,503);process.env.TWILIO_AUTH_TOKEN='test-token';
- await app.q('drop table fieldops_text_messages');assert.equal((await post(b)).status,503);
+ await app.q('drop table fieldops_text_messages cascade');assert.equal((await post(b)).status,503);
  }finally{for(const k of keys){if(old[k]===undefined)delete process.env[k];else process.env[k]=old[k];}await app.close();}
 });
