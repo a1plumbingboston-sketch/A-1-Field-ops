@@ -1,13 +1,13 @@
 {
   "name": "a1-fieldops",
-  "version": "31.8.8",
+  "version": "31.9.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/customer-payment-status.test.js tests/finance.test.js tests/database.test.js tests/documents.test.js tests/api.test.js tests/dashboard.test.js tests/ai-reply.test.js tests/jobs.test.js tests/send-document.test.js tests/client-quote.test.js tests/reliable-quotes.test.js tests/field-tools.test.js tests/twilio-webhook.test.js tests/payment-form.test.js tests/ai-selection.test.js tests/square.test.js tests/payment-page.test.js tests/schedule.test.js tests/followups.test.js tests/business-review.test.js tests/customer-sign.test.js tests/material-costs.test.js tests/estimate-labor.test.js tests/estimator.test.js tests/labor-rate-settings.test.js tests/invoice-allocate.test.js tests/remodel-invoice.test.js tests/payment-receipts.test.js tests/invoice-signing.test.js tests/team.test.js tests/team-http.test.js tests/work-summary.test.js tests/invoice-field-context.test.js tests/employee-reliability.test.js tests/pwa-updates.test.js tests/estimate-timeout.test.js tests/per-task-quotes.test.js",
+    "test": "node --test tests/construction-estimator.test.js tests/customer-payment-status.test.js tests/finance.test.js tests/database.test.js tests/documents.test.js tests/api.test.js tests/dashboard.test.js tests/ai-reply.test.js tests/jobs.test.js tests/send-document.test.js tests/client-quote.test.js tests/reliable-quotes.test.js tests/field-tools.test.js tests/twilio-webhook.test.js tests/payment-form.test.js tests/ai-selection.test.js tests/square.test.js tests/payment-page.test.js tests/schedule.test.js tests/followups.test.js tests/business-review.test.js tests/customer-sign.test.js tests/material-costs.test.js tests/estimate-labor.test.js tests/labor-rate-settings.test.js tests/invoice-allocate.test.js tests/remodel-invoice.test.js tests/payment-receipts.test.js tests/invoice-signing.test.js tests/team.test.js tests/team-http.test.js tests/work-summary.test.js tests/invoice-field-context.test.js tests/employee-reliability.test.js tests/pwa-updates.test.js tests/estimate-timeout.test.js tests/per-task-quotes.test.js",
     "smoke": "bash workflow-smoke-test.sh",
     "dev": "node tests/dev-server.js",
-    "test:browser": "node --test --test-force-exit tests/browser.test.js tests/field-tools-browser.test.js tests/business-review-browser.test.js tests/discount-warning-browser.test.js"
+    "test:browser": "node --test --test-force-exit tests/construction-estimator-browser.test.js tests/browser.test.js tests/field-tools-browser.test.js tests/business-review-browser.test.js tests/discount-warning-browser.test.js"
   },
   "dependencies": {
     "pdfkit": "0.17.2"

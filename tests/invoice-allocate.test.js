@@ -32,6 +32,10 @@ test('allocate mode normalizes AI weights into dollar amounts that sum exactly t
     const u = String(url);
     if (u.includes('fieldops_key_status') || u.includes('fieldops_ai_usage')) return authed(true)(url, opt);
     if (u.includes('api.openai.com')) {
+      const request=JSON.parse(opt.body);
+      assert.equal(request.store,false);
+      assert.equal(request.text.format.name,'line_item_allocation');
+      assert.equal(request.text.format.strict,true);
       return Response.json({output: [{type: 'message', content: [{type: 'output_text', text: JSON.stringify({items: [{description: 'Labor — water heater replacement', weight: 2}, {description: 'Tankless water heater unit', weight: 5}, {description: 'Expansion tank and fittings', weight: 1}], reasoning: 'Split by typical labor vs. equipment cost.'})}]}]});
     }
     throw Error('unexpected: ' + u);
@@ -50,7 +54,7 @@ test('allocate mode strips any AI-proposed truck/dispatch/call fee line item', w
   global.fetch = async (url, opt) => {
     const u = String(url);
     if (u.includes('fieldops_key_status') || u.includes('fieldops_ai_usage')) return authed(true)(url, opt);
-    if (u.includes('api.openai.com')) return Response.json({output: [{type: 'message', content: [{type: 'output_text', text: JSON.stringify({items: [{description: 'Truck fee', weight: 1}, {description: 'Labor', weight: 4}], reasoning: ''})}]}]});
+    if (u.includes('api.openai.com')) return Response.json({output: [{type: 'message', content: [{type: 'output_text', text: JSON.stringify({items: [{description: 'Truck fee', weight: 1}, {description: 'Contingency', weight: 1}, {description: 'Labor', weight: 4}], reasoning: ''})}]}]});
     throw Error('unexpected: ' + u);
   };
   const res = response();
@@ -145,4 +149,16 @@ test('allocate and generate modes accept a full multi-section scope document wit
   assert.equal(res.body.items.length, 2);
   assert.equal(res.body.items[0].unit_price, 3000); // weight 3 of 4 total shares
   assert.equal(res.body.items[1].unit_price, 1000);
+}));
+
+test('whole-house allocation preserves multiline task boundaries through the AI request', withEnv(async()=>{
+ const scope=Array.from({length:80},(_,i)=>`${i+1}. Room ${i+1} — rough and finish plumbing task`).join('\n');
+ let prompt='';
+ global.fetch=async(url,opt)=>{
+  const u=String(url);if(u.includes('fieldops_key_status')||u.includes('fieldops_ai_usage'))return authed(true)(url,opt);
+  if(u.includes('api.openai.com')){prompt=JSON.parse(opt.body).input;return Response.json({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({items:[{description:'First-floor plumbing scope',weight:1},{description:'Upper-floor plumbing scope',weight:1}],reasoning:'Grouped related room tasks.'})}]}]});}
+  throw Error('unexpected: '+u);
+ };
+ const res=response();await handler({method:'POST',headers:{'x-fieldops-key':'test'},body:{mode:'allocate',document_type:'estimate',total:50000,description:scope}},res);
+ assert.equal(res.code,200);assert.match(prompt,/1\. Room 1/);assert.match(prompt,/80\. Room 80/);assert.ok(prompt.includes('\n2. Room 2'));
 }));

@@ -16,13 +16,13 @@ test('getLaborRateRanges reads saved rows and falls back to defaults for a missi
   global.fetch = async url => { if (String(url).includes('fieldops_labor_rate_settings')) return Response.json([{profile: 'construction', min_rate: 150, max_rate: 220}, {profile: 'service', min_rate: 300, max_rate: 100}]); throw Error('unexpected: ' + url); };
   const ranges = await getLaborRateRanges();
   assert.deepEqual(ranges.construction, {min: 150, max: 220});
-  assert.deepEqual(ranges.service, {min: 120, max: 200}); // invalid row (max<min) ignored, default kept
+  assert.deepEqual(ranges.service, {min: 200, max: 250}); // invalid row (max<min) ignored, default kept
 }));
 
 test('getLaborRateRanges fails open to defaults on a database error', withEnv(async () => {
   global.fetch = async () => { throw new Error('network down'); };
   const ranges = await getLaborRateRanges();
-  assert.deepEqual(ranges, {service: {min: 120, max: 200}, construction: {min: 120, max: 200}});
+  assert.deepEqual(ranges, {service: {min: 200, max: 250}, construction: {min: 200, max: 250}});
 }));
 
 test('laborRateSettingsHandler requires authentication and validates the range before saving', withEnv(async () => {

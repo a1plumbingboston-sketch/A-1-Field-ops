@@ -12,8 +12,8 @@
 // end, moderate at the midpoint — same tiering as before, just rescaled to
 // whatever range the owner has set instead of fixed $200/$225/$250.
 export const DEFAULT_RANGES = {
-  service: {min: 120, max: 200},
-  construction: {min: 120, max: 200}
+  service: {min: 200, max: 250},
+  construction: {min: 200, max: 250}
 };
 
 export function normalizeDifficulty(value) {
@@ -77,7 +77,11 @@ if (typeof window !== 'undefined') {
     if (!selected || !input) return;
     const profile = profileOverride || activeProfile();
     const result = laborRateForDifficulty(selected.value, profile);
-    input.value = String(result.rate);
+    const data=input.dataset||{};
+    const previousAuto=data.autoRate;
+    const manuallyEdited=previousAuto!==undefined&&input.value!==previousAuto;
+    if(!manuallyEdited)input.value=String(result.rate);
+    data.autoRate=String(result.rate);
     const r = ranges[profile] || DEFAULT_RANGES.service;
     input.min = String(r.min);
     input.max = String(r.max);
@@ -90,7 +94,7 @@ if (typeof window !== 'undefined') {
   window.A1EstimateLabor = Object.freeze({normalizeDifficulty, laborRateForDifficulty, loadLaborRateRanges, currentLaborRateRanges, sync});
   document.getElementById('estDescriptionQuestion8')?.addEventListener('change', () => sync());
   document.getElementById('estQuoteMode')?.addEventListener('change', () => sync());
-  document.getElementById('estimateForm')?.addEventListener('reset', () => queueMicrotask(() => sync()));
+  document.getElementById('estimateForm')?.addEventListener('reset', () => queueMicrotask(() => {const input=document.getElementById('estLaborRate');if(input?.dataset)delete input.dataset.autoRate;sync();}));
   // Kick off a real load in the background; sync() already ran once above
   // with defaults so the form is never blank while this resolves.
   loadLaborRateRanges().then(() => sync());

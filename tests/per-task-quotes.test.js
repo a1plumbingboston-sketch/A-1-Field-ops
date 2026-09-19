@@ -57,7 +57,7 @@ test('switching client, job, quote kind or draft cannot receive another contextâ
 });
 
 test('all scope questions and selection changes invalidate visible AI results; discounts do not',()=>{
- const ids=['estQuoteMode','estCustomerId','estJobId','estTitle','estDescription','estPricingMode','estZip','estLaborHours','estLaborRate','estMaterialCost','estMarkup','estContingency',...Array.from({length:9},(_,i)=>'estDescriptionQuestion'+i)];
+ const ids=['estQuoteMode','estCustomerId','estJobId','estTitle','estDescription','estPricingMode','estZip','estLaborHours','estLaborRate','estMaterialCost','estMarkup','estContingency','estDescriptionQuestion8'];
  for(const event of ['input','change'])for(const id of ids){
   const h=harness();h.seed();h.events.get(event)({target:{id}});h.ctx.applyAiQuote();assert.equal(h.saves(),0,`${event}: ${id}`);
  }

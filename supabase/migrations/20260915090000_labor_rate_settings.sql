@@ -1,9 +1,6 @@
 -- Owner-configurable hourly labor rate, split into two independent ranges:
 -- 'service' (day-to-day service calls) and 'construction' (remodels/builds).
--- Replaces the previously hardcoded $200/$225/$250 constants that used to
--- live in estimate-labor.js. Only ever read/written by server code using the
--- service-role key (no anon/publishable access), so no RLS policy is
--- required here — consistent with fieldops_ai_usage.
+-- Only server code using the service-role key can read or write this table.
 create table public.fieldops_labor_rate_settings (
   profile text primary key check (profile in ('service','construction')),
   min_rate numeric not null check (min_rate > 0 and min_rate <= 1000),

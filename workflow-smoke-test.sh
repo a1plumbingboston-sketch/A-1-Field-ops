@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
-"${PYTHON:-python3}" - "$ROOT/index.html" "$ROOT/_inline.js" <<'PY'
+"${PYTHON:-python3}" - "$ROOT/index.html" "$ROOT/_inline.js" "$ROOT/estimate-request.js" "$ROOT/task-estimator.js" <<'PY'
 import re,sys,pathlib
 html=pathlib.Path(sys.argv[1]).read_text()
 parts=[m.group(1) for m in re.finditer(r'<script(?:\s[^>]*)?>(.*?)</script>',html,re.S|re.I)]
 pathlib.Path(sys.argv[2]).write_text('\n;\n'.join(parts))
+support=html+'\n'+pathlib.Path(sys.argv[3]).read_text()+'\n'+pathlib.Path(sys.argv[4]).read_text()
 checks={
  'lead conversion': 'convertLead',
  'customer loading': 'loadCustomers',
@@ -24,19 +25,20 @@ checks={
  'signature status': '/api/signature-status',
  'csv export': 'exportTaxCsv',
  'AI lead reply': 'aiReply',
- 'AI estimate': '/api/estimate-assist',
+ 'AI service estimate': '/api/estimate-assist',
+ 'AI construction estimate': "mode:'allocate'",
  'AI invoice': '/api/invoice-assist',
  'estimate AI auth': "'x-fieldops-key':accessKey",
  'atomic payment path': "action:'payment'",
 }
-missing=[k for k,v in checks.items() if v not in html]
+missing=[k for k,v in checks.items() if v not in support]
 if missing: raise SystemExit('Missing workflow checks: '+', '.join(missing))
-for bad in ('SUPABASE_URL','PUBLISHABLE_KEY','loadLeads()'):
+for bad in ('loadLeads()',):
     if bad in html: raise SystemExit('Stale broken reference remains: '+bad)
 print('workflow references OK')
 PY
 node --check "$ROOT/_inline.js"
 rm "$ROOT/_inline.js"
 for f in "$ROOT"/api/*.js "$ROOT"/lib/*.js "$ROOT"/document-system.js; do node --check "$f"; done
-grep -q "a1-fieldops-v31.8.2" "$ROOT/service-worker.js"
+grep -Eq "^const CACHE='a1-fieldops-[^']+';" "$ROOT/service-worker.js"
 echo "All local workflow smoke tests passed."

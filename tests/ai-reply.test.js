@@ -14,7 +14,7 @@ test('AI draft generation, edited approval and hold persist using the live lead 
   assert.equal(lead.ai_reply_draft,'Synthetic reply for local workflow testing.');
   assert.equal(lead.ai_reply_status,'draft_ready');
   const input={value:'My reviewed and edited reply.',disabled:false},banners=[];
-  const context=vm.createContext({window:{},URL:app.origin,KEY:'test',sessionStorage:{getItem:()=> 'test-key'},fetch,$:()=>input,showBanner:(text,type)=>banners.push({text,type}),load:async()=>{lead=(await app.q('select * from leads where id=$1',[id]))[0];}});
+  const context=vm.createContext({window:{},SUPABASE_URL:app.origin,KEY:'test',sessionStorage:{getItem:()=> 'test-key'},fetch,$:()=>input,showBanner:(text,type)=>banners.push({text,type}),load:async()=>{lead=(await app.q('select * from leads where id=$1',[id]))[0];}});
   vm.runInContext(disposition,context);
   await context.window.setAiDisposition(id,'approved');
   assert.equal(banners.at(-1).type,'success');assert.equal(lead.ai_reply_status,'approved');assert.equal(lead.ai_reply_draft,input.value);

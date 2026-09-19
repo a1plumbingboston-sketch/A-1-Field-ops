@@ -1,15 +1,15 @@
 <!doctype html>
 <html>
 <head>
-  <meta name="fieldops-release" content="31.9.0">
-  <script src="/app-updates.js?v=31.9.0" defer></script>
+  <meta name="fieldops-release" content="31.9.0-17ca287f51b4">
+  <script src="/app-updates.js?v=31.9.0-17ca287f51b4" defer></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0a0b0e">
   <title>A-1 FieldOps</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="/a1-logo.png">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=31.9.0-17ca287f51b4">
 
 <style>
 .ai-estimator h2{margin:.15rem 0 .5rem}.ai-panel{border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;background:rgba(255,255,255,.04);white-space:normal}.ai-panel h3{margin:.1rem 0 .5rem}.ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.ai-stat{padding:10px;border-radius:12px;background:rgba(255,255,255,.05)}.ai-stat b{display:block;font-size:1.05rem}.ai-note{font-size:.9rem;opacity:.8;line-height:1.4}.ai-sources a{display:block;margin:.35rem 0}.ai-estimator textarea{min-height:110px}.ai-estimator .job-toolbar{flex-wrap:wrap}.ai-estimator .job-toolbar button{flex:1;min-width:150px}
@@ -31,13 +31,13 @@
 </style>
 
 <style id="a1-brand-v31.9.0">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
-<link rel="stylesheet" href="document-system.css"><script src="document-system.js"></script>
-<link rel="stylesheet" href="warm-premium.css?v=31.9.0"><link rel="stylesheet" href="/finance-workspace.css">
-<script type="module" src="/finance-workspace.js"></script>
-<script type="module" src="/estimate-labor.js?v=31.9.0"></script>
-<script type="module" src="/estimate-request.js?v=31.9.0"></script>
-<link rel="stylesheet" href="/task-estimator.css?v=31.9.0"><script type="module" src="/task-estimator.js?v=31.9.0"></script><script type="module" src="/labor-rate-settings.js?v=31.9.0"></script>
-<script type="module" src="/receipt-preferences.js?v=31.9.0"></script></head>
+<link rel="stylesheet" href="document-system.css?v=31.9.0-17ca287f51b4"><script src="document-system.js?v=31.9.0-17ca287f51b4"></script>
+<link rel="stylesheet" href="warm-premium.css?v=31.9.0-17ca287f51b4"><link rel="stylesheet" href="/finance-workspace.css?v=31.9.0-17ca287f51b4">
+<script type="module" src="/finance-workspace.js?v=31.9.0-17ca287f51b4"></script>
+<script type="module" src="/estimate-labor.js?v=31.9.0-17ca287f51b4"></script>
+<script type="module" src="/estimate-request.js?v=31.9.0-17ca287f51b4"></script>
+<link rel="stylesheet" href="/task-estimator.css?v=31.9.0-17ca287f51b4"><script type="module" src="/task-estimator.js?v=31.9.0-17ca287f51b4"></script><script type="module" src="/labor-rate-settings.js?v=31.9.0-17ca287f51b4"></script>
+<script type="module" src="/receipt-preferences.js?v=31.9.0-17ca287f51b4"></script></head>
 <body>
   <div id="login" class="login">
     <img class="a1-login-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating">
@@ -102,7 +102,7 @@
 <label for="estDescription">Work to be quoted</label><textarea id="estDescription" placeholder="Describe the work, existing equipment, access and what is included. AI can help polish your notes."></textarea>
 <div id="serviceEstimateTools" style="display:contents"><label>AI pricing style<select id="estPricingMode" aria-label="AI pricing style"><option value="per_task">Per-task pricing (recommended)</option><option value="hourly">Hourly pricing</option></select></label><p class="meta">Per-task pricing gives each task a fixed customer price. Labor hours help AI estimate the work internally. One $75 truck fee is added per call.</p>
 <label>Job difficulty<select id="estDescriptionQuestion8" aria-describedby="estLaborRateNote"><option value="">Not assessed — provisional</option><option value="Standard — straightforward access">Standard</option><option value="Moderate — some access or condition challenges">Moderate</option><option value="Difficult — restricted access or extensive preparation">Difficult</option><option value="Specialist assessment needed">Specialist assessment — provisional</option></select></label>
-<h3 class="entry-section">Location &amp; labor</h3><div class="item-grid entry-grid"><label>Job ZIP code or city<input id="estZip" placeholder="e.g. 01960 or Peabody"></label><label>Estimated labor hours<input id="estLaborHours" type="number" step="0.25" min="0" placeholder="e.g. 4"></label><label>Customer labor rate ($/hour)<input id="estLaborRate" type="number" step="1" min="200" max="250" value="200" readonly aria-describedby="estLaborRateNote estLaborHelp"></label></div><p id="estLaborHelp" class="entry-help">Your selling rate, based on difficulty. This is what you charge for labor, not employee pay.</p>
+<h3 class="entry-section">Location &amp; labor</h3><div class="item-grid entry-grid"><label>Job ZIP code or city<input id="estZip" placeholder="e.g. 01960 or Peabody"></label><label>Estimated labor hours<input id="estLaborHours" type="number" step="0.25" min="0" placeholder="e.g. 4"></label><label>Customer labor rate ($/hour)<input id="estLaborRate" type="number" inputmode="decimal" step="1" min="1" max="1000" value="200" aria-describedby="estLaborRateNote estLaborHelp"></label></div><p id="estLaborHelp" class="entry-help">Your selling rate. Difficulty helps you judge time and risk but never silently overwrites a rate you enter.</p>
 <p id="estLaborRateNote" class="meta" role="status">$200–$250/hour based on job difficulty. Confirm site conditions before quoting.</p>
 <h3 class="entry-section">Materials &amp; allowances</h3><div class="item-grid entry-grid"><label>Material purchase cost ($)<input id="estMaterialCost" type="number" step="0.01" min="0" placeholder="e.g. 300" aria-describedby="estMaterialsHelp"></label><label>Material markup (%)<input id="estMarkup" type="number" step="1" min="0" value="25" aria-describedby="estMaterialsHelp"></label><label>Misc. fittings allowance (%)<input id="estContingency" type="number" step="1" min="0" value="10" aria-describedby="estFittingsHelp"></label></div><p id="estMaterialsHelp" class="entry-help">Enter your total material cost before markup. A 25% markup turns $100 of purchased materials into $125 billed to the customer.</p><p id="estFittingsHelp" class="entry-help">The fittings allowance is a percentage of material purchase cost only, with material markup applied once. It never increases labor charges. Enter 0 when those fittings are already included.</p>
 <div class="job-toolbar"><button type="button" id="aiEstimateBtn" class="convert">✦ AI Estimate Assist</button><button type="button" id="quickCalcBtn">Quick Price Check</button><button type="button" onclick="openPriceBook(true)">Price book</button></div>
@@ -1150,4 +1150,3 @@ window.openDeliveryHistory=async(kind,id)=>{
 </script>
 </body>
 </html>
-
