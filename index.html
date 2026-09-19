@@ -1,15 +1,15 @@
 <!doctype html>
 <html>
 <head>
-  <meta name="fieldops-release" content="31.9.0-17ca287f51b4">
-  <script src="/app-updates.js?v=31.9.0-17ca287f51b4" defer></script>
+  <meta name="fieldops-release" content="31.9.1">
+  <script src="/app-updates.js?v=31.9.1" defer></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0a0b0e">
   <title>A-1 FieldOps</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="/a1-logo.png">
-  <link rel="stylesheet" href="styles.css?v=31.9.0-17ca287f51b4">
+  <link rel="stylesheet" href="styles.css?v=31.9.1">
 
 <style>
 .ai-estimator h2{margin:.15rem 0 .5rem}.ai-panel{border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;background:rgba(255,255,255,.04);white-space:normal}.ai-panel h3{margin:.1rem 0 .5rem}.ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.ai-stat{padding:10px;border-radius:12px;background:rgba(255,255,255,.05)}.ai-stat b{display:block;font-size:1.05rem}.ai-note{font-size:.9rem;opacity:.8;line-height:1.4}.ai-sources a{display:block;margin:.35rem 0}.ai-estimator textarea{min-height:110px}.ai-estimator .job-toolbar{flex-wrap:wrap}.ai-estimator .job-toolbar button{flex:1;min-width:150px}
@@ -18,6 +18,7 @@
 .doc-modal-card{width:min(860px,100%)}.doc-preview-actions{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}.material-markup-box{display:grid;gap:6px}.mini-action{justify-self:start;border:0;background:transparent!important;color:#d7d9df!important;padding:2px 0!important;font-size:.78rem;text-decoration:underline;min-height:auto!important}.computed-price{padding:10px 12px;border:1px solid #343840;border-radius:10px;background:#111318}.computed-price b{display:block;font-size:1.05rem}.signature-status{border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px;margin:12px 0;background:rgba(255,255,255,.035)}.invoice-edit-row{display:grid;grid-template-columns:minmax(0,1fr) 90px 125px auto;gap:8px;align-items:center;margin:8px 0}.invoice-edit-row input{min-width:0}.invoice-edit-row button{padding:9px 10px}@media(max-width:650px){.invoice-edit-row{grid-template-columns:1fr 1fr}.invoice-edit-row .edit-desc{grid-column:1/-1}.invoice-edit-row button{grid-column:1/-1}}
 </style>
 <style id="entry-label-clarity">
+#estimateEditActions[hidden],#estimateEditNotice[hidden],#estimateTaxNote[hidden]{display:none!important}
 #estimateForm .entry-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}
 #estimateForm .entry-section{margin:12px 0 0;font-size:1.05rem}
 #estimateForm .entry-help,#invoiceEditForm .entry-help,#customInvoiceForm .entry-help,#bookForm .entry-help{font-size:.86rem;font-weight:400;line-height:1.45;margin:0;color:var(--warm-muted,#52636b)}
@@ -30,18 +31,18 @@
 @media(max-width:600px){#estimateForm .entry-grid{grid-template-columns:1fr}}
 </style>
 
-<style id="a1-brand-v31.9.0">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
-<link rel="stylesheet" href="document-system.css?v=31.9.0-17ca287f51b4"><script src="document-system.js?v=31.9.0-17ca287f51b4"></script>
-<link rel="stylesheet" href="warm-premium.css?v=31.9.0-17ca287f51b4"><link rel="stylesheet" href="/finance-workspace.css?v=31.9.0-17ca287f51b4">
-<script type="module" src="/finance-workspace.js?v=31.9.0-17ca287f51b4"></script>
-<script type="module" src="/estimate-labor.js?v=31.9.0-17ca287f51b4"></script>
-<script type="module" src="/estimate-request.js?v=31.9.0-17ca287f51b4"></script>
-<link rel="stylesheet" href="/task-estimator.css?v=31.9.0-17ca287f51b4"><script type="module" src="/task-estimator.js?v=31.9.0-17ca287f51b4"></script><script type="module" src="/labor-rate-settings.js?v=31.9.0-17ca287f51b4"></script>
-<script type="module" src="/receipt-preferences.js?v=31.9.0-17ca287f51b4"></script></head>
+<style id="a1-brand-v31.9.1">.a1-app-logo{height:42px;width:auto;object-fit:contain}.login .a1-login-logo{width:min(320px,90%);height:auto;margin:0 auto 12px}.login>.logo{display:none}</style>
+<link rel="stylesheet" href="document-system.css?v=31.9.1"><script src="document-system.js?v=31.9.1"></script>
+<link rel="stylesheet" href="warm-premium.css?v=31.9.1"><link rel="stylesheet" href="/finance-workspace.css?v=31.9.1">
+<script type="module" src="/finance-workspace.js?v=31.9.1"></script>
+<script type="module" src="/estimate-labor.js?v=31.9.1"></script>
+<script type="module" src="/estimate-request.js?v=31.9.1"></script>
+<link rel="stylesheet" href="/task-estimator.css?v=31.9.1"><script type="module" src="/task-estimator.js?v=31.9.1"></script><script type="module" src="/labor-rate-settings.js?v=31.9.1"></script>
+<script type="module" src="/receipt-preferences.js?v=31.9.1"></script></head>
 <body>
   <div id="login" class="login">
     <img class="a1-login-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating">
-    <h1>FieldOps <small style="font-size:12px">v31.9.0</small></h1>
+    <h1>FieldOps <small style="font-size:12px">v31.9.1</small></h1>
     <p>Private operations portal</p>
     <form id="loginForm" action="javascript:void(0)" onsubmit="if(window.fieldOpsLogin){window.fieldOpsLogin(event)}else{document.getElementById('loginMsg').textContent='FieldOps could not initialize. Refresh once; if this remains, use the new deployment URL.'}; return false;">
       <input id="accessKey" type="password" placeholder="Access key" autocomplete="current-password" required>
@@ -52,7 +53,7 @@
 
   <div id="app" style="display:none">
     <header>
-      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing &amp; HVAC · v31.9.0</small></div></div>
+      <div style="display:flex;align-items:center;gap:10px"><img class="a1-app-logo" src="a1-logo.png" alt="A-1 Plumbing & Heating"><div><b>A-1 FIELDOPS</b><small>Plumbing &amp; HVAC · v31.9.1</small></div></div>
       <button id="logout">Sign out</button>
     </header>
     <main>
@@ -93,25 +94,25 @@
 <div id="quoteDraftNotice" class="ai-panel" hidden><p id="quoteDraftText">An unfinished quote is saved on this device.</p><div class="actions"><button id="restoreQuoteDraft" type="button">Restore Draft</button><button id="discardQuoteDraft" type="button">Discard Draft</button></div></div>
 <form id="estimateForm" class="estimate-form ai-estimator" style="display:none">
 <div class="eyebrow">SMART ESTIMATOR</div>
-<h2 id="estimateFormHeading">Build a profitable estimate</h2><input type="hidden" id="estQuoteMode" value="service">
+<h2 id="estimateFormHeading">Build a profitable estimate</h2><p id="estimateEditNotice" class="meta" role="status" hidden></p><input type="hidden" id="estQuoteMode" value="service">
 <label>Client<select id="estCustomerId" class="search" required><option value="">Choose a client</option></select></label>
 <button type="button" id="estimateNewClient">+ New Client</button>
 <label>Job (optional)<select id="estJobId" class="search"><option value="">No job yet — quote only</option></select></label>
 <p class="meta">Choose a client by name. You can send a quote before a job is scheduled.</p>
-<label>Estimate title<input id="estTitle" placeholder="e.g. 50-gal gas water heater replacement" required></label>
-<label for="estDescription">Work to be quoted</label><textarea id="estDescription" placeholder="Describe the work, existing equipment, access and what is included. AI can help polish your notes."></textarea>
+<label>Estimate title<input id="estTitle" maxlength="300" placeholder="e.g. 50-gal gas water heater replacement" required></label>
+<label for="estDescription">Work to be quoted</label><textarea id="estDescription" maxlength="20000" placeholder="Describe the work, existing equipment, access and what is included. AI can help polish your notes."></textarea>
 <div id="serviceEstimateTools" style="display:contents"><label>AI pricing style<select id="estPricingMode" aria-label="AI pricing style"><option value="per_task">Per-task pricing (recommended)</option><option value="hourly">Hourly pricing</option></select></label><p class="meta">Per-task pricing gives each task a fixed customer price. Labor hours help AI estimate the work internally. One $75 truck fee is added per call.</p>
 <label>Job difficulty<select id="estDescriptionQuestion8" aria-describedby="estLaborRateNote"><option value="">Not assessed — provisional</option><option value="Standard — straightforward access">Standard</option><option value="Moderate — some access or condition challenges">Moderate</option><option value="Difficult — restricted access or extensive preparation">Difficult</option><option value="Specialist assessment needed">Specialist assessment — provisional</option></select></label>
-<h3 class="entry-section">Location &amp; labor</h3><div class="item-grid entry-grid"><label>Job ZIP code or city<input id="estZip" placeholder="e.g. 01960 or Peabody"></label><label>Estimated labor hours<input id="estLaborHours" type="number" step="0.25" min="0" placeholder="e.g. 4"></label><label>Customer labor rate ($/hour)<input id="estLaborRate" type="number" inputmode="decimal" step="1" min="1" max="1000" value="200" aria-describedby="estLaborRateNote estLaborHelp"></label></div><p id="estLaborHelp" class="entry-help">Your selling rate. Difficulty helps you judge time and risk but never silently overwrites a rate you enter.</p>
+<h3 class="entry-section">Location &amp; labor</h3><div class="item-grid entry-grid"><label>Job ZIP code or city<input id="estZip" placeholder="e.g. 01960 or Peabody"></label><label>Estimated labor hours<input id="estLaborHours" type="number" step="any" min="0" placeholder="e.g. 4"></label><label>Customer labor rate ($/hour)<input id="estLaborRate" type="number" inputmode="decimal" step="any" min="1" max="1000" value="200" aria-describedby="estLaborRateNote estLaborHelp"></label></div><p id="estLaborHelp" class="entry-help">Your selling rate. Difficulty helps you judge time and risk but never silently overwrites a rate you enter.</p>
 <p id="estLaborRateNote" class="meta" role="status">$200–$250/hour based on job difficulty. Confirm site conditions before quoting.</p>
-<h3 class="entry-section">Materials &amp; allowances</h3><div class="item-grid entry-grid"><label>Material purchase cost ($)<input id="estMaterialCost" type="number" step="0.01" min="0" placeholder="e.g. 300" aria-describedby="estMaterialsHelp"></label><label>Material markup (%)<input id="estMarkup" type="number" step="1" min="0" value="25" aria-describedby="estMaterialsHelp"></label><label>Misc. fittings allowance (%)<input id="estContingency" type="number" step="1" min="0" value="10" aria-describedby="estFittingsHelp"></label></div><p id="estMaterialsHelp" class="entry-help">Enter your total material cost before markup. A 25% markup turns $100 of purchased materials into $125 billed to the customer.</p><p id="estFittingsHelp" class="entry-help">The fittings allowance is a percentage of material purchase cost only, with material markup applied once. It never increases labor charges. Enter 0 when those fittings are already included.</p>
+<h3 class="entry-section">Materials &amp; allowances</h3><div class="item-grid entry-grid"><label>Material purchase cost ($)<input id="estMaterialCost" type="number" step="any" min="0" placeholder="e.g. 300" aria-describedby="estMaterialsHelp"></label><label>Material markup (%)<input id="estMarkup" type="number" step="any" min="0" value="25" aria-describedby="estMaterialsHelp"></label><label>Misc. fittings allowance (%)<input id="estContingency" type="number" step="any" min="0" value="10" aria-describedby="estFittingsHelp"></label></div><p id="estMaterialsHelp" class="entry-help">Enter your total material cost before markup. A 25% markup turns $100 of purchased materials into $125 billed to the customer.</p><p id="estFittingsHelp" class="entry-help">The fittings allowance is a percentage of material purchase cost only, with material markup applied once. It never increases labor charges. Enter 0 when those fittings are already included.</p>
 <div class="job-toolbar"><button type="button" id="aiEstimateBtn" class="convert">✦ AI Estimate Assist</button><button type="button" id="quickCalcBtn">Quick Price Check</button><button type="button" onclick="openPriceBook(true)">Price book</button></div>
-<div id="aiEstimatePanel" class="ai-panel" style="display:none"></div></div><p id="remodelAppliedNote" class="meta" hidden>Remodel proposal: stage pricing includes the listed labor and material allowances. No automatic service-call fee. Reopen Remodel Quoter to revise the intake.</p>
+<div id="aiEstimatePanel" class="ai-panel" style="display:none"></div></div><p id="remodelAppliedNote" class="meta" hidden>Remodel proposal: stage pricing includes the listed labor and material allowances. No automatic service-call fee. Open Construction Estimator to revise the project details.</p>
 <h3 class="entry-section">Customer line items</h3><p id="estimateItemsHelp" class="entry-help">Use quantity 1 for a fixed-price task, or enter the number of units or hours. Enter the customer price per unit, including any material markup; these rows do not add markup automatically.</p><div id="estimateItems"></div>
 <button type="button" id="addEstimateItem">+ Add line item</button>
 <label>Estimate discount ($ off total)<input id="estDiscount" type="number" min="0" step="0.01" value="0" oninput="calcEstimateTotal()"></label><p class="meta">Deducted from the quote before tax. Enter 0 for no discount.</p><p id="estDiscountWarning" class="meta" style="color:#c9202f" role="status"></p><div class="estimate-total">Estimate total: <b id="estimateTotal">$0.00</b></div>
 <div id="estimateMargin" class="meta"></div><p id="quoteDraftStatus" class="meta" role="status"></p>
-<button type="submit" class="convert">Save Draft Estimate</button>
+<p id="estimateTaxNote" class="meta" hidden></p><button type="submit" id="saveEstimateButton" class="convert">Save Draft Estimate</button><div id="estimateEditActions" class="job-toolbar" hidden><button type="button" id="copyEstimateAsNew">Copy as new quote</button><button type="button" id="cancelEstimateEdit">Cancel editing</button></div>
 </form>
 <div id="estimates" class="leads"><div class="empty">Choose Estimates below to load estimates.</div></div></section>
     <section id="invoiceView" style="display:none"><button class="convert" onclick="newCustomInvoice()">New Invoice</button><button onclick="invoiceArchived=!invoiceArchived;this.textContent=invoiceArchived?'Show current':'Archived';loadInvoices()">Archived</button>
@@ -543,7 +544,7 @@ window.openJobForm=async(clientId='',jobId=null)=>{
 };
 window.quoteForJob=async id=>{
  const job=jobCache.find(j=>j.id===id);if(!job?.customer_id){showBanner('Add a client to this job before preparing a quote.','error');return;}
- await loadCustomers();await prefillEstimate(job.customer_id);$('#estJobId').value=id;$('#estTitle').value=job.title||'';
+ await loadCustomers();if(!await prefillEstimate(job.customer_id))return;$('#estJobId').value=id;$('#estTitle').value=job.title||'';
  if($('#estJobId').value!==id)showBanner('This job is no longer active. The quote can be saved without a job.','error');
 };
 $('#newJobBtn').onclick=()=>openJobForm();
@@ -632,7 +633,7 @@ $('#customerSearch').addEventListener('input',renderCustomers);
 
 function addEstimateItem(description='',qty=1,unit=0){
   const row=document.createElement('div'); row.className='estimate-item';
-  row.innerHTML=`<label class="entry-description">Item description<input class="item-desc" placeholder="e.g. Replace kitchen faucet" value="${esc(description)}" required></label><label>Quantity<input class="item-qty" type="number" min="0" step="0.01" value="${qty}"></label><label>Customer unit price ($)<input class="item-unit" type="number" min="0" step="0.01" value="${unit}"></label><button type="button" class="remove-item" aria-label="Remove line item">Remove</button>`;
+  row.innerHTML=`<label class="entry-description">Item description<input class="item-desc" placeholder="e.g. Replace kitchen faucet" value="${esc(description)}" required></label><label>Quantity<input class="item-qty" type="number" min="0" step="any" value="${qty}"></label><label>Customer unit price ($)<input class="item-unit" type="number" min="0" step="0.01" value="${unit}"></label><button type="button" class="remove-item" aria-label="Remove line item">Remove</button>`;
   row.querySelector('.remove-item').onclick=()=>{row.remove();calcEstimateTotal();};
   row.querySelectorAll('input').forEach(x=>x.addEventListener('input',calcEstimateTotal));
   $('#estimateItems').appendChild(row); calcEstimateTotal();
@@ -645,17 +646,80 @@ function appendQuoteDiscount(items,value){
 }
 function calcEstimateTotal(){
   let subtotal=0; document.querySelectorAll('#estimateItems .estimate-item').forEach(r=>subtotal+=Math.round(((Number(r.querySelector('.item-qty').value)||0)*(Number(r.querySelector('.item-unit').value)||0)+Number.EPSILON)*100)/100);
-  const discount=Number($('#estDiscount')?.value||0),total=subtotal-discount,warn=$('#estDiscountWarning');
+  const discount=Number($('#estDiscount')?.value||0),total=subtotal-discount+Number(estimateEditor?.tax||0),warn=$('#estDiscountWarning');
   if(warn)warn.textContent=discount>subtotal?`Discount can't exceed the ${subtotal.toLocaleString(undefined,{style:'currency',currency:'USD'})} subtotal — saving will be blocked until this is fixed.`:'';
   $('#estimateTotal').textContent=total.toLocaleString(undefined,{style:'currency',currency:'USD'});
   $('#estimateTotal').style.color=discount>subtotal?'#c9202f':'';
   return total;
 }
 $('#addEstimateItem').onclick=()=>addEstimateItem();
-$('#newEstimateBtn').onclick=async()=>{await loadCustomers();await prefillEstimate('');};
+$('#newEstimateBtn').onclick=async()=>{if(!confirmEstimateReplacement())return;const generation=estimateEditorLoad;await loadCustomers();if(generation!==estimateEditorLoad)return;await prefillEstimate('',{force:true});};
 $('#refreshEstimates').onclick=loadEstimates;
-let quoteSaveRequestId=crypto.randomUUID();
-window.prefillEstimate=async id=>{quoteSaveRequestId=crypto.randomUUID();aiQuoteSuggestions=[];aiQuoteContext=null;$('#aiEstimatePanel').innerHTML='';$('#aiEstimatePanel').style.display='none';setSection('estimates');$('#estimateForm').reset();$('#estimateForm').style.display='grid';syncEstimateCustomers(id);$('#estimateItems').innerHTML='';addEstimateItem();addEstimateItem('Truck fee',1,75);await loadEstimateJobs();};
+let quoteSaveRequestId=crypto.randomUUID(),estimateEditor=null,estimateEditorLoad=0,estimateHydrating=0;
+const estimateContextFields=['estQuoteMode','estPricingMode','estZip','estLaborHours','estLaborRate','estMaterialCost','estMarkup','estContingency','estDescriptionQuestion8'];
+function captureEstimateContext(){return {version:1,fields:Object.fromEntries(estimateContextFields.map(id=>[id,$('#'+id)?.value??''])),construction:$('#estQuoteMode').value==='remodel'?(window.A1TaskEstimator?.capture()||null):null};}
+function confirmEstimateReplacement(){
+ const form=$('#estimateForm');if(form.style.display==='none')return true;
+ const meaningful=$('#estTitle').value.trim()||$('#estDescription').value.trim()||[...document.querySelectorAll('#estimateItems .item-desc')].some(el=>el.value.trim()&&!/^truck fee$/i.test(el.value.trim()));
+ return !meaningful||confirm('Leave the current quote builder? Save any changes you want to keep before opening another quote.');
+}
+function updateEstimateEditorUI(){
+ const locked=!!estimateEditor?.locked;
+ $('#estCustomerId').disabled=locked;$('#estJobId').disabled=locked;$('#estimateNewClient').hidden=locked;
+ $('#estimateEditActions').hidden=!estimateEditor;
+ $('#saveEstimateButton').textContent=estimateEditor?(locked?'Create change order':'Save estimate changes'):'Save Draft Estimate';
+ $('#estimateTaxNote').hidden=!Number(estimateEditor?.tax);$('#estimateTaxNote').textContent=estimateEditor?.tax?'Includes existing tax of '+money(estimateEditor.tax)+'.':'';
+ $('#estimateEditNotice').hidden=!estimateEditor;
+ if(estimateEditor)$('#estimateEditNotice').textContent=(locked?'You are revising an approved quote. Saving creates a separate change order for customer approval. To change the client or linked job, use Copy as new quote.':'Edit any quote details below, then save your changes. Nothing is sent automatically.')+(estimateEditor.legacy?' Earlier quote: the original estimating inputs were not saved. Existing scope and prices are preserved; enter any missing details before asking AI to reprice.':'');
+ syncQuoteMode();
+}
+window.prefillEstimate=async(id,{force=false}={})=>{
+ if(!force&&!confirmEstimateReplacement())return false;
+ const generation=++estimateEditorLoad;estimateHydrating=0;estimateEditor=null;quoteSaveRequestId=crypto.randomUUID();aiQuoteSuggestions=[];aiQuoteContext=null;
+ $('#aiEstimatePanel').innerHTML='';$('#aiEstimatePanel').style.display='none';$('#estimateMargin').textContent='';setSection('estimates');$('#estimateForm').reset();$('#estimateForm').style.display='grid';syncEstimateCustomers(id);
+ window.A1TaskEstimator?.reset();$('#estimateItems').innerHTML='';addEstimateItem();addEstimateItem('Truck fee',1,75);await loadEstimateJobs();if(generation!==estimateEditorLoad)return false;updateEstimateEditorUI();return true;
+};
+async function estimateEditorRequest(payload){
+ const r=await fetch('/api/update-invoice',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':getAccessKey()},body:JSON.stringify(payload)});
+ const j=await r.json();if(!r.ok)throw new Error(j.error||'The estimate could not be saved.');return j;
+}
+function restoreEstimateContext(context,doc={}){
+ const fields=context?.fields||{};
+ for(const id of estimateContextFields){const el=$('#'+id);if(el&&Object.hasOwn(fields,id))el.value=fields[id]??'';}
+ if(!context?.fields){$('#estQuoteMode').value=/^Remodel — /i.test(doc.title||'')?'remodel':'service';$('#estMarkup').value='';$('#estContingency').value='';}
+ window.A1TaskEstimator?.restore(context?.construction||null);syncRestoredEstimateRate(fields);
+}
+function syncRestoredEstimateRate(fields={}){
+ window.A1EstimateLabor.sync();
+ if(Object.hasOwn(fields,'estLaborRate')){const input=$('#estLaborRate');input.value=fields.estLaborRate??'';const rate=Number(input.value);if(input.value!==''&&Number.isFinite(rate)&&rate>0){input.min=String(Math.min(Number(input.min)||1,rate));input.max=String(Math.max(Number(input.max)||1000,rate));}}
+}
+window.openEstimateEditor=async(id,{recovering=false}={})=>{
+ if(!recovering&&!confirmEstimateReplacement())return false;
+ persistQuoteDraft();const previousDisplay=$('#estimateForm').style.display,load=++estimateEditorLoad;estimateHydrating=load;$('#estimateForm').style.display='none';let populated=false;
+ try{
+  const data=await estimateEditorRequest({action:'load_estimate',id});if(load!==estimateEditorLoad)return false;
+  await loadCustomers();if(load!==estimateEditorLoad)return false;
+  $('#estimateForm').reset();populated=true;setSection('estimates');$('#estimateModal').style.display='none';
+  const doc=data.doc;estimateEditor={id:doc.id,revision:data.revision,locked:!!data.locked,tax:Number(doc.tax||0),legacy:!data.context_available};quoteSaveRequestId=crypto.randomUUID();
+  aiQuoteSuggestions=[];aiQuoteContext=null;$('#aiEstimatePanel').innerHTML='';$('#aiEstimatePanel').style.display='none';$('#estimateMargin').textContent='';
+  syncEstimateCustomers(doc.customer_id);$('#estTitle').value=doc.title||'';$('#estDescription').value=doc.description||'';
+  await loadEstimateJobs();if(load!==estimateEditorLoad)return false;restoreEstimateContext(data.estimator_context,doc);
+  if(doc.job_id&&![...$('#estJobId').options].some(o=>o.value===doc.job_id))$('#estJobId').add(new Option('Existing linked job',doc.job_id));$('#estJobId').value=doc.job_id||'';
+  $('#estimateItems').innerHTML='';let discount=0;
+  for(const item of data.items||[]){if(Number(item.unit_price)<0)discount-=Number(item.quantity)*Number(item.unit_price);else addEstimateItem(item.description,Number(item.quantity),Number(item.unit_price));}
+  $('#estDiscount').value=String(discount);calcEstimateTotal();updateEstimateEditorUI();
+  if(data.pending_change_order_id)showBanner('A change order is awaiting review. Review or cancel it before saving another change order.','error');
+  estimateHydrating=0;$('#estimateForm').style.display='grid';if(!recovering)persistQuoteDraft();$('#estTitle').focus();return true;
+ }catch(err){if(load===estimateEditorLoad&&!populated)$('#estimateForm').style.display=previousDisplay;showBanner('Could not open estimate: '+err.message,'error');return false;}finally{if(estimateHydrating===load)estimateHydrating=0;}
+};
+$('#cancelEstimateEdit').onclick=async()=>{
+ if(!confirm('Close this editor without saving these changes?'))return;
+ const id=estimateEditor?.id;estimateEditor=null;estimateEditorLoad++;clearQuoteDraft();$('#estimateForm').reset();$('#estimateForm').style.display='none';updateEstimateEditorUI();if(id)await openEstimate(id);
+};
+$('#copyEstimateAsNew').onclick=()=>{
+ estimateEditor=null;estimateEditorLoad++;quoteSaveRequestId=crypto.randomUUID();aiQuoteSuggestions=[];aiQuoteContext=null;$('#aiEstimatePanel').innerHTML='';$('#aiEstimatePanel').style.display='none';
+ updateEstimateEditorUI();calcEstimateTotal();persistQuoteDraft();showBanner('Now creating a new quote. Choose the client and job, review the details, then save. The original quote is unchanged.','success');
+};
 
 window.archiveDocument=async(kind,id,archive)=>{
  if(!['estimate','invoice'].includes(kind))return;
@@ -672,20 +736,23 @@ async function loadEstimates(){
   }catch(err){$('#estimates').innerHTML='<div class="empty">Estimates could not load. '+esc(err?.message||String(err))+'</div>';}
 }
 $('#estimateForm').onsubmit=async e=>{
-  e.preventDefault();
+  e.preventDefault();if(estimateHydrating){showBanner('Wait for the estimate details to finish loading.','error');return;}
   const items=[...document.querySelectorAll('.estimate-item')].map(r=>({description:r.querySelector('.item-desc').value.trim(),quantity:Number(r.querySelector('.item-qty').value)||0,unit_price:Number(r.querySelector('.item-unit').value)||0})).filter(x=>x.description);
   if(!items.length){showBanner('Add at least one estimate line item.','error');return;}
-  const button=e.target.querySelector('[type="submit"]');if(button.disabled)return;button.disabled=true;
+  const button=e.target.querySelector('[type="submit"]');if(button.disabled)return;const savingRequest=quoteSaveRequestId,controlStates=[...e.target.querySelectorAll('input,select,textarea,button'),...document.querySelectorAll('#taskEstimatorForm input,#taskEstimatorForm select,#taskEstimatorForm textarea,#taskEstimatorForm button')].filter(el=>!el.disabled).map(el=>[el,el.disabled]);controlStates.forEach(([el])=>el.disabled=true);
   persistQuoteDraft();
   try{
     if(!customerById($('#estCustomerId').value))throw new Error('Choose a client before saving the quote.');
     if(items.some(x=>!Number.isFinite(x.quantity)||!Number.isFinite(x.unit_price)||x.quantity<=0||x.unit_price<0))throw new Error('Use a positive quantity and a valid price for each item.');
     appendQuoteDiscount(items,$('#estDiscount')?.value);
-    const {data,error}=await sb.rpc('fieldops_create_quote',{p_request_id:quoteSaveRequestId,p_customer_id:$('#estCustomerId').value,p_job_id:$('#estJobId').value||null,p_title:$('#estTitle').value.trim(),p_description:$('#estDescription').value.trim(),p_items:items});
-    if(error)throw error;if(!data?.id)throw new Error('Save confirmation was not received. Retry this draft to check its saved status.');
-    quoteSaveRequestId=crypto.randomUUID();clearQuoteDraft();
-    e.target.reset(); $('#estimateItems').innerHTML=''; addEstimateItem();await loadEstimateJobs();await loadEstimates();showBanner('Quote saved. Review it, then choose Send Quote.','success');await openEstimate(data.id);
-  }catch(err){showBanner('Could not save estimate: '+(err?.message||String(err)),'error');}finally{button.disabled=false;}
+    const data=await estimateEditorRequest({action:'save_estimate',estimate_id:estimateEditor?.id||null,request_id:quoteSaveRequestId,expected_revision:estimateEditor?.revision||null,customer_id:$('#estCustomerId').value,job_id:$('#estJobId').value||null,title:$('#estTitle').value.trim(),description:$('#estDescription').value.trim(),items,estimator_context:captureEstimateContext()});
+    if(!data?.id)throw new Error('Save confirmation was not received. Retry this draft to check its saved status.');
+    if(savingRequest!==quoteSaveRequestId){await loadEstimates();showBanner('Your previous quote was saved. The current builder has been left unchanged.','success');return;}
+    quoteSaveRequestId=crypto.randomUUID();estimateEditor=null;estimateEditorLoad++;clearQuoteDraft();
+    e.target.reset();e.target.style.display='none';window.A1TaskEstimator?.reset();$('#estimateItems').innerHTML='';updateEstimateEditorUI();await loadEstimates();
+    showBanner(data.change_order_id?'Change order created. Review it and request customer approval. The original quote is unchanged.':'Quote saved with all estimating details. Review it before sending.','success');
+    if(data.change_order_id)await openBrandedDocument('change_order',data.change_order_id);else await openEstimate(data.id);
+  }catch(err){showBanner('Could not save estimate: '+(err?.message||String(err)),'error');}finally{controlStates.forEach(([el,disabled])=>el.disabled=disabled);updateEstimateEditorUI();}
 };
 
 
@@ -696,7 +763,7 @@ window.openEstimate=async id=>{
  const customer=customerById(estimate?.customer_id);
  const contactButtons=customer?`${customer.phone?`<button onclick='contactDoc("estimate","call",customerById("${estimate.customer_id}"),estimateCache.find(x=>String(x.id)===String("${id}")),window._estimateItems?.["${id}"]||[])'>Call</button><button onclick='contactDoc("estimate","sms",customerById("${estimate.customer_id}"),estimateCache.find(x=>String(x.id)===String("${id}")),window._estimateItems?.["${id}"]||[])'>Text Quote</button>`:''}${customer.email?`<button class='convert' onclick="sendCustomerDocument('estimate','${id}')">Send Quote</button><button onclick='contactDoc("estimate","email",customerById("${estimate.customer_id}"),estimateCache.find(x=>String(x.id)===String("${id}")),window._estimateItems?.["${id}"]||[])'>Email Draft</button>`:''}`:'';
  window._estimateItems=window._estimateItems||{}; window._estimateItems[id]=items||[];
- detail.innerHTML=`<div class="eyebrow">ESTIMATE</div><h2 id="estimateModalTitle">${esc(estimate?.title||estimate?.estimate_number||'Estimate')}</h2><div class="meta" id="documentStatus-estimate-${id}">Status: ${esc(estimate?.status||'draft')}</div>${estimate?.description?`<p>${esc(estimate.description)}</p>`:''}<div>${rows||'<div class="empty">No line items.</div>'}</div><div class="detail-total"><span>Total</span><b>${Number(estimate?.total||estimate?.total_amount||0).toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div><div id="estimateAiPanel"></div><div id="signatureStatus-${id}" class="signature-status"></div>${contactButtons?`<h3>Contact / Send quote</h3><div class="actions">${contactButtons}</div><p class="meta">Send Quote emails a secure, read-only review and signing link. After signing, the customer receives a signed PDF. Email Draft opens your mail app with the signing link.</p>`:''}<div class="actions"><button class="convert" onclick="openBrandedDocument('estimate','${id}')">View Quote / PDF</button><button onclick="openDeliveryHistory('estimate','${id}')">Email activity</button><button onclick="openInvoiceEditor('${id}','estimate')">Edit / Change Order</button><button id="aiScopeBtn-${id}" onclick="aiEstimateDescription('${id}')">✦ AI Write Scope</button><button onclick="setEstimateStatus('${id}','sent')">Mark Sent</button><button class="convert" onclick="setEstimateStatus('${id}','approved')">Mark Approved</button><button onclick="setEstimateStatus('${id}','declined')">Declined</button>${['approved','converted'].includes(estimate?.status)?`<button onclick="scheduleApprovedQuote('${id}')">Create Job</button>`:''}${estimate?.status==='approved'?`<button class="convert" onclick="createInvoiceFromEstimate('${id}')">Create Invoice</button>`:''}</div>`;
+ detail.innerHTML=`<div class="eyebrow">ESTIMATE</div><h2 id="estimateModalTitle">${esc(estimate?.title||estimate?.estimate_number||'Estimate')}</h2><div class="meta" id="documentStatus-estimate-${id}">Status: ${esc(estimate?.status||'draft')}</div>${estimate?.description?`<p>${esc(estimate.description)}</p>`:''}<div>${rows||'<div class="empty">No line items.</div>'}</div><div class="detail-total"><span>Total</span><b>${Number(estimate?.total||estimate?.total_amount||0).toLocaleString(undefined,{style:'currency',currency:'USD'})}</b></div><div id="estimateAiPanel"></div><div id="signatureStatus-${id}" class="signature-status"></div>${contactButtons?`<h3>Contact / Send quote</h3><div class="actions">${contactButtons}</div><p class="meta">Send Quote emails a secure, read-only review and signing link. After signing, the customer receives a signed PDF. Email Draft opens your mail app with the signing link.</p>`:''}<div class="actions"><button class="convert" onclick="openBrandedDocument('estimate','${id}')">View Quote / PDF</button><button onclick="openDeliveryHistory('estimate','${id}')">Email activity</button><button onclick="openEstimateEditor('${id}')">Edit estimate</button><button id="aiScopeBtn-${id}" onclick="aiEstimateDescription('${id}')">✦ AI Write Scope</button><button onclick="setEstimateStatus('${id}','sent')">Mark Sent</button><button class="convert" onclick="setEstimateStatus('${id}','approved')">Mark Approved</button><button onclick="setEstimateStatus('${id}','declined')">Declined</button>${['approved','converted'].includes(estimate?.status)?`<button onclick="scheduleApprovedQuote('${id}')">Create Job</button>`:''}${estimate?.status==='approved'?`<button class="convert" onclick="createInvoiceFromEstimate('${id}')">Create Invoice</button>`:''}</div>`;
  await loadInvoiceSignatureStatus(id,'estimate');
  }catch(err){detail.innerHTML='<div class="empty">Estimate detail could not load. '+esc(err?.message||String(err))+'</div>';}
 };
@@ -779,11 +846,11 @@ window.openInvoice=async id=>{
 window.loadInvoiceSignatureStatus=async(id,kind='invoice')=>{const el=$('#signatureStatus-'+id);if(!el)return;try{const r=await fetch('/api/signature-status?kind='+kind+'&id='+id,{headers:{'x-fieldops-key':getAccessKey()}}),j=await r.json();if(!r.ok)throw new Error(j.error);el.innerHTML=`<b>${j.signed?'✓ Customer signed':j.pending?'Awaiting customer signature':'Not signed yet'}</b>${j.signed?`<p>Signed by ${esc(j.customer_name)} on ${esc(new Date(j.signed_at).toLocaleString())}.</p><a target="_blank" rel="noopener" href="/customer-sign.html?token=${encodeURIComponent(j.token)}">View preserved signed copy</a>`:''}<div class="actions"><button onclick="createSigningLink('${kind}','${id}')">Review / E-Sign</button></div>${(j.changes||[]).map(c=>`<div class="signature-status"><b>Change Order #${c.change_order_number} · ${money(c.total)}</b><p>${esc(c.status)} · Revised total ${money(Number(c.base_total)+Number(c.total))}</p><div class="actions"><button onclick="openBrandedDocument('change_order','${c.id}')">View / PDF</button>${c.status==='draft'?`<button onclick="createSigningLink('change_order','${c.id}')">Review / E-Sign</button><button onclick="sendCustomerDocument('change_order','${c.id}')">Send Change Order</button><button onclick="cancelChangeOrder('${c.id}','${kind}','${id}')">Cancel Change Order</button>`:''}${c.billing_invoice_id?`<button onclick="openInvoice('${c.billing_invoice_id}')">Adjustment invoice</button>`:''}</div></div>`).join('')}`;}catch(e){el.textContent=e.message;}};
 window.cancelChangeOrder=async(id,kind,parent)=>{try{const r=await fetch('/api/documents',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':getAccessKey()},body:JSON.stringify({kind:'change_order',id,action:'cancel'})}),j=await r.json();if(!r.ok)throw new Error(j.error);await loadInvoiceSignatureStatus(parent,kind);}catch(e){showBanner(e.message,'error');}};
 async function saveDocumentEdit(kind,id,title,description,items){const r=await fetch('/api/update-invoice',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':getAccessKey()},body:JSON.stringify({kind,id,title,description,items})}),j=await r.json();if(!r.ok)throw new Error(j.error);await loadInvoices();await loadEstimates();showBanner(j.change_order_id?'Separate change order created. The original signed document is unchanged. Customer approval is required.':'Document updated.','success');if(j.change_order_id)await openBrandedDocument('change_order',j.change_order_id);else if(kind==='estimate')await openEstimate(id);else await openInvoice(id);return j;}
-window.openInvoiceEditor=async(id,kind='invoice')=>{let doc=(kind==='estimate'?estimateCache:invoiceCache).find(x=>String(x.id)===String(id));if(!doc)return;try{let {data:items,error}=await sb.from(kind==='estimate'?'estimate_items':'invoice_items').select('*').eq(kind+'_id',id).order('sort_order',{ascending:true});if(error)throw error;const sr=await fetch('/api/signature-status?kind='+kind+'&id='+id,{headers:{'x-fieldops-key':getAccessKey()}});if(!sr.ok)throw new Error('Could not check approved document history');const sj=await sr.json(),latest=(sj.changes||[]).filter(c=>c.status==='approved').at(-1);if(latest){items=latest.items;doc={...doc,title:latest.title,description:latest.description};}const discount=(items||[]).filter(i=>Number(i.unit_price)<0).reduce((sum,i)=>sum-Number(i.quantity)*Number(i.unit_price),0);items=(items||[]).filter(i=>Number(i.unit_price)>=0);const customer=customerById(doc.customer_id);const detail=$(kind==='estimate'?'#estimateDetail':'#invoiceDetail');detail.innerHTML=`<h2>Edit ${kind}</h2><p class="meta">Enter the revised full scope and pricing. If this document is signed, saving creates a separate change order for the difference from the currently approved total. The original remains unchanged.</p>${customer?`<details class="remodel-invoice-options"><summary>Customer contact</summary><div class="item-grid entry-grid"><label>Name<input id="editCustName" value="${esc(customer.name||'')}"></label><label>Email<input id="editCustEmail" type="email" value="${esc(customer.email||'')}"></label><label>Phone<input id="editCustPhone" value="${esc(customer.phone||'')}"></label></div><p class="meta">Saves immediately to the customer record — separate from the price/scope changes below, and from any signed document already sent.</p><button type="button" id="saveCustContact">Save contact info</button><p id="custContactStatus" class="meta" role="status"></p></details>`:''}<form id="invoiceEditForm" class="estimate-form"><label>${kind==='estimate'?'Estimate':'Invoice'} title<input id="editInvTitle" value="${esc(doc.title||'')}"></label><label for="editInvDescription">${kind==='estimate'?'Work to be quoted':'Work performed / invoice description'}</label><textarea id="editInvDescription">${esc(doc.description||'')}</textarea><h3>Customer line items</h3><p class="entry-help">Quantity × customer unit price = line total. Include any material markup in the unit price; no additional markup is added here.</p><div id="invoiceEditItems">${(items||[]).map((x,i)=>invoiceEditRow(x.description,x.quantity,x.unit_price,i)).join('')}</div><button type="button" id="addInvoiceEditItem">+ Add line item</button><label>Discount ($ off total)<input id="editDiscount" type="number" min="0" step="0.01" value="${discount}" oninput="calcEditDocumentTotal()"></label><p id="editDiscountWarning" class="meta" style="color:#c9202f" role="status"></p><div class="detail-total" aria-live="polite"><span>Revised total</span><b id="editDocumentTotal"></b></div><button class="convert" type="submit">Save / Create Change Order</button><button type="button" id="cancelDocEdit">Cancel</button></form>`;$('#editInvDescription').dataset.invoiceId=kind==='invoice'?id:'';$('#cancelDocEdit').onclick=()=>kind==='estimate'?openEstimate(id):openInvoice(id);$('#addInvoiceEditItem').onclick=()=>{$('#invoiceEditItems').insertAdjacentHTML('beforeend',invoiceEditRow('',1,0,0));calcEditDocumentTotal();};$('#invoiceEditItems').addEventListener('input',calcEditDocumentTotal);calcEditDocumentTotal();if(customer)$('#saveCustContact').onclick=async()=>{const btn=$('#saveCustContact');btn.disabled=true;try{const name=$('#editCustName').value.trim();if(!name)throw new Error('Enter the client\u2019s name.');const payload={name,email:$('#editCustEmail').value.trim()||null,phone:$('#editCustPhone').value.trim()||null};const {data,error}=await sb.from('customers').update(payload).eq('id',doc.customer_id).select().single();if(error)throw error;if(!data?.id)throw new Error('Contact info was not saved.');customerCache=customerCache.filter(c=>c.id!==data.id);customerCache.unshift(data);renderCustomers();$('#custContactStatus').textContent='Contact info saved.';}catch(e){$('#custContactStatus').textContent=e.message;}finally{btn.disabled=false;}};$('#invoiceEditForm').onsubmit=async e=>{e.preventDefault();const button=e.submitter;button.disabled=true;try{const rows=[...document.querySelectorAll('#invoiceEditItems .invoice-edit-row')].map(r=>({description:r.querySelector('.edit-desc').value.trim(),quantity:Number(r.querySelector('.edit-qty').value),unit_price:Number(r.querySelector('.edit-price').value)}));appendQuoteDiscount(rows,$('#editDiscount').value);await saveDocumentEdit(kind,id,$('#editInvTitle').value,$('#editInvDescription').value,rows);}catch(e){showBanner(e.message,'error');}finally{button.disabled=false;}};}catch(e){showBanner(e.message,'error');}};
+window.openInvoiceEditor=async(id,kind='invoice')=>{if(kind==='estimate')return openEstimateEditor(id);let doc=(kind==='estimate'?estimateCache:invoiceCache).find(x=>String(x.id)===String(id));if(!doc)return;try{let {data:items,error}=await sb.from(kind==='estimate'?'estimate_items':'invoice_items').select('*').eq(kind+'_id',id).order('sort_order',{ascending:true});if(error)throw error;const sr=await fetch('/api/signature-status?kind='+kind+'&id='+id,{headers:{'x-fieldops-key':getAccessKey()}});if(!sr.ok)throw new Error('Could not check approved document history');const sj=await sr.json(),latest=(sj.changes||[]).filter(c=>c.status==='approved').at(-1);if(latest){items=latest.items;doc={...doc,title:latest.title,description:latest.description};}const discount=(items||[]).filter(i=>Number(i.unit_price)<0).reduce((sum,i)=>sum-Number(i.quantity)*Number(i.unit_price),0);items=(items||[]).filter(i=>Number(i.unit_price)>=0);const customer=customerById(doc.customer_id);const detail=$(kind==='estimate'?'#estimateDetail':'#invoiceDetail');detail.innerHTML=`<h2>Edit ${kind}</h2><p class="meta">Enter the revised full scope and pricing. If this document is signed, saving creates a separate change order for the difference from the currently approved total. The original remains unchanged.</p>${customer?`<details class="remodel-invoice-options"><summary>Customer contact</summary><div class="item-grid entry-grid"><label>Name<input id="editCustName" value="${esc(customer.name||'')}"></label><label>Email<input id="editCustEmail" type="email" value="${esc(customer.email||'')}"></label><label>Phone<input id="editCustPhone" value="${esc(customer.phone||'')}"></label></div><p class="meta">Saves immediately to the customer record — separate from the price/scope changes below, and from any signed document already sent.</p><button type="button" id="saveCustContact">Save contact info</button><p id="custContactStatus" class="meta" role="status"></p></details>`:''}<form id="invoiceEditForm" class="estimate-form"><label>${kind==='estimate'?'Estimate':'Invoice'} title<input id="editInvTitle" value="${esc(doc.title||'')}"></label><label for="editInvDescription">${kind==='estimate'?'Work to be quoted':'Work performed / invoice description'}</label><textarea id="editInvDescription">${esc(doc.description||'')}</textarea><h3>Customer line items</h3><p class="entry-help">Quantity × customer unit price = line total. Include any material markup in the unit price; no additional markup is added here.</p><div id="invoiceEditItems">${(items||[]).map((x,i)=>invoiceEditRow(x.description,x.quantity,x.unit_price,i)).join('')}</div><button type="button" id="addInvoiceEditItem">+ Add line item</button><label>Discount ($ off total)<input id="editDiscount" type="number" min="0" step="0.01" value="${discount}" oninput="calcEditDocumentTotal()"></label><p id="editDiscountWarning" class="meta" style="color:#c9202f" role="status"></p><div class="detail-total" aria-live="polite"><span>Revised total</span><b id="editDocumentTotal"></b></div><button class="convert" type="submit">Save / Create Change Order</button><button type="button" id="cancelDocEdit">Cancel</button></form>`;$('#editInvDescription').dataset.invoiceId=kind==='invoice'?id:'';$('#cancelDocEdit').onclick=()=>kind==='estimate'?openEstimate(id):openInvoice(id);$('#addInvoiceEditItem').onclick=()=>{$('#invoiceEditItems').insertAdjacentHTML('beforeend',invoiceEditRow('',1,0,0));calcEditDocumentTotal();};$('#invoiceEditItems').addEventListener('input',calcEditDocumentTotal);calcEditDocumentTotal();if(customer)$('#saveCustContact').onclick=async()=>{const btn=$('#saveCustContact');btn.disabled=true;try{const name=$('#editCustName').value.trim();if(!name)throw new Error('Enter the client\u2019s name.');const payload={name,email:$('#editCustEmail').value.trim()||null,phone:$('#editCustPhone').value.trim()||null};const {data,error}=await sb.from('customers').update(payload).eq('id',doc.customer_id).select().single();if(error)throw error;if(!data?.id)throw new Error('Contact info was not saved.');customerCache=customerCache.filter(c=>c.id!==data.id);customerCache.unshift(data);renderCustomers();$('#custContactStatus').textContent='Contact info saved.';}catch(e){$('#custContactStatus').textContent=e.message;}finally{btn.disabled=false;}};$('#invoiceEditForm').onsubmit=async e=>{e.preventDefault();const button=e.submitter;button.disabled=true;try{const rows=[...document.querySelectorAll('#invoiceEditItems .invoice-edit-row')].map(r=>({description:r.querySelector('.edit-desc').value.trim(),quantity:Number(r.querySelector('.edit-qty').value),unit_price:Number(r.querySelector('.edit-price').value)}));appendQuoteDiscount(rows,$('#editDiscount').value);await saveDocumentEdit(kind,id,$('#editInvTitle').value,$('#editInvDescription').value,rows);}catch(e){showBanner(e.message,'error');}finally{button.disabled=false;}};}catch(e){showBanner(e.message,'error');}};
 function workContext(id){if(id!=='estDescription')return'';const sel=document.getElementById('estDescriptionQuestion8');return sel?.value?('Job difficulty: '+sel.value):'';}
 function installDescriptionAssist(){
  for(const id of ['estDescription','jobNotes','editInvDescription','bookDescription']){const field=document.getElementById(id);if(!field||field.dataset.aiAssist)continue;field.dataset.aiAssist='1';const button=document.createElement('button');button.type='button';button.textContent='✦ AI: Rewrite wording only (no pricing)';field.insertAdjacentElement('afterend',button);
- button.onclick=async()=>{const original=field.value;if(!original.trim()){showBanner('Describe the work first, then ask AI to polish it.','error');return;}button.disabled=true;try{const type=id==='estDescription'||id==='bookDescription'?'estimate':id==='jobNotes'?'job':($('#invoiceDetail h2')?.textContent.includes('estimate')?'estimate':'invoice');const r=await fetch('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':getAccessKey()},body:JSON.stringify({document_type:type,invoice_id:field.dataset.invoiceId||undefined,description:original,notes:workContext(id),items:[]})}),j=await r.json();if(!r.ok)throw new Error(j.error);if(!field.isConnected)return;const text=j.draft?.brief_description;if(!text)throw new Error('No draft returned');button.nextElementSibling?.classList.contains('description-ai-preview')&&button.nextElementSibling.remove();const preview=document.createElement('div');preview.className='description-ai-preview ai-panel';const wording=document.createElement('p');wording.textContent=text;const apply=document.createElement('button');apply.type='button';apply.textContent='Use this wording';apply.onclick=()=>{if(field.value!==original){showBanner('Your description changed. Generate a new draft to keep your latest edits.','error');return;}field.value=text;field.dispatchEvent(new Event('input',{bubbles:true}));preview.remove();};const discard=document.createElement('button');discard.type='button';discard.textContent='Keep my wording';discard.onclick=()=>preview.remove();preview.append(wording,apply,discard);button.insertAdjacentElement('afterend',preview);}catch(e){showBanner(e.message,'error');}finally{button.disabled=false;}};
+ button.onclick=async()=>{const original=field.value,wordingContext=id==='estDescription'?currentAiQuoteContext():null;if(!original.trim()){showBanner('Describe the work first, then ask AI to polish it.','error');return;}button.disabled=true;try{const type=id==='estDescription'||id==='bookDescription'?'estimate':id==='jobNotes'?'job':($('#invoiceDetail h2')?.textContent.includes('estimate')?'estimate':'invoice');const r=await fetch('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':getAccessKey()},body:JSON.stringify({document_type:type,invoice_id:field.dataset.invoiceId||undefined,description:original,notes:workContext(id),items:[]})}),j=await r.json();if(!r.ok)throw new Error(j.error);if(!field.isConnected||(wordingContext&&wordingContext!==currentAiQuoteContext()))return;const text=j.draft?.brief_description;if(!text)throw new Error('No draft returned');button.nextElementSibling?.classList.contains('description-ai-preview')&&button.nextElementSibling.remove();const preview=document.createElement('div');preview.className='description-ai-preview ai-panel';const wording=document.createElement('p');wording.textContent=text;const apply=document.createElement('button');apply.type='button';apply.textContent='Use this wording';apply.onclick=()=>{if(field.value!==original||(wordingContext&&wordingContext!==currentAiQuoteContext())){showBanner('Your description changed. Generate a new draft to keep your latest edits.','error');return;}field.value=text;field.dispatchEvent(new Event('input',{bubbles:true}));preview.remove();};const discard=document.createElement('button');discard.type='button';discard.textContent='Keep my wording';discard.onclick=()=>preview.remove();preview.append(wording,apply,discard);button.insertAdjacentElement('afterend',preview);}catch(e){showBanner(e.message,'error');}finally{button.disabled=false;}};
  }
 }
 new MutationObserver(installDescriptionAssist).observe(document.body,{childList:true,subtree:true});installDescriptionAssist();
@@ -1032,36 +1099,45 @@ function readQuoteDraft(){try{return JSON.parse(localStorage.getItem(quoteDraftS
 function refreshQuoteDraftNotice(){$('#quoteDraftNotice').hidden=!readQuoteDraft();}
 function clearQuoteDraft(){try{localStorage.removeItem(quoteDraftStorageKey);}catch{}$('#quoteDraftStatus').textContent='';refreshQuoteDraftNotice();}
 function persistQuoteDraft(){
- if(restoringQuoteDraft||$('#estimateForm').style.display==='none')return;
+ if(restoringQuoteDraft||estimateHydrating||$('#estimateForm').style.display==='none')return;
  const fields=Object.fromEntries(quoteDraftFields.map(id=>[id,$('#'+id).value]));const items=[...document.querySelectorAll('.estimate-item')].map(row=>({description:row.querySelector('.item-desc').value,quantity:row.querySelector('.item-qty').value,unit_price:row.querySelector('.item-unit').value}));
  if(!fields.estTitle&&!fields.estDescription&&!items.some(i=>i.description))return;
- try{localStorage.setItem(quoteDraftStorageKey,JSON.stringify({fields,items,requestId:quoteSaveRequestId,savedAt:new Date().toISOString()}));$('#quoteDraftStatus').textContent='Draft saved on this device. It has not been sent.';refreshQuoteDraftNotice();}
+ try{localStorage.setItem(quoteDraftStorageKey,JSON.stringify({fields,items,editor:estimateEditor,context:captureEstimateContext(),requestId:quoteSaveRequestId,savedAt:new Date().toISOString()}));$('#quoteDraftStatus').textContent='Draft saved on this device. It has not been sent.';refreshQuoteDraftNotice();}
  catch{$('#quoteDraftStatus').textContent='This browser could not save a recovery copy. Keep this page open until you save the quote.';}
 }
 $('#estimateForm').addEventListener('input',persistQuoteDraft);$('#estimateForm').addEventListener('change',persistQuoteDraft);
 $('#estimateForm').addEventListener('click',()=>setTimeout(persistQuoteDraft,0));
 $('#restoreQuoteDraft').onclick=async()=>{
  const draft=readQuoteDraft();if(!draft?.fields||!Array.isArray(draft.items))return;
- restoringQuoteDraft=true;
- try{await loadCustomers();await prefillEstimate(draft.fields.estCustomerId||'');quoteSaveRequestId=draft.requestId||crypto.randomUUID();
- for(const id of quoteDraftFields)if(id!=='estJobId')$('#'+id).value=draft.fields[id]||(id==='estPricingMode'?'per_task':'');
- if(!draft.fields.estQuoteMode&&/^Remodel — /.test(draft.fields.estTitle||''))$('#estQuoteMode').value='remodel';await loadEstimateJobs();$('#estJobId').value=draft.fields.estJobId||'';$('#estimateItems').innerHTML='';draft.items.slice(0,100).forEach(i=>addEstimateItem(i.description,Number.isFinite(Number(i.quantity))?Number(i.quantity):1,Number.isFinite(Number(i.unit_price))?Number(i.unit_price):0));
- syncQuoteMode();window.A1EstimateLabor.sync();$('#quoteDraftStatus').textContent='Recovered line items are unchanged. Labor guidance uses current difficulty rates. Review before saving or sending.';
- }catch(e){showBanner('Could not restore draft: '+e.message,'error');}finally{restoringQuoteDraft=false;}
+ restoringQuoteDraft=true;let generation;const restoreStart=estimateEditorLoad;
+ try{
+  if(draft.editor?.id){if(!await openEstimateEditor(draft.editor.id,{recovering:true}))return;estimateEditor.revision=draft.editor.revision;}
+  else{await loadCustomers();if(restoreStart!==estimateEditorLoad)return;if(!await prefillEstimate(draft.fields.estCustomerId||'',{force:true}))return;}
+  generation=estimateEditorLoad;estimateHydrating=generation;$('#estimateForm').style.display='none';quoteSaveRequestId=draft.requestId||crypto.randomUUID();
+  for(const id of quoteDraftFields)if(id!=='estJobId')$('#'+id).value=draft.fields[id]??(id==='estPricingMode'?'per_task':'');
+  if(!draft.fields.estQuoteMode&&/^Remodel — /.test(draft.fields.estTitle||''))$('#estQuoteMode').value='remodel';
+  await loadEstimateJobs();if(generation!==estimateEditorLoad)return;
+  if(draft.fields.estJobId&&![...$('#estJobId').options].some(o=>o.value===draft.fields.estJobId))$('#estJobId').add(new Option('Existing linked job',draft.fields.estJobId));$('#estJobId').value=draft.fields.estJobId||'';
+  $('#estimateItems').innerHTML='';draft.items.slice(0,100).forEach(i=>addEstimateItem(i.description,Number.isFinite(Number(i.quantity))?Number(i.quantity):1,Number.isFinite(Number(i.unit_price))?Number(i.unit_price):0));
+  window.A1TaskEstimator?.restore(draft.context?.construction||null);updateEstimateEditorUI();syncRestoredEstimateRate(draft.fields);calcEstimateTotal();estimateHydrating=0;$('#estimateForm').style.display='grid';
+  $('#quoteDraftStatus').textContent='Recovered your quote details and prices. Review before saving. If another device changed this quote, reload its latest version before saving.';
+ }catch(e){showBanner('Could not restore draft: '+e.message,'error');}finally{if(estimateHydrating===generation)estimateHydrating=0;restoringQuoteDraft=false;persistQuoteDraft();}
 };
+
 $('#discardQuoteDraft').onclick=clearQuoteDraft;
 
-function syncQuoteMode(){const remodel=$('#estQuoteMode').value==='remodel';$('#serviceEstimateTools').style.display=remodel?'none':'contents';$('#remodelAppliedNote').hidden=!remodel;$('#estimateFormHeading').textContent=remodel?'Review your remodel proposal':'Build a profitable estimate';}
+function syncQuoteMode(){const remodel=$('#estQuoteMode').value==='remodel';$('#serviceEstimateTools').style.display=remodel?'none':'contents';$('#remodelAppliedNote').hidden=!remodel;$('#estimateFormHeading').textContent=estimateEditor?(remodel?'Edit your remodel estimate':'Edit your estimate'):(remodel?'Review your remodel proposal':'Build a profitable estimate');}
 $('#estimateForm').addEventListener('reset',()=>{$('#estQuoteMode').value='service';queueMicrotask(syncQuoteMode);});
-window.A1RemodelBridge={key:getAccessKey,apply:async proposal=>{
- if(readQuoteDraft()&&!confirm('Replace the current unsaved estimate draft with this proposal? Saved estimates stay unchanged.'))return false;
- await loadCustomers();await prefillEstimate('');
- $('#estQuoteMode').value=proposal.profile==='construction'?'remodel':'service';syncQuoteMode();$('#estTitle').value=proposal.title;$('#estDescription').value=proposal.description;
+window.A1RemodelBridge={key:getAccessKey,contextId:()=>quoteSaveRequestId+':'+(estimateEditor?.id||'new'),apply:async proposal=>{
+ if(readQuoteDraft()&&!confirm('Replace the current builder scope and prices with this proposal? Nothing is saved or sent until you save the estimate.'))return false;
+ if(!estimateEditor){const client=$('#estCustomerId').value,job=$('#estJobId').value,context=quoteSaveRequestId;await loadCustomers();if(context!==quoteSaveRequestId)return false;if(!await prefillEstimate(client,{force:true}))return false;$('#estJobId').value=job;}
+ window.A1TaskEstimator?.restore(proposal.intake||null);$('#estQuoteMode').value=proposal.profile==='construction'?'remodel':'service';syncQuoteMode();$('#estTitle').value=proposal.title;$('#estDescription').value=proposal.description;
  if(proposal.difficulty){const selected=[...$('#estDescriptionQuestion8').options].find(o=>window.A1EstimateLabor.normalizeDifficulty(o.value)===proposal.difficulty);if(selected)$('#estDescriptionQuestion8').value=selected.value;}
  $('#estimateItems').innerHTML='';proposal.items.forEach(i=>addEstimateItem(i.description,i.quantity,i.unit_price));
  window.A1EstimateLabor.sync();calcEstimateTotal();persistQuoteDraft();return true;
 }};
 
+document.addEventListener('fieldops:construction-change',()=>{if($('#estQuoteMode').value==='remodel')persistQuoteDraft();});
 window.addEventListener('pagehide',persistQuoteDraft);
 window.addEventListener('offline',()=>showBanner('Offline. Your quote can be kept as a draft on this device; saving to FieldOps and sending need internet.','error'));
 window.addEventListener('online',()=>showBanner('Connection restored. Review your draft, then save or send when ready.','success'));
@@ -1150,3 +1226,4 @@ window.openDeliveryHistory=async(kind,id)=>{
 </script>
 </body>
 </html>
+

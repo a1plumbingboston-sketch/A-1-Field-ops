@@ -83,8 +83,12 @@ if (typeof window !== 'undefined') {
     if(!manuallyEdited)input.value=String(result.rate);
     data.autoRate=String(result.rate);
     const r = ranges[profile] || DEFAULT_RANGES.service;
-    input.min = String(r.min);
-    input.max = String(r.max);
+    // Configured ranges guide automatic rates; keep an explicitly entered or
+    // historical positive rate valid when settings arrive or inputs resync.
+    const enteredRate=Number(input.value);
+    const preserveEntered=manuallyEdited&&Number.isFinite(enteredRate)&&enteredRate>0;
+    input.min = String(preserveEntered?Math.min(r.min,enteredRate):r.min);
+    input.max = String(preserveEntered?Math.max(r.max,enteredRate):r.max);
     const note = document.getElementById('estLaborRateNote');
     if (note) note.textContent = result.provisional
       ? `$${result.rate}/hour is provisional. Confirm site conditions before quoting. Existing line items change only when you edit or apply a new recommendation.`
@@ -100,3 +104,4 @@ if (typeof window !== 'undefined') {
   loadLaborRateRanges().then(() => sync());
   sync();
 }
+

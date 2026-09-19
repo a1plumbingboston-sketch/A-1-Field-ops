@@ -1,9 +1,20 @@
 import {authorized,rpc,uuid,clean,error} from '../lib/db.js';
+import {estimateSaveInput} from '../lib/estimate-editor.js';
 export default async function handler(req,res){res.setHeader('Cache-Control','no-store');if(req.method!=='POST')return res.status(405).json({error:'POST only'});try{
  if(!await authorized(req))return res.status(401).json({error:'Authentication required'});
+ if(req.body?.action==='load_estimate'){
+  if(!uuid(req.body.id))return res.status(400).json({error:'Choose a valid estimate'});
+  try{return res.json(await rpc('fieldops_load_estimate_editor',{p_id:req.body.id}));}catch(e){return res.status(/not found/i.test(e.message)?404:503).json({error:e.message});}
+ }
+ if(req.body?.action==='save_estimate'){
+  let input;try{input=estimateSaveInput(req.body);}catch(e){return res.status(400).json({error:e.message});}
+  try{return res.json(await rpc('fieldops_save_estimate_editor',input));}catch(e){return res.status(/changed|pending|approved|signed|different save|reopen|Save as new|conflict/i.test(e.message)?409:/not found|choose|invalid|discount|too large|Enter /i.test(e.message)?400:503).json({error:e.message});}
+ }
+
  const kind=req.body?.kind||'invoice',id=req.body?.invoice_id||req.body?.id,items=req.body?.items;
  if(!uuid(id)||!['estimate','invoice'].includes(kind))return res.status(400).json({error:'Invalid document'});
  if(!Array.isArray(items)||items.length<1||items.length>100||items.some(i=>!clean(i.description,500)||!Number.isFinite(Number(i.quantity))||!Number.isFinite(Number(i.unit_price))||Number(i.quantity)<=0||(Number(i.unit_price)<0&&(i.description!=='Discount'||Number(i.quantity)!==1))||Math.abs(Number(i.quantity)*Number(i.unit_price))>1e9))return res.status(400).json({error:'Enter 1–100 valid line items with positive quantities and valid prices (negative prices are only allowed for a Discount)'});
  if(req.body.action==='create'){if(kind!=='invoice'||!uuid(req.body.customer_id)||!clean(req.body.title,300))return res.status(400).json({error:'Choose a customer and enter a title'});return res.status(200).json(await rpc('fieldops_create_invoice',{p_id:id,p_customer_id:req.body.customer_id,p_title:clean(req.body.title,300),p_description:clean(req.body.description),p_items:items.map(i=>({description:clean(i.description,500),quantity:Number(i.quantity),unit_price:Number(i.unit_price)}))}));}
  const result=await rpc('fieldops_edit_document',{p_kind:kind,p_id:id,p_title:clean(req.body.title,300),p_description:clean(req.body.description),p_items:items.map(i=>({description:clean(i.description,500),quantity:Number(i.quantity),unit_price:Number(i.unit_price)}))});return res.status(200).json(result);
  }catch(e){return error(res,e);}}
+

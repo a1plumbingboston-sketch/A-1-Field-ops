@@ -12,7 +12,7 @@ checks={
  'customer loading': 'loadCustomers',
  'job loading': 'loadJobs',
  'materials': 'openMaterials',
- 'estimate save': 'fieldops_create_quote',
+ 'estimate save': "action:'save_estimate'",
  'estimate send': 'setEstimateStatus',
  'estimate approval': "setEstimateStatus('${id}','approved')",
  'invoice creation': 'createInvoiceFromEstimate',
@@ -42,3 +42,4 @@ rm "$ROOT/_inline.js"
 for f in "$ROOT"/api/*.js "$ROOT"/lib/*.js "$ROOT"/document-system.js; do node --check "$f"; done
 grep -Eq "^const CACHE='a1-fieldops-[^']+';" "$ROOT/service-worker.js"
 echo "All local workflow smoke tests passed."
+
