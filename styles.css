@@ -36,3 +36,5 @@
 .field-tools-card button,.field-tools-card input:not([type=checkbox]),.field-tools-card select,.field-tools-card textarea{background:#1a1d23;color:#fff;border:1px solid #343941;border-radius:10px;padding:10px;font:inherit}.field-tools-card button{cursor:pointer}.field-tools-card input[type=file]{font-size:13px}
 
 .photo-download{display:block;padding:12px;margin-top:8px;border:1px solid #343941;border-radius:10px;color:#fff;text-align:center;text-decoration:none;background:#1a1d23}
+/* Method-specific controls must stay hidden even inside grid labels. */
+#estimateForm [hidden]{display:none!important}
