@@ -1,0 +1,24 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright';
+import {startServer} from './dev-server.js';
+import {calculateServiceQuote,serviceInput} from '../lib/service-quote.js';
+
+test('service scope questions, review gate, draft save and separate fixed-total allocation on a phone',{timeout:60000},async()=>{
+ const app=await startServer(),browser=await chromium.launch({headless:true});
+ try{
+  await app.q("update customers set owner_id='0e034a68-56ff-41af-a323-80415f6570b5' where id=$1",[app.customer]);
+  const page=await browser.newPage({viewport:{width:390,height:844}}),errors=[],requests=[];page.setDefaultTimeout(10000);page.on('pageerror',e=>errors.push(e.message));
+  const scope={summary:'Replace supplied kitchen faucet.',questions:[],assumptions:['1.5 person-hours, working accessible stops'],exclusions:['Countertop work'],tasks:[{description:'Replace supplied kitchen faucet and supplies',labor_hours:1.5,material_cost:40,materials:'Two supply lines',cost_basis:'Owner confirmed purchase cost',source_url:null}]};
+  await page.route('**/api/service-quote',async route=>{const input=JSON.parse(route.request().postData());requests.push(input);const raw=requests.length===1?{...scope,questions:['Are the shutoffs working?']}:scope;await route.fulfill({contentType:'application/json',body:JSON.stringify({analysis:calculateServiceQuote(raw,serviceInput(input))})});});
+  await page.route('**/api/estimate-assist',async route=>{const x=JSON.parse(route.request().postData());assert.equal(x.allocation_mode,true);assert.equal(Number(x.target_total),999.99);await route.fulfill({contentType:'application/json',body:JSON.stringify({analysis:{summary:'Allocated exact owner total.',recommended_total:999.99,recommended_line_items:[{description:'Faucet labor and materials',quantity:1,unit_price:999.99}],sources:[],risks:[]}})});});
+  await page.goto(app.origin);await page.locator('#accessKey').fill('test-key');await page.getByRole('button',{name:'Unlock FieldOps'}).click();await page.locator('#app').waitFor({state:'visible'});
+  await page.getByRole('button',{name:'Estimates',exact:true}).click();await page.getByRole('button',{name:'New Estimate',exact:true}).click();
+  await page.locator('#estCustomerId').selectOption(app.customer);await page.locator('#estTitle').fill('Kitchen faucet');await page.locator('#estDescription').fill('Replace customer-supplied kitchen faucet. Accessible cabinet. Supply lines cost $40; cleanup and testing included.');await page.locator('#estLaborRate').fill('200');await page.locator('#estContingency').fill('0');
+  assert.equal(await page.locator('#estMethod').inputValue(),'service');await page.getByRole('button',{name:'✦ Build service quote',exact:true}).click();await page.getByText('Are the shutoffs working?',{exact:true}).waitFor();assert.equal(await page.locator('#applyAiQuoteButton').count(),0);
+  await page.locator('#estServiceAnswers').fill('Yes, both shutoffs work. No permit or disposal costs in this scope.');await page.getByRole('button',{name:'✦ Build service quote',exact:true}).click();await page.locator('#serviceQuoteReviewed').waitFor();assert.equal(await page.locator('#applyAiQuoteButton').isEnabled(),false);
+  await page.locator('#serviceQuoteReviewed').check();await page.getByRole('button',{name:'Use reviewed service quote'}).click();assert.equal(await page.locator('#estimateTotal').textContent(),'$425.00');assert.equal(await page.locator('#estimateItems .estimate-item').count(),2);
+  await page.getByRole('button',{name:'Save Draft Estimate',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#estimateForm').style.display==='none').catch(async e=>{console.error('Save banner:',await page.locator('#appMsg').textContent());throw e;});const saved=await app.q("select total,estimator_context from estimates where title='Kitchen faucet'");assert.equal(Number(saved[0].total),425);assert.equal(saved[0].estimator_context.fields.estMethod,'service');assert.match(saved[0].estimator_context.fields.estServiceAnswers,/shutoffs work/);
+  await page.locator('#closeEstimateModal').click();await page.getByRole('button',{name:'New Estimate',exact:true}).click();await page.locator('#estMethod').selectOption('allocate');await page.locator('#estTitle').fill('Fixed price faucet');await page.locator('#estDescription').fill('Replace faucet and supplies.');await page.locator('#estPresetTotal').fill('999.99');await page.getByRole('button',{name:'✦ Allocate my total'}).click();await page.locator('#applyAiQuoteButton').waitFor();await page.locator('#applyAiQuoteButton').click();assert.equal(await page.locator('#estimateTotal').textContent(),'$1,074.99');assert.deepEqual(errors,[]);
+ }catch(e){console.error('Service browser flow failed:',e);throw e;}finally{await browser.close();await app.close();}
+});

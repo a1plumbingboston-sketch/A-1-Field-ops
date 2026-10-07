@@ -28,6 +28,7 @@ await db.exec(await fs.readFile(new URL('../supabase/migrations/20260911165952_q
 await db.exec(await fs.readFile(new URL('../supabase/migrations/20260911171637_document_archive.sql',import.meta.url),'utf8'));
 await db.exec(await fs.readFile(new URL('../supabase/migrations/20260911171927_custom_invoices.sql',import.meta.url),'utf8'));
 await db.exec(await fs.readFile(new URL('../supabase/migrations/20260911211117_technician_workspace.sql',import.meta.url),'utf8'));
+await db.exec(await fs.readFile(new URL('../supabase/migrations/20260919173852_full_estimate_builder_edit.sql',import.meta.url),'utf8'));
 const mails=[],realFetch=global.fetch;
 const identifier=s=>{if(!/^[a-z_][a-z_0-9]*$/i.test(s))throw new Error('Invalid identifier');return '"'+s+'"';};
 async function rest(url,options={}){const u=new URL(url),method=options.method||'GET',body=options.body?JSON.parse(options.body):null;const endpoint=u.pathname.split('/rest/v1/')[1];try{
