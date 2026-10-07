@@ -7,7 +7,7 @@ export async function requestEstimate(input,{accessKey='',signal,onProgress=()=>
  const interval=setInterval(progress,10000);
  try{
   progress();
-  const response=await fetch(input.estimator_mode==='service'?'/api/service-quote':'/api/estimate-assist',{method:'POST',signal:controller.signal,headers:{'Content-Type':'application/json','x-fieldops-key':accessKey},body:JSON.stringify(input)});
+  const response=await fetch('/api/estimate-assist',{method:'POST',signal:controller.signal,headers:{'Content-Type':'application/json','x-fieldops-key':accessKey},body:JSON.stringify(input)});
   let data;
   try{data=await response.json();}catch(error){if(controller.signal.aborted)throw controller.signal.reason;throw new Error('The estimate connection ended before a complete result arrived. Your draft is unchanged.');}
   if(controller.signal.aborted)throw controller.signal.reason;

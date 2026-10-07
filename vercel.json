@@ -141,10 +141,6 @@
     "api/documents.js": {
       "maxDuration": 300,
       "supportsCancellation": true
-    },
-    "api/service-quote.js": {
-      "maxDuration": 300,
-      "supportsCancellation": true
     }
   }
 }

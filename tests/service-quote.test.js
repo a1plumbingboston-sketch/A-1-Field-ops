@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
 import {serviceInput,calculateServiceQuote,retrievedSourceUrls} from '../lib/service-quote.js';
 import {estimateInput,estimateLineItemTarget,reconcileEstimateTotal} from '../lib/estimate-guidance.js';
-import handler from '../api/service-quote.js';
+import handler from '../api/estimate-assist.js';
 const input=serviceInput({description:'Replace customer-supplied faucet with accessible working stops.',labor_rate:200,markup_pct:25,contingency_pct:10});
 const scope={summary:'Replace faucet and test.',questions:[],assumptions:['1.5 person-hours including cleanup.'],exclusions:['Countertop repair'],tasks:[{description:'Replace kitchen faucet',labor_hours:1.5,material_cost:40,materials:'Two supplies',cost_basis:'Unverified allowance for supplies',source_url:null}]};
 test('service price uses the entered rate, marks materials once and adds one call fee',()=>{
@@ -33,8 +33,8 @@ test('service endpoint authenticates, uses the structured Responses protocol and
  const res=()=>Object.assign(new EventEmitter(),{setHeader(){},status(n){this.code=n;return this;},json(j){this.body=j;return this;}});
  try{
   global.fetch=async(url,options)=>{if(String(url).includes('fieldops_key_status'))return Response.json(options.headers['x-fieldops-key']==='valid');calls++;const body=JSON.parse(options.body);assert.equal(body.text.format.schema.additionalProperties,false);assert.equal(body.store,false);return Response.json({status:'completed',id:'test',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(scope)}]}]});};
-  let r=res();await handler({method:'POST',headers:{},body:input},r);assert.equal(r.code,401);assert.equal(calls,0);
-  r=res();await handler({method:'POST',headers:{'x-fieldops-key':'valid'},body:input},r);assert.equal(r.body.analysis.total_with_truck,430);assert.equal(calls,1);
-  global.fetch=async url=>String(url).includes('fieldops_key_status')?Response.json(true):Response.json({status:'incomplete'});r=res();await handler({method:'POST',headers:{'x-fieldops-key':'valid'},body:input},r);assert.equal(r.code,502);assert.ok(!r.body.analysis);
+  let r=res();await handler({method:'POST',headers:{},body:{...input,estimator_mode:'service'}},r);assert.equal(r.code,401);assert.equal(calls,0);
+  r=res();await handler({method:'POST',headers:{'x-fieldops-key':'valid'},body:{...input,estimator_mode:'service'}},r);assert.equal(r.body.analysis.total_with_truck,430);assert.equal(calls,1);
+  global.fetch=async url=>String(url).includes('fieldops_key_status')?Response.json(true):Response.json({status:'incomplete'});r=res();await handler({method:'POST',headers:{'x-fieldops-key':'valid'},body:{...input,estimator_mode:'service'}},r);assert.equal(r.code,502);assert.ok(!r.body.analysis);
  }finally{global.fetch=savedFetch;if(savedKey===undefined)delete process.env.OPENAI_API_KEY;else process.env.OPENAI_API_KEY=savedKey;}
 });

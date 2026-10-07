@@ -10,8 +10,16 @@ test('service scope questions, review gate, draft save and separate fixed-total 
   await app.q("update customers set owner_id='0e034a68-56ff-41af-a323-80415f6570b5' where id=$1",[app.customer]);
   const page=await browser.newPage({viewport:{width:390,height:844}}),errors=[],requests=[];page.setDefaultTimeout(10000);page.on('pageerror',e=>errors.push(e.message));
   const scope={summary:'Replace supplied kitchen faucet.',questions:[],assumptions:['1.5 person-hours, working accessible stops'],exclusions:['Countertop work'],tasks:[{description:'Replace supplied kitchen faucet and supplies',labor_hours:1.5,material_cost:40,materials:'Two supply lines',cost_basis:'Owner confirmed purchase cost',source_url:null}]};
-  await page.route('**/api/service-quote',async route=>{const input=JSON.parse(route.request().postData());requests.push(input);const raw=requests.length===1?{...scope,questions:['Are the shutoffs working?']}:scope;await route.fulfill({contentType:'application/json',body:JSON.stringify({analysis:calculateServiceQuote(raw,serviceInput(input))})});});
-  await page.route('**/api/estimate-assist',async route=>{const x=JSON.parse(route.request().postData());assert.equal(x.allocation_mode,true);assert.equal(Number(x.target_total),999.99);await route.fulfill({contentType:'application/json',body:JSON.stringify({analysis:{summary:'Allocated exact owner total.',recommended_total:999.99,recommended_line_items:[{description:'Faucet labor and materials',quantity:1,unit_price:999.99}],sources:[],risks:[]}})});});
+  await page.route('**/api/estimate-assist',async route=>{
+   const input=JSON.parse(route.request().postData());
+   if(input.estimator_mode==='service'){
+    requests.push(input);const raw=requests.length===1?{...scope,questions:['Are the shutoffs working?']}:scope;
+    await route.fulfill({contentType:'application/json',body:JSON.stringify({analysis:calculateServiceQuote(raw,serviceInput(input))})});
+   }else{
+    assert.equal(input.allocation_mode,true);assert.equal(Number(input.target_total),999.99);
+    await route.fulfill({contentType:'application/json',body:JSON.stringify({analysis:{summary:'Allocated exact owner total.',recommended_total:999.99,recommended_line_items:[{description:'Faucet labor and materials',quantity:1,unit_price:999.99}],sources:[],risks:[]}})});
+   }
+  });
   await page.goto(app.origin);await page.locator('#accessKey').fill('test-key');await page.getByRole('button',{name:'Unlock FieldOps'}).click();await page.locator('#app').waitFor({state:'visible'});
   await page.getByRole('button',{name:'Estimates',exact:true}).click();await page.getByRole('button',{name:'New Estimate',exact:true}).click();
   await page.locator('#estCustomerId').selectOption(app.customer);await page.locator('#estTitle').fill('Kitchen faucet');await page.locator('#estDescription').fill('Replace customer-supplied kitchen faucet. Accessible cabinet. Supply lines cost $40; cleanup and testing included.');await page.locator('#estLaborRate').fill('200');await page.locator('#estContingency').fill('0');

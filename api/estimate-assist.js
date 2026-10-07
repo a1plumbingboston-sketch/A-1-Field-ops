@@ -1,8 +1,10 @@
+import serviceQuoteHandler from '../lib/service-quote-handler.js';
 import {authorized,db} from '../lib/db.js';
 import {estimateInput,relevantPrices,validateEstimate,estimateSchema,estimateLineItemTarget,reconcileEstimateTotal} from '../lib/estimate-guidance.js';
 import {randomUUID} from 'node:crypto';
 async function within(promise,ms){let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new DOMException('Operation exceeded its deadline','TimeoutError')),ms);})]);}finally{clearTimeout(timer);}}
 export default async function handler(req,res){
+ if(req.body?.estimator_mode==='service')return serviceQuoteHandler(req,res);
  res.setHeader('Cache-Control','no-store');
  if(req.method!=='POST')return res.status(405).json({error:'POST only'});
  const started=Date.now(),trace=randomUUID(),controller=new AbortController();let timer,stage='authentication',model;
