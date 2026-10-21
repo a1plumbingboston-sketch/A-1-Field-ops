@@ -1,4 +1,5 @@
 import {test} from 'node:test';
+import {requestAi} from '../ai-request.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
@@ -12,6 +13,7 @@ function harness({stored=null,fetcher}={}){
  const document={querySelector:node,createElement:make,dispatchEvent:e=>events.push(e.type)};
  const window={A1RemodelBridge:{key:()=> 'local-fixture',contextId:()=>id,apply:async proposal=>{applied.push(proposal);return true;}}};
  const fetch=fetcher||(async()=>({ok:true,json:async()=>({items:[{description:'Plumbing project',quantity:1,unit_price:2500}],reasoning:'Synthetic allocation'})}));
+ window.A1AiRequest=async(url,options)=>{const original=global.fetch;global.fetch=fetch;try{return await requestAi(url,options);}finally{global.fetch=original;}};
  vm.runInNewContext(source,{window,document,localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},Event:class{constructor(type){this.type=type;}},AbortController,confirm:()=>true,fetch,console});
  return {api:window.A1TaskEstimator,form,node,events,storage,applied,setContext:v=>{id=v;},submit:()=>form.onsubmit({preventDefault(){}})};
 }
@@ -44,4 +46,13 @@ test('combined walkthrough above the API limit is not silently truncated or sent
  let calls=0;const h=harness({fetcher:async()=>{calls++;throw Error('Must not send oversized intake');}});
  const oversized={...input(),scope:'S'.repeat(16000),conditions:'C'.repeat(2400),exclusions:'E'.repeat(2400)};
  h.api.restore(oversized);await h.submit();assert.equal(calls,0);assert.match(h.node('#taskStatus').textContent,/combined 20,000 characters/);assert.deepEqual(plain(h.api.capture()),oversized);assert.equal(h.node('#taskResult').innerHTML,'');assert.equal(h.node('#buildTaskEstimate').disabled,false);
+});
+
+test('stalled allocation restores controls, preserves walkthrough, and allows a successful retry',async t=>{
+ t.mock.timers.enable({apis:['setTimeout'],now:1000});let stalled=true,calls=0;
+ const h=harness({fetcher:async()=>{calls++;if(stalled)return new Promise(()=>{});return {ok:true,json:async()=>({items:[{description:'Plumbing work',quantity:1,unit_price:2500}]})};}});
+ h.api.restore(input());const pending=h.submit();assert.equal(h.node('#buildTaskEstimate').disabled,true);
+ t.mock.timers.tick(120000);await pending;
+ assert.equal(h.node('#buildTaskEstimate').disabled,false);assert.match(h.node('#taskStatus').textContent,/too long.*draft is unchanged/i);assert.deepEqual(plain(h.api.capture()),input());assert.equal(h.node('#taskResult').innerHTML,'');assert.equal(calls,1);
+ stalled=false;await h.submit();assert.equal(calls,2);assert.equal(h.node('#buildTaskEstimate').disabled,false);assert.match(h.node('#taskStatus').textContent,/ready for review/i);
 });

@@ -48,7 +48,7 @@ form.onsubmit=async e=>{
  if(!Number.isFinite(total)||total<=0){$('#taskStatus').textContent='Enter the total project price you want itemized.';return;}
  inputSnapshot=JSON.stringify(inputs());inputContext=contextId();const generation=revision,request=new AbortController();activeRequest=request;btn.disabled=true;$('#taskStatus').textContent='Organizing the scope into fixed-price line items…';
  try{
-  const r=await fetch('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':window.A1RemodelBridge.key()},body:JSON.stringify({mode:'allocate',document_type:'estimate',profile:'construction',title:x.project,description,total}),signal:request.signal});
+  const r=await window.A1AiRequest('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':window.A1RemodelBridge.key()},body:JSON.stringify({mode:'allocate',document_type:'estimate',profile:'construction',title:x.project,description,total}),signal:request.signal});
   const j=await r.json();if(generation!==revision)return;if(inputContext!==contextId())throw Error('The estimate changed while AI was working. Allocate again for the current estimate.');if(!r.ok)throw Error(j.error||'Could not allocate this project price.');
   if(inputSnapshot!==JSON.stringify(inputs()))throw Error('The walkthrough changed while AI was working. Build again with the latest scope.');
   const sum=(j.items||[]).reduce((n,i)=>n+Number(i.quantity)*Number(i.unit_price),0);

@@ -1,3 +1,4 @@
+import {withinDeadline} from '../request-deadline.js';
 import {remodelInvoiceContext,remodelInvoiceRules} from '../lib/remodel-invoice.js';
 import {reviewedInvoiceWork} from '../lib/work-summary.js';
 import {checkAiRateLimit} from '../lib/ai-limit.js';
@@ -83,7 +84,7 @@ async function generateItems(req,res){
   const x=req.body||{};
   const description=clean(x.description,6000);
   if(description.length<10)return res.status(400).json({error:'Describe the work before asking AI to create line items.'});
-  const ranges=await getLaborRateRanges().catch(()=>({service:{min:120,max:200}}));
+  const ranges=await withinDeadline(getLaborRateRanges().catch(()=>({service:{min:120,max:200}})),10000);
   const range=ranges.service;
   const model=process.env.OPENAI_INVOICE_MODEL||'gpt-5.6-luna';
   const rateLine=['standard','moderate','difficult'].map(d=>`$${rateForDifficulty(d,range).rate} ${d}`).join(', ');
@@ -123,9 +124,9 @@ export default async function handler(req,res){
   res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
   if(req.method!=='POST')return res.status(405).json({error:'POST only'});
   try{
-    if(!(await verifyFieldOpsKey(String(req.headers['x-fieldops-key']||''))))return res.status(401).json({error:'Authentication required'});
+    if(!(await withinDeadline(verifyFieldOpsKey(String(req.headers['x-fieldops-key']||'')),15000)))return res.status(401).json({error:'Authentication required'});
     if(!process.env.OPENAI_API_KEY)return res.status(503).json({error:'AI invoice writer is not configured'});
-    try{await checkAiRateLimit('invoice');}catch(e){return res.status(429).json({error:e.message});}
+    try{await withinDeadline(checkAiRateLimit('invoice'),10000);}catch(e){return res.status(e.name==='TimeoutError'?503:429).json({error:e.message});}
     if(req.body?.mode==='allocate')return await allocateTotal(req,res);
     if(req.body?.mode==='generate')return await generateItems(req,res);
     const x=req.body||{};
@@ -133,9 +134,9 @@ export default async function handler(req,res){
     const items=Array.isArray(x.items)?x.items.slice(0,100).map(i=>({description:clean(i.description,500),quantity:Number(i.quantity||0),unit_price:Number(i.unit_price||0)})):[];
     const isEstimate=String(x.document_type||'invoice').toLowerCase()==='estimate';
     const isJob=x.document_type==='job';
-    const workContext=(!isEstimate&&!isJob)?await reviewedInvoiceWork(x.invoice_id):{manager_notes:'',technician_reports:''};
+    const workContext=(!isEstimate&&!isJob)?await withinDeadline(reviewedInvoiceWork(x.invoice_id),10000):{manager_notes:'',technician_reports:''};
     const fieldReport=workContext.technician_reports;
-    const remodel=(!isEstimate&&!isJob)?await remodelInvoiceContext(x.invoice_id):{approved_quote:'',approved_changes:[]};
+    const remodel=(!isEstimate&&!isJob)?await withinDeadline(remodelInvoiceContext(x.invoice_id),10000):{approved_quote:'',approved_changes:[]};
     const billingStage=['deposit','progress','final'].includes(x.billing_stage)?x.billing_stage:'unspecified';
     const prompt=`You write customer-facing ${isJob?'job descriptions':isEstimate?'estimates':'invoices'} for A-1 Plumbing & Heating, a professional plumbing contractor. Turn rough field notes into concise, polished ${isEstimate?'scope-of-work wording for proposed work':'invoice wording for completed/billed work'}.
 
@@ -175,5 +176,5 @@ ${remodelInvoiceRules}`;
     draft.review_notes=clean(draft.review_notes,1800);draft.customer_message=clean(draft.customer_message,1000);draft.brief_description=clean(draft.brief_description,1200);
     draft.line_items=draft.line_items.slice(0,items.length).map(v=>({description:clean(v?.description,500)}));
     return res.status(200).json({draft,approved_quote_used:!!remodel.approved_quote,field_report_used:!!fieldReport,usage:j.usage||null,request_id:j.id||null});
-  }catch(err){return res.status(500).json({error:err?.message||'Could not write invoice'});}
+  }catch(err){return res.status(err?.name==='TimeoutError'?503:500).json({error:err?.name==='TimeoutError'?'AI took too long to respond. Your draft is unchanged. Please try again.':err?.message||'Could not write invoice'});}
 }
