@@ -37,6 +37,7 @@
 <script type="module" src="/finance-workspace.js?v=31.9.2"></script>
 <script type="module" src="/estimate-labor.js?v=31.9.2"></script>
 <script type="module" src="/estimate-request.js?v=31.9.2"></script>
+<script type="module" src="/ai-request.js?v=31.9.2"></script>
 <link rel="stylesheet" href="/task-estimator.css?v=31.9.2"><script type="module" src="/task-estimator.js?v=31.9.2"></script><script type="module" src="/labor-rate-settings.js?v=31.9.2"></script>
 <script type="module" src="/receipt-preferences.js?v=31.9.2"></script>
 <link rel="stylesheet" href="/customer-messaging.css?v=31.9.2"><script type="module" src="/customer-messaging.js?v=31.9.2"></script></head>
@@ -623,7 +624,7 @@ window.aiInvoiceDraft=async id=>{
   try{
     const accessKey=sessionStorage.getItem('a1_fieldops_key')||'';
     const payload={invoice_id:invoice.id,billing_stage:$('#invoiceBillingStage')?.value||'unspecified',remodel_notes:$('#invoiceBillingNotes')?.value||'',title:invoice.title||'',description:invoice.description||'',notes:invoice.notes||'',items:items.map(x=>({description:x.description,quantity:x.quantity,unit_price:x.unit_price})),total:Number(invoice.total||0)};
-    const r=await fetch('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':accessKey},body:JSON.stringify(payload)});
+    const r=await window.A1AiRequest('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':accessKey},body:JSON.stringify(payload)});
     const j=await r.json().catch(()=>({})); if(!r.ok)throw new Error(j?.error||'AI invoice writer unavailable');
     if(sourceFingerprint!==JSON.stringify({title:invoiceCache.find(i=>i.id===id)?.title,description:invoiceCache.find(i=>i.id===id)?.description,items:window._invoiceItems?.[id]||[]}))throw new Error('Invoice changed while AI was writing. Open the latest invoice and try again.');
     const d=j.draft||{};d.source_fingerprint=sourceFingerprint;
@@ -795,16 +796,16 @@ window.aiEstimateDescription=async id=>{
  try{
   const accessKey=sessionStorage.getItem('a1_fieldops_key')||'';
   if(!accessKey)throw new Error('FieldOps access key is missing. Sign in again.');
-  const {data:items,error:ie}=await sb.from('estimate_items').select('*').eq('estimate_id',id).order('sort_order',{ascending:true}); if(ie)throw ie;
+  const {data:items,error:ie}=await window.A1WithinDeadline(sb.from('estimate_items').select('*').eq('estimate_id',id).order('sort_order',{ascending:true}),15000,'Loading quote items timed out. Your draft is unchanged. Please try again.'); if(ie)throw ie;
   const payload={document_type:'estimate',title:estimate.title||'',description:estimate.description||'',notes:estimate.notes||'',items:(items||[]).map(x=>({description:x.description,quantity:x.quantity,unit_price:x.unit_price})),total:Number(estimate.total||0)};
-  const r=await fetch('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':accessKey},body:JSON.stringify(payload)});
+  const r=await window.A1AiRequest('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':accessKey},body:JSON.stringify(payload)});
   const j=await r.json().catch(()=>({})); if(!r.ok)throw new Error(j?.error||'AI writer unavailable');
   const d=j?.draft||j; const brief=String(d?.brief_description||'').trim(); if(!brief)throw new Error('AI returned no description');
-  await saveDocumentEdit('estimate',id,estimate.title,brief,items);
+  await window.A1WithinDeadline(saveDocumentEdit('estimate',id,estimate.title,brief,items),20000,'Saving is taking longer than expected. The save may still finish; check the quote before trying again.');
   if(panel)panel.innerHTML=`<div class="ai-note"><b>AI scope added:</b><br>${esc(brief)}</div>`;
   showBanner('Professional scope of work added.','success');
-  await loadEstimates();
-  await openEstimate(id);
+  await window.A1WithinDeadline(loadEstimates(),15000,'Your scope was saved, but refreshing timed out. Reopen the quote to check it.');
+  await window.A1WithinDeadline(openEstimate(id),15000,'Your scope was saved, but refreshing timed out. Reopen the quote to check it.');
  }catch(err){
   if(panel)panel.innerHTML=`<div class="empty">AI scope writer failed: ${esc(err?.message||String(err))}</div>`;
   showBanner('AI scope writer failed: '+(err?.message||String(err)),'error');
@@ -855,7 +856,7 @@ window.openInvoiceEditor=async(id,kind='invoice')=>{if(kind==='estimate')return 
 function workContext(id){if(id!=='estDescription')return'';const sel=document.getElementById('estDescriptionQuestion8');return sel?.value?('Job difficulty: '+sel.value):'';}
 function installDescriptionAssist(){
  for(const id of ['estDescription','jobNotes','editInvDescription','bookDescription']){const field=document.getElementById(id);if(!field||field.dataset.aiAssist)continue;field.dataset.aiAssist='1';const button=document.createElement('button');button.type='button';button.textContent='✦ AI: Rewrite wording only (no pricing)';field.insertAdjacentElement('afterend',button);
- button.onclick=async()=>{const original=field.value,wordingContext=id==='estDescription'?currentAiQuoteContext():null;if(!original.trim()){showBanner('Describe the work first, then ask AI to polish it.','error');return;}button.disabled=true;try{const type=id==='estDescription'||id==='bookDescription'?'estimate':id==='jobNotes'?'job':($('#invoiceDetail h2')?.textContent.includes('estimate')?'estimate':'invoice');const r=await fetch('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':getAccessKey()},body:JSON.stringify({document_type:type,invoice_id:field.dataset.invoiceId||undefined,description:original,notes:workContext(id),items:[]})}),j=await r.json();if(!r.ok)throw new Error(j.error);if(!field.isConnected||(wordingContext&&wordingContext!==currentAiQuoteContext()))return;const text=j.draft?.brief_description;if(!text)throw new Error('No draft returned');button.nextElementSibling?.classList.contains('description-ai-preview')&&button.nextElementSibling.remove();const preview=document.createElement('div');preview.className='description-ai-preview ai-panel';const wording=document.createElement('p');wording.textContent=text;const apply=document.createElement('button');apply.type='button';apply.textContent='Use this wording';apply.onclick=()=>{if(field.value!==original||(wordingContext&&wordingContext!==currentAiQuoteContext())){showBanner('Your description changed. Generate a new draft to keep your latest edits.','error');return;}field.value=text;field.dispatchEvent(new Event('input',{bubbles:true}));preview.remove();};const discard=document.createElement('button');discard.type='button';discard.textContent='Keep my wording';discard.onclick=()=>preview.remove();preview.append(wording,apply,discard);button.insertAdjacentElement('afterend',preview);}catch(e){showBanner(e.message,'error');}finally{button.disabled=false;}};
+ button.onclick=async()=>{const original=field.value,wordingContext=id==='estDescription'?currentAiQuoteContext():null;if(!original.trim()){showBanner('Describe the work first, then ask AI to polish it.','error');return;}button.disabled=true;try{const type=id==='estDescription'||id==='bookDescription'?'estimate':id==='jobNotes'?'job':($('#invoiceDetail h2')?.textContent.includes('estimate')?'estimate':'invoice');const r=await window.A1AiRequest('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':getAccessKey()},body:JSON.stringify({document_type:type,invoice_id:field.dataset.invoiceId||undefined,description:original,notes:workContext(id),items:[]})}),j=await r.json();if(!r.ok)throw new Error(j.error);if(!field.isConnected||(wordingContext&&wordingContext!==currentAiQuoteContext()))return;const text=j.draft?.brief_description;if(!text)throw new Error('No draft returned');button.nextElementSibling?.classList.contains('description-ai-preview')&&button.nextElementSibling.remove();const preview=document.createElement('div');preview.className='description-ai-preview ai-panel';const wording=document.createElement('p');wording.textContent=text;const apply=document.createElement('button');apply.type='button';apply.textContent='Use this wording';apply.onclick=()=>{if(field.value!==original||(wordingContext&&wordingContext!==currentAiQuoteContext())){showBanner('Your description changed. Generate a new draft to keep your latest edits.','error');return;}field.value=text;field.dispatchEvent(new Event('input',{bubbles:true}));preview.remove();};const discard=document.createElement('button');discard.type='button';discard.textContent='Keep my wording';discard.onclick=()=>preview.remove();preview.append(wording,apply,discard);button.insertAdjacentElement('afterend',preview);}catch(e){showBanner(e.message,'error');}finally{button.disabled=false;}};
  }
 }
 new MutationObserver(installDescriptionAssist).observe(document.body,{childList:true,subtree:true});installDescriptionAssist();
@@ -875,7 +876,7 @@ function installAllocateAssist(){
   if(!confirm('Replace the current line items with AI-created, AI-priced line items based on the description? This uses your Service labor rate.'))return;
   generateBtn.disabled=true;
   try{
-   const r=await fetch('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':getAccessKey()},body:JSON.stringify({mode:'generate',description,notes:workContext('editInvDescription')})}),j=await r.json();
+   const r=await window.A1AiRequest('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':getAccessKey()},body:JSON.stringify({mode:'generate',description,notes:workContext('editInvDescription')})}),j=await r.json();
    if(!r.ok)throw new Error(j.error);
    if(!Array.isArray(j.items))throw new Error('Unexpected response from the server — the app may not be fully updated. Raw response: '+JSON.stringify(j).slice(0,200));
    $('#invoiceEditItems').innerHTML=j.items.map((i,idx)=>invoiceEditRow(i.description,i.quantity,i.unit_price,idx)).join('');
@@ -894,7 +895,7 @@ function installAllocateAssist(){
   if(!confirm(`Replace the current line items with an AI split of ${money(total)}? This does not change the total or send anything.`))return;
   allocateBtn.disabled=true;
   try{
-   const r=await fetch('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':getAccessKey()},body:JSON.stringify({mode:'allocate',description,notes:workContext('editInvDescription'),total})}),j=await r.json();
+   const r=await window.A1AiRequest('/api/invoice-assist',{method:'POST',headers:{'Content-Type':'application/json','x-fieldops-key':getAccessKey()},body:JSON.stringify({mode:'allocate',description,notes:workContext('editInvDescription'),total})}),j=await r.json();
    if(!r.ok)throw new Error(j.error);
    if(!Array.isArray(j.items))throw new Error('Unexpected response from the server — the app may not be fully updated. Raw response: '+JSON.stringify(j).slice(0,200));
    $('#invoiceEditItems').innerHTML=j.items.map((i,idx)=>invoiceEditRow(i.description,i.quantity,i.unit_price,idx)).join('');
