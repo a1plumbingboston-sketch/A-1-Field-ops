@@ -100,7 +100,7 @@ Rules:
 - Return ONLY valid JSON: {"items":[{"description":string,"hours":number,"difficulty":string,"reason":string}], "summary":string}.
 - difficulty is one of: standard, moderate, difficult, specialist, unassessed — reflecting access/conditions for that specific line item.
 - hours is your best-effort labor-hours estimate for that line item alone (covering its full stated quantity, if any). Do not invent material costs, part prices, or any dollar amount — the app prices each item itself from your hours and A-1's labor rate (${rateLine} for this job).
-- Do not include a separate truck fee, dispatch fee, mobilization charge or service-call fee as a line item — the app adds that separately.
+- Do not include a separate truck fee, dispatch fee, mobilization charge or service-call fee as a line item — the app handles any optional fee separately, only when selected.
 - Descriptions should be short (3-10 words), plain customer-facing plumbing language, specific to this job's actual scope. Do not invent parts, materials, brands, diagnostics, or work not implied by the description.
 - summary is a short internal note (1-2 sentences); never shown to the customer.`;
   const r=await fetch('https://api.openai.com/v1/responses',{method:'POST',signal:AbortSignal.timeout(55000),headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({model,store:false,reasoning:{effort:'medium'},input:prompt,max_output_tokens:2000,text:{format:{type:'json_schema',name:'generated_invoice_items',strict:true,schema:generatedItemsSchema}}})});
